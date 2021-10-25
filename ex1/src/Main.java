@@ -46,7 +46,7 @@ public class Main
 				/************************/
 				/* [6] Print to console */
 				/************************/
-				System.out.print(TokenNames.class.getFields()[TokenNames.MINUS].getName());
+				System.out.print(TokenNames.class.getFields()[s.sym].getName());
 				System.out.print("(");
 				System.out.print(s.value);
 				System.out.print(")");
