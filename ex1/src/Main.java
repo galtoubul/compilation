@@ -1,6 +1,7 @@
    
 import java.io.*;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 
 import java_cup.runtime.Symbol;
    
@@ -45,14 +46,17 @@ public class Main
 				/************************/
 				/* [6] Print to console */
 				/************************/
+				System.out.print(TokenNames.class.getFields()[TokenNames.MINUS].getName());
+				System.out.print("(");
+				System.out.print(s.value);
+				System.out.print(")");
 				System.out.print("[");
 				System.out.print(l.getLine());
 				System.out.print(",");
 				System.out.print(l.getTokenStartPosition());
-				System.out.print("]:");
-				System.out.print(s.value);
+				System.out.print("]");
 				System.out.print("\n");
-				
+
 				/*********************/
 				/* [7] Print to file */
 				/*********************/
