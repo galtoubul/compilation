@@ -74,6 +74,7 @@ LineTerminator	= \r|\n|\r\n
 WhiteSpace		= {LineTerminator} | [(] | [)] |[ \t\f]
 INTEGER			= 0 | [1-9][0-9]*
 ID				= [a-zA-Z][a-zA-Z0-9]*
+STRING          = [\"][a-zA-Z]*[\"]
 
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
@@ -110,6 +111,7 @@ ID				= [a-zA-Z][a-zA-Z0-9]*
 ","				    { return symbol(TokenNames.COMMA);}
 ">"				    { return symbol(TokenNames.GT);}
 "<"				    { return symbol(TokenNames.LT);}
+{STRING}            { return symbol(TokenNames.STRING,     new String( yytext()));}
 "class"				{ return symbol(TokenNames.CLASS);}
 "nil"				{ return symbol(TokenNames.NIL);}
 "array"				{ return symbol(TokenNames.ARRAY);}
@@ -119,7 +121,7 @@ ID				= [a-zA-Z][a-zA-Z0-9]*
 "new"				{ return symbol(TokenNames.NEW);}
 "if"				{ return symbol(TokenNames.IF);}
 {INTEGER}			{ return symbol(TokenNames.INT, new Integer(yytext()));}
-{ID}				{ return symbol(TokenNames.ID,     new String( yytext()));}   
+{ID}				{ return symbol(TokenNames.ID,     new String( yytext()));}
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 <<EOF>>				{ return symbol(TokenNames.EOF);}
 }
