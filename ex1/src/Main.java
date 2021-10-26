@@ -1,14 +1,10 @@
-   
 import java.io.*;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
-
 import java_cup.runtime.Symbol;
    
-public class Main
-{
-	static public void main(String argv[])
-	{
+public class Main {
+
+	static public void main(String argv[]) {
 		Lexer l;
 		Symbol s;
 		FileReader file_reader;
@@ -16,8 +12,7 @@ public class Main
 		String inputFilename = argv[0];
 		String outputFilename = argv[1];
 		
-		try
-		{
+		try {
 			/********************************/
 			/* [1] Initialize a file reader */
 			/********************************/
@@ -41,8 +36,8 @@ public class Main
 			/********************************/
 			/* [5] Main reading tokens loop */
 			/********************************/
-			while (s.sym != TokenNames.EOF)
-			{
+			while (s.sym != TokenNames.EOF) {
+
 				/************************/
 				/* [6] Print to console */
 				/************************/
@@ -92,8 +87,7 @@ public class Main
 			file_writer.close();
     	}
 			     
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

@@ -53,28 +53,33 @@ import java_cup.runtime.*;
 	/*********************************************************************************/
 	/* Create a new java_cup.runtime.Symbol with information about the current token */
 	/*********************************************************************************/
-	private Symbol symbol(int type)               {return new Symbol(type, yyline, yycolumn);}
-	private Symbol symbol(int type, Object value) {return new Symbol(type, yyline, yycolumn, value);}
+
+	private Symbol symbol(int type) { return new Symbol(type, yyline, yycolumn); }
+
+	private Symbol symbol(int type, Object value) { return new Symbol(type, yyline, yycolumn, value); }
 
 	/*******************************************/
 	/* Enable line number extraction from main */
 	/*******************************************/
-	public int getLine() { return yyline + 1; } 
+	public int getLine() { return yyline + 1; }
 
 	/**********************************************/
 	/* Enable token position extraction from main */
 	/**********************************************/
-	public int getTokenStartPosition() { return yycolumn + 1; } 
+	public int getTokenStartPosition() { return yycolumn + 1; }
 %}
 
 /***********************/
-/* MACRO DECALARATIONS */
+/* MACRO DECLARATIONS */
 /***********************/
-LineTerminator	= \r|\n|\r\n
-WhiteSpace		= {LineTerminator} | [(] | [)] |[ \t\f]
+
+LineTerminator	= \r | \n | \r\n
+WHITESPACE		= {LineTerminator} | [\t\f]
 INTEGER			= 0 | [1-9][0-9]*
 ID				= [a-zA-Z][a-zA-Z0-9]*
-STRING          = [\"][a-zA-Z]*[\"]
+STRING          = \"[a-zA-Z]*\"
+CharsInComments = [()[]{}?!+-*/.;a-zA-Z]* | {WhiteSpace}*
+COMMENT         = //.* | /\* {CharsInComments} */\
 
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
@@ -94,34 +99,36 @@ STRING          = [\"][a-zA-Z]*[\"]
 
 <YYINITIAL> {
 
-"+"					{ return symbol(TokenNames.PLUS);}
-"-"					{ return symbol(TokenNames.MINUS);}
-"*"				    { return symbol(TokenNames.TIMES);}
-"/"					{ return symbol(TokenNames.DIVIDE);}
-"("					{ return symbol(TokenNames.LPAREN);}
-")"					{ return symbol(TokenNames.RPAREN);}
-"["					{ return symbol(TokenNames.LBRACK);}
-"]"					{ return symbol(TokenNames.RBRACK);}
-"{"					{ return symbol(TokenNames.LBRACE);}
-"}"					{ return symbol(TokenNames.RBRACE);}
-"="					{ return symbol(TokenNames.EQ);}
-":="				{ return symbol(TokenNames.ASSIGN);}
-";"				    { return symbol(TokenNames.SEMICOLON);}
-"."				    { return symbol(TokenNames.DOT);}
-","				    { return symbol(TokenNames.COMMA);}
-">"				    { return symbol(TokenNames.GT);}
-"<"				    { return symbol(TokenNames.LT);}
-{STRING}            { return symbol(TokenNames.STRING,     new String( yytext()));}
-"class"				{ return symbol(TokenNames.CLASS);}
-"nil"				{ return symbol(TokenNames.NIL);}
-"array"				{ return symbol(TokenNames.ARRAY);}
-"while"				{ return symbol(TokenNames.WHILE);}
-"extends"			{ return symbol(TokenNames.EXTENDS);}
-"return"			{ return symbol(TokenNames.RETURN);}
-"new"				{ return symbol(TokenNames.NEW);}
-"if"				{ return symbol(TokenNames.IF);}
-{INTEGER}			{ return symbol(TokenNames.INT, new Integer(yytext()));}
-{ID}				{ return symbol(TokenNames.ID,     new String( yytext()));}
-{WhiteSpace}		{ /* just skip what was found, do nothing */ }
-<<EOF>>				{ return symbol(TokenNames.EOF);}
+"+"					{ return symbol(TokenNames.PLUS);                           }
+"-"					{ return symbol(TokenNames.MINUS);                          }
+"*"				    { return symbol(TokenNames.TIMES);                          }
+"/"					{ return symbol(TokenNames.DIVIDE);                         }
+"("					{ return symbol(TokenNames.LPAREN);                         }
+")"					{ return symbol(TokenNames.RPAREN);                         }
+"["					{ return symbol(TokenNames.LBRACK);                         }
+"]"					{ return symbol(TokenNames.RBRACK);                         }
+"{"					{ return symbol(TokenNames.LBRACE);                         }
+"}"					{ return symbol(TokenNames.RBRACE);                         }
+"="					{ return symbol(TokenNames.EQ);                             }
+":="				{ return symbol(TokenNames.ASSIGN);                         }
+";"				    { return symbol(TokenNames.SEMICOLON);                      }
+"."				    { return symbol(TokenNames.DOT);                            }
+","				    { return symbol(TokenNames.COMMA);                          }
+">"				    { return symbol(TokenNames.GT);                             }
+"<"				    { return symbol(TokenNames.LT);                             }
+"class"				{ return symbol(TokenNames.CLASS);                          }
+"nil"				{ return symbol(TokenNames.NIL);                            }
+"array"				{ return symbol(TokenNames.ARRAY);                          }
+"while"				{ return symbol(TokenNames.WHILE);                          }
+"extends"			{ return symbol(TokenNames.EXTENDS);                        }
+"return"			{ return symbol(TokenNames.RETURN);                         }
+"new"				{ return symbol(TokenNames.NEW);                            }
+"if"				{ return symbol(TokenNames.IF);                             }
+{STRING}            { return symbol(TokenNames.STRING, new String(yytext()));   }
+{INTEGER}			{ return symbol(TokenNames.INT, new Integer(yytext()));     }
+{ID}				{ return symbol(TokenNames.ID, new String(yytext()));       }
+{WhiteSpace}		{ /* just skip what was found, do nothing */                }
+{COMMENT}		    { /* just skip what was found, do nothing */                }
+<<EOF>>				{ return symbol(TokenNames.EOF);                            }
+
 }
