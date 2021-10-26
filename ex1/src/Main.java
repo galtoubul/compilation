@@ -47,9 +47,11 @@ public class Main
 				/* [6] Print to console */
 				/************************/
 				System.out.print(TokenNames.class.getFields()[s.sym].getName());
-				System.out.print("(");
-				System.out.print(s.value);
-				System.out.print(")");
+				if (s.value != null) {
+					System.out.print("(");
+					System.out.print(s.value);
+					System.out.print(")");
+				}
 				System.out.print("[");
 				System.out.print(l.getLine());
 				System.out.print(",");
@@ -60,9 +62,17 @@ public class Main
 				/*********************/
 				/* [7] Print to file */
 				/*********************/
+				file_writer.print(TokenNames.class.getFields()[s.sym].getName());
+				if (s.value != null) {
+					file_writer.print("(");
+					file_writer.print(s.value);
+					file_writer.print(")");
+				}
+				file_writer.print("[");
 				file_writer.print(l.getLine());
-				file_writer.print(": ");
-				file_writer.print(s.value);
+				file_writer.print(",");
+				file_writer.print(l.getTokenStartPosition());
+				file_writer.print("]");
 				file_writer.print("\n");
 				
 				/***********************/

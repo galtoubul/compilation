@@ -71,9 +71,9 @@ import java_cup.runtime.*;
 /* MACRO DECALARATIONS */
 /***********************/
 LineTerminator	= \r|\n|\r\n
-WhiteSpace		= {LineTerminator} | [ \t\f]
+WhiteSpace		= {LineTerminator} | [(] | [)] |[ \t\f]
 INTEGER			= 0 | [1-9][0-9]*
-ID				= [a-z]+
+ID				= [a-zA-Z][a-zA-Z0-9]*
 
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
@@ -95,11 +95,30 @@ ID				= [a-z]+
 
 "+"					{ return symbol(TokenNames.PLUS);}
 "-"					{ return symbol(TokenNames.MINUS);}
-"PPP"				{ return symbol(TokenNames.TIMES);}
+"*"				    { return symbol(TokenNames.TIMES);}
 "/"					{ return symbol(TokenNames.DIVIDE);}
 "("					{ return symbol(TokenNames.LPAREN);}
 ")"					{ return symbol(TokenNames.RPAREN);}
-{INTEGER}			{ return symbol(TokenNames.NUMBER, new Integer(yytext()));}
+"["					{ return symbol(TokenNames.LBRACK);}
+"]"					{ return symbol(TokenNames.RBRACK);}
+"{"					{ return symbol(TokenNames.LBRACE);}
+"}"					{ return symbol(TokenNames.RBRACE);}
+"="					{ return symbol(TokenNames.EQ);}
+":="				{ return symbol(TokenNames.ASSIGN);}
+";"				    { return symbol(TokenNames.SEMICOLON);}
+"."				    { return symbol(TokenNames.DOT);}
+","				    { return symbol(TokenNames.COMMA);}
+">"				    { return symbol(TokenNames.GT);}
+"<"				    { return symbol(TokenNames.LT);}
+"class"				{ return symbol(TokenNames.CLASS);}
+"nil"				{ return symbol(TokenNames.NIL);}
+"array"				{ return symbol(TokenNames.ARRAY);}
+"while"				{ return symbol(TokenNames.WHILE);}
+"extends"			{ return symbol(TokenNames.EXTENDS);}
+"return"			{ return symbol(TokenNames.RETURN);}
+"new"				{ return symbol(TokenNames.NEW);}
+"if"				{ return symbol(TokenNames.IF);}
+{INTEGER}			{ return symbol(TokenNames.INT, new Integer(yytext()));}
 {ID}				{ return symbol(TokenNames.ID,     new String( yytext()));}   
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 <<EOF>>				{ return symbol(TokenNames.EOF);}

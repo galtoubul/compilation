@@ -8,8 +8,15 @@
       <change beforePath="$PROJECT_DIR$/../LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/../LICENSE" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LEXER" beforeDir="false" afterPath="$PROJECT_DIR$/LEXER" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Lexer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/TokenNames.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/TokenNames.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/Input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/input/Input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jflex/LEX_FILE.lex" beforeDir="false" afterPath="$PROJECT_DIR$/jflex/LEX_FILE.lex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output/OutputTokens.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/OutputTokens.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TokenNames.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TokenNames.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ids.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ids.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../names.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../names.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../users.txt" afterDir="false" />
@@ -52,7 +59,7 @@
       <option name="presentableId" value="Default" />
       <updated>1635168106509</updated>
       <workItem from="1635168127045" duration="1532000" />
-      <workItem from="1635169851898" duration="2560000" />
+      <workItem from="1635169851898" duration="10205000" />
     </task>
     <servers />
   </component>
