@@ -78,9 +78,9 @@ WHITESPACE		= {LineTerminator} | [ \t\f]
 INTEGER			= 0 | [1-9][0-9]*
 ID				= [a-zA-Z][a-zA-Z0-9]*
 STRING          = \"[a-zA-Z]*\"
-CharsInComments = [()[]{}?!-\\+\/.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
+CharsInComments = [()[]{}?!\-\+\*\/.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
 LINE_COMMENT    = \/\/.*{LineTerminator}
-BLOCK_COMMENT   = \/\\* {CharsInComments}* \\*\/
+BLOCK_COMMENT   = \/\* {CharsInComments}* \*\/
 COMMENT         = {LINE_COMMENT} | {BLOCK_COMMENT}
 
 /******************************/
