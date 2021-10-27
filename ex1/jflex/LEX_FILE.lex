@@ -74,12 +74,14 @@ import java_cup.runtime.*;
 /***********************/
 
 LineTerminator	= \r | \n | \r\n
-WHITESPACE		= {LineTerminator} | [\t\f]
+WHITESPACE		= {LineTerminator} | [ \t\f]
 INTEGER			= 0 | [1-9][0-9]*
 ID				= [a-zA-Z][a-zA-Z0-9]*
 STRING          = \"[a-zA-Z]*\"
-CharsInComments = [()[]{}?!+-*/.;a-zA-Z]* | {WhiteSpace}*
-COMMENT         = //.* | /\* {CharsInComments} */\
+CharsInComments = [()[]{}?!-\\+\/.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
+LINE_COMMENT    = \/\/.*{LineTerminator}
+BLOCK_COMMENT   = \/\\* {CharsInComments}* \\*\/
+COMMENT         = {LINE_COMMENT} | {BLOCK_COMMENT}
 
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
@@ -127,7 +129,7 @@ COMMENT         = //.* | /\* {CharsInComments} */\
 {STRING}            { return symbol(TokenNames.STRING, new String(yytext()));   }
 {INTEGER}			{ return symbol(TokenNames.INT, new Integer(yytext()));     }
 {ID}				{ return symbol(TokenNames.ID, new String(yytext()));       }
-{WhiteSpace}		{ /* just skip what was found, do nothing */                }
+{WHITESPACE}		{ /* just skip what was found, do nothing */                }
 {COMMENT}		    { /* just skip what was found, do nothing */                }
 <<EOF>>				{ return symbol(TokenNames.EOF);                            }
 
