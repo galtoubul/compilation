@@ -73,15 +73,21 @@ import java_cup.runtime.*;
 /* MACRO DECLARATIONS */
 /***********************/
 
-LineTerminator	= \r | \n | \r\n
-WHITESPACE		= {LineTerminator} | [ \t\f]
-INTEGER			= 0 | [1-9][0-9]*
-ID				= [a-zA-Z][a-zA-Z0-9]*
-STRING          = \"[a-zA-Z]*\"
-CharsInComments = [()[]{}?!\-\+\*\/.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
-LINE_COMMENT    = \/\/.*{LineTerminator}
-BLOCK_COMMENT   = \/\* {CharsInComments}* \*\/
-COMMENT         = {LINE_COMMENT} | {BLOCK_COMMENT}
+LineTerminator	         = \r | \n | \r\n
+WHITESPACE		         = {LineTerminator} | [ \t\f]
+INTEGER			         = 0 | [1-9][0-9]*
+ID				         = [a-zA-Z][a-zA-Z0-9]*
+STRING                   = \"[a-zA-Z]*\"
+
+CharsInCommentsNoDivStar = [()[]{}?!\-\+.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
+CharsInCommentsNoStar    = {CharsInCommentsNoDivStar} | \/
+CommentContent           = {CharsInCommentsNoStar}* (\* | (\*{CharsInCommentsNoDivStar}{CharsInCommentsNoStar}*)*)
+CharsInComments          = [()[]{}?!\-\+\*\/.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
+
+LINE_COMMENT             = \/\/.*{LineTerminator}
+UNCLOSED_BLOCK_COMMENT   = \/\* {CommentContent}
+BLOCK_COMMENT            = {UNCLOSED_BLOCK_COMMENT} \*\/
+COMMENT                  = {LINE_COMMENT} | {BLOCK_COMMENT}
 
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
