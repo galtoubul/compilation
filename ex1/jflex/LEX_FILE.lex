@@ -153,7 +153,7 @@ ANY                      = .
 {ID}				{ return symbol(TokenNames.ID, new String(yytext()));       }
 {WHITESPACE}		{ /* just skip what was found, do nothing */                }
 {COMMENT}		    { /* just skip what was found, do nothing */                }
-{UNCLOSED_COMMENT}	{ return symbol(TokenNames.NEW);                            }
+{UNCLOSED_COMMENT}	{ return symbol(TokenNames.ERROR);                          }
 {BAD_INTEGER}       { return symbol(TokenNames.ERROR);                          }
 <<EOF>>				{ return symbol(TokenNames.EOF);                            }
 {ANY}           	{ return symbol(TokenNames.ERROR);                          }
