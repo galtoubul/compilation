@@ -29,4 +29,6 @@ public interface TokenNames {
     public static final int GT          = 26;
     public static final int STRING      = 27;
     public static final int COMMA       = 28;
+    public static final int ERROR       = 29;
+
 }

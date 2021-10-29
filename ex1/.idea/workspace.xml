@@ -5,11 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eb8431c0-2812-4692-9263-41c23b93991a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/input/TEST_03.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/../LICENSE" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/LEXER" beforeDir="false" afterPath="$PROJECT_DIR$/LEXER" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Lexer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/Input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/input/Input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/input/TEST_02_Merge_Lists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/input/TEST_02_Merge_Lists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jflex/LEX_FILE.lex" beforeDir="false" afterPath="$PROJECT_DIR$/jflex/LEX_FILE.lex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/OutputTokens.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/OutputTokens.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer.java" afterDir="false" />
@@ -18,6 +20,13 @@
       <change beforePath="$PROJECT_DIR$/../names.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../names.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../users.txt" afterDir="false" />
     </list>
+    <list id="c596c125-4e73-4633-b9f6-7518153ada38" name="Changes by Eyal Nesher" comment="">
+      <change beforePath="$PROJECT_DIR$/jflex/LEX_FILE.lex" beforeDir="false" afterPath="$PROJECT_DIR$/jflex/LEX_FILE.lex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+    </list>
+    <list id="6237dec7-c906-4219-8ee0-9ded5a93c7be" name="Changes by galto" comment="">
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +34,27 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/src/Main.java">
+      <ranges>
+        <range start1="67" end1="68" start2="67" end2="67" changelist="6237dec7-c906-4219-8ee0-9ded5a93c7be" />
+        <range start1="69" end1="70" start2="68" end2="69" changelist="6237dec7-c906-4219-8ee0-9ded5a93c7be" />
+        <range start1="71" end1="71" start2="70" end2="71" changelist="c596c125-4e73-4633-b9f6-7518153ada38" />
+      </ranges>
+    </file>
+    <file path="$PROJECT_DIR$/jflex/LEX_FILE.lex">
+      <ranges>
+        <range start1="69" end1="69" start2="69" end2="77" changelist="c596c125-4e73-4633-b9f6-7518153ada38" />
+        <range start1="78" end1="78" start2="86" end2="87" changelist="eb8431c0-2812-4692-9263-41c23b93991a" />
+        <range start1="81" end1="82" start2="90" end2="91" changelist="c596c125-4e73-4633-b9f6-7518153ada38" />
+        <range start1="83" end1="88" start2="92" end2="97" changelist="c596c125-4e73-4633-b9f6-7518153ada38" />
+        <range start1="90" end1="90" start2="99" end2="101" changelist="c596c125-4e73-4633-b9f6-7518153ada38" />
+        <range start1="135" end1="136" start2="146" end2="152" changelist="c596c125-4e73-4633-b9f6-7518153ada38" />
+        <range start1="139" end1="140" start2="155" end2="157" changelist="eb8431c0-2812-4692-9263-41c23b93991a" />
+        <range start1="141" end1="141" start2="158" end2="159" changelist="c596c125-4e73-4633-b9f6-7518153ada38" />
+      </ranges>
+    </file>
   </component>
   <component name="ProjectId" id="2004IGhiYmH1NcNwFO2lHHFa3az" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -56,7 +86,7 @@
       <option name="presentableId" value="Default" />
       <updated>1635168106509</updated>
       <workItem from="1635168127045" duration="1532000" />
-      <workItem from="1635169851898" duration="12889000" />
+      <workItem from="1635169851898" duration="23026000" />
     </task>
     <servers />
   </component>

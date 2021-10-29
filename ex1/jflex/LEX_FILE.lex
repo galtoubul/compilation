@@ -67,6 +67,14 @@ import java_cup.runtime.*;
 	/* Enable token position extraction from main */
 	/**********************************************/
 	public int getTokenStartPosition() { return yycolumn + 1; }
+
+	private Symbol getIntSymbol(Integer integer) {
+	    if (integer < Math.pow(2, 15)) {
+        	        return symbol(TokenNames.INT, integer);
+        } else {
+        	        return symbol(TokenNames.ERROR);
+        }
+	}
 %}
 
 /***********************/
@@ -76,18 +84,21 @@ import java_cup.runtime.*;
 LINE_TERMINATOR	         = \r | \n | \r\n
 WHITESPACE		         = [ \t\f] | {LINE_TERMINATOR}
 INTEGER			         = 0 | [1-9][0-9]*
+BAD_INTEGER              = 0[0-9]+
 ID				         = [a-zA-Z][a-zA-Z0-9]*
 STRING                   = \"[a-zA-Z]*\"
 
-CharsInCommentsNoDivStar = [()[]{}?!\-\+.;a-zA-Z] | {WHITESPACE} | {LINE_TERMINATOR}
+CharsInCommentsNoDivStar = [()[]{}?!\-\+.;a-zA-Z0-9] | {WHITESPACE} | {LINE_TERMINATOR}
 CharsInCommentsNoStar    = {CharsInCommentsNoDivStar} | \/
-CommentContent           = {CharsInCommentsNoStar}* (\* | (\*{CharsInCommentsNoDivStar}{CharsInCommentsNoStar}*))*
-CharsInComments          = [()[]{}?!\-\+\*\/.;a-zA-Z] | {WHITESPACE} | {LINE_TERMINATOR}
-
-LINE_COMMENT             = \/\/.*{LINE_TERMINATOR}
-UNCLOSED_COMMENT         = \/\* {CommentContent}
+BlockCommentContent      = {CharsInCommentsNoStar}* (\* | (\*{CharsInCommentsNoDivStar}{CharsInCommentsNoStar}*))*
+CharsInLineComments      = {CharsInCommentsNoStar} | \*
+/* l;akshdfaasdh/ asdflkjhgahl *f/asdhuewrahuajkdfas **sglj */
+LINE_COMMENT             = \/\/{CharsInLineComments}*{LINE_TERMINATOR}
+UNCLOSED_COMMENT         = \/\* {BlockCommentContent}
 BLOCK_COMMENT            = {UNCLOSED_COMMENT} \*\/
 COMMENT                  = {LINE_COMMENT} | {BLOCK_COMMENT}
+
+ANY                      = .
 
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
@@ -133,11 +144,18 @@ COMMENT                  = {LINE_COMMENT} | {BLOCK_COMMENT}
 "new"				{ return symbol(TokenNames.NEW);                            }
 "if"				{ return symbol(TokenNames.IF);                             }
 {STRING}            { return symbol(TokenNames.STRING, new String(yytext()));   }
-{INTEGER}			{ return symbol(TokenNames.INT, new Integer(yytext()));     }
+{INTEGER}			{ try {
+                        return getIntSymbol(new Integer(yytext()));
+                      } catch (Exception e) {
+                        // Integer token overflows Integer constructor
+                        return symbol(TokenNames.ERROR);
+                      }                                                         }
 {ID}				{ return symbol(TokenNames.ID, new String(yytext()));       }
 {WHITESPACE}		{ /* just skip what was found, do nothing */                }
 {COMMENT}		    { /* just skip what was found, do nothing */                }
-{UNCLOSED_COMMENT}	{ throw new RuntimeException("Lexical error: unclosed comment"); }
+{UNCLOSED_COMMENT}	{ return symbol(TokenNames.NEW);                            }
+{BAD_INTEGER}       { return symbol(TokenNames.ERROR);                          }
 <<EOF>>				{ return symbol(TokenNames.EOF);                            }
+{ANY}           	{ return symbol(TokenNames.ERROR);                          }
 
 }
