@@ -73,18 +73,18 @@ import java_cup.runtime.*;
 /* MACRO DECLARATIONS */
 /***********************/
 
-LineTerminator	         = \r | \n | \r\n
-WHITESPACE		         = {LineTerminator} | [ \t\f]
+LINE_TERMINATOR	         = \r | \n | \r\n
+WHITESPACE		         = [ \t\f] | {LINE_TERMINATOR}
 INTEGER			         = 0 | [1-9][0-9]*
 ID				         = [a-zA-Z][a-zA-Z0-9]*
 STRING                   = \"[a-zA-Z]*\"
 
-CharsInCommentsNoDivStar = [()[]{}?!\-\+.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
+CharsInCommentsNoDivStar = [()[]{}?!\-\+.;a-zA-Z] | {WHITESPACE} | {LINE_TERMINATOR}
 CharsInCommentsNoStar    = {CharsInCommentsNoDivStar} | \/
 CommentContent           = {CharsInCommentsNoStar}* (\* | (\*{CharsInCommentsNoDivStar}{CharsInCommentsNoStar}*))*
-CharsInComments          = [()[]{}?!\-\+\*\/.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
+CharsInComments          = [()[]{}?!\-\+\*\/.;a-zA-Z] | {WHITESPACE} | {LINE_TERMINATOR}
 
-LINE_COMMENT             = \/\/.*{LineTerminator}
+LINE_COMMENT             = \/\/.*{LINE_TERMINATOR}
 UNCLOSED_COMMENT         = \/\* {CommentContent}
 BLOCK_COMMENT            = {UNCLOSED_COMMENT} \*\/
 COMMENT                  = {LINE_COMMENT} | {BLOCK_COMMENT}
