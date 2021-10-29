@@ -50,7 +50,7 @@ public class Main {
 			}
 			
 			if (s.sym == TokenNames.ERROR) {
-				output = "ERROR\n";
+				output = "ERROR";
 			}
 
 			/******************************/
@@ -66,9 +66,8 @@ public class Main {
 			file_writer.close();
 			System.out.print(output);
     	}
-		// TODO
+
 		catch (Exception e) {
-			System.out.println("error");
 			e.printStackTrace();
 		}
 	}
