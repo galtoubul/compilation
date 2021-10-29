@@ -88,7 +88,7 @@ BAD_INTEGER              = 0[0-9]+
 ID				         = [a-zA-Z][a-zA-Z0-9]*
 STRING                   = \"[a-zA-Z]*\"
 
-CharsInCommentsNoDivStar = [()[]{}?!\-\+.;a-zA-Z0-9] | {WHITESPACE} | {LINE_TERMINATOR}
+CharsInCommentsNoDivStar = [\(\)\[\]\{\}\?!\-\+\.;a-zA-Z0-9] | {WHITESPACE} | {LINE_TERMINATOR}
 CharsInCommentsNoStar    = {CharsInCommentsNoDivStar} | \/
 BlockCommentContent      = {CharsInCommentsNoStar}* (\* | (\*{CharsInCommentsNoDivStar}{CharsInCommentsNoStar}*))*
 CharsInLineComments      = {CharsInCommentsNoStar} | \*
