@@ -81,12 +81,12 @@ STRING                   = \"[a-zA-Z]*\"
 
 CharsInCommentsNoDivStar = [()[]{}?!\-\+.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
 CharsInCommentsNoStar    = {CharsInCommentsNoDivStar} | \/
-CommentContent           = {CharsInCommentsNoStar}* (\* | (\*{CharsInCommentsNoDivStar}{CharsInCommentsNoStar}*)*)
+CommentContent           = {CharsInCommentsNoStar}* (\* | (\*{CharsInCommentsNoDivStar}{CharsInCommentsNoStar}*))*
 CharsInComments          = [()[]{}?!\-\+\*\/.;a-zA-Z] | {WHITESPACE} | {LineTerminator}
 
 LINE_COMMENT             = \/\/.*{LineTerminator}
-UNCLOSED_BLOCK_COMMENT   = \/\* {CommentContent}
-BLOCK_COMMENT            = {UNCLOSED_BLOCK_COMMENT} \*\/
+UNCLOSED_COMMENT         = \/\* {CommentContent}
+BLOCK_COMMENT            = {UNCLOSED_COMMENT} \*\/
 COMMENT                  = {LINE_COMMENT} | {BLOCK_COMMENT}
 
 /******************************/
@@ -137,6 +137,7 @@ COMMENT                  = {LINE_COMMENT} | {BLOCK_COMMENT}
 {ID}				{ return symbol(TokenNames.ID, new String(yytext()));       }
 {WHITESPACE}		{ /* just skip what was found, do nothing */                }
 {COMMENT}		    { /* just skip what was found, do nothing */                }
+{UNCLOSED_COMMENT}	{ throw new RuntimeException("Lexical error: unclosed comment"); }
 <<EOF>>				{ return symbol(TokenNames.EOF);                            }
 
 }
