@@ -50,7 +50,7 @@ public class Main {
 			}
 			
 			if (s.sym == TokenNames.ERROR) {
-				output = "ERROR";
+				output = "ERROR\n";
 			}
 
 			/******************************/

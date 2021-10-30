@@ -75,5 +75,4 @@ void main(void)
     }
 }
 
-323
-// 38
+string  "int" df int 3

@@ -144,6 +144,8 @@ ANY                      = .
 "return"			{ return symbol(TokenNames.RETURN);                         }
 "new"				{ return symbol(TokenNames.NEW);                            }
 "if"				{ return symbol(TokenNames.IF);                             }
+"string"			{ return symbol(TokenNames.TYPE_STRING);                    }
+"int"				{ return symbol(TokenNames.TYPE_INT);                       }
 {STRING}            { return symbol(TokenNames.STRING, new String(yytext()));   }
 {INTEGER}			{ try {
                         return getIntSymbol(new Integer(yytext()));
