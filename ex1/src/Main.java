@@ -52,6 +52,9 @@ public class Main {
 			if (s.sym == TokenNames.ERROR) {
 				output = "ERROR";
 			}
+			else if (output.length() > 0 && output.charAt(output.length() - 1) == '\n'){
+				output = output.substring(0, output.length() - 1);
+			}
 
 			/******************************/
 			/* [8] Close lexer input file */
