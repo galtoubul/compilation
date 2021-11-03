@@ -10,10 +10,8 @@
       <change beforePath="$PROJECT_DIR$/LEXER" beforeDir="false" afterPath="$PROJECT_DIR$/LEXER" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Lexer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/TokenNames.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/TokenNames.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/TEST_02_Merge_Lists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/input/TEST_02_Merge_Lists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/TEST_03.txt" beforeDir="false" afterPath="$PROJECT_DIR$/input/TEST_03.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jflex/LEX_FILE.lex" beforeDir="false" afterPath="$PROJECT_DIR$/jflex/LEX_FILE.lex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output/OutputTokens.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/OutputTokens.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
@@ -22,7 +20,9 @@
       <change beforePath="$PROJECT_DIR$/../names.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../names.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../users.txt" afterDir="false" />
     </list>
-    <list id="c596c125-4e73-4633-b9f6-7518153ada38" name="Changes by Eyal Nesher" comment="" />
+    <list id="c596c125-4e73-4633-b9f6-7518153ada38" name="Changes by Eyal Nesher" comment="">
+      <change beforePath="$PROJECT_DIR$/jflex/LEX_FILE.lex" beforeDir="false" afterPath="$PROJECT_DIR$/jflex/LEX_FILE.lex" afterDir="false" />
+    </list>
     <list id="6237dec7-c906-4219-8ee0-9ded5a93c7be" name="Changes by galto" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +49,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/external_jars" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -71,7 +72,7 @@
       <updated>1635168106509</updated>
       <workItem from="1635168127045" duration="1532000" />
       <workItem from="1635169851898" duration="23026000" />
-      <workItem from="1635588267317" duration="1898000" />
+      <workItem from="1635588267317" duration="6303000" />
     </task>
     <servers />
   </component>

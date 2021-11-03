@@ -90,6 +90,7 @@ STRING                   = \"[a-zA-Z]*\"
 
 CharsInLineComments      = [\(\)\[\]\{\}\?!\-\+\/\*\.;a-zA-Z0-9 \t\f]
 LINE_COMMENT             = \/\/{CharsInLineComments}*{LINE_TERMINATOR}
+BAD_LINE_COMMENT         = \/\/[^\r\n]*{LINE_TERMINATOR}
 
 CharsInCommentsNoDivStar = [\(\)\[\]\{\}\?!\-\+\.;a-zA-Z0-9] | {WHITESPACE} | {LINE_TERMINATOR}
 CharsInCommentsNoStar    = {CharsInCommentsNoDivStar} | \/
@@ -157,6 +158,7 @@ ANY                      = .
 {WHITESPACE}		{ /* just skip what was found, do nothing */                }
 {COMMENT}		    { /* just skip what was found, do nothing */                }
 {UNCLOSED_COMMENT}	{ return symbol(TokenNames.ERROR);                          }
+{BAD_LINE_COMMENT}	{ return symbol(TokenNames.ERROR);                          }
 {BAD_INTEGER}       { return symbol(TokenNames.ERROR);                          }
 <<EOF>>				{ return symbol(TokenNames.EOF);                            }
 {ANY}           	{ return symbol(TokenNames.ERROR);                          }
