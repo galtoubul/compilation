@@ -2,14 +2,14 @@ package AST;
 
 public class AST_EXP_BINOP extends AST_EXP
 {
-	int OP;
+	Binop OP;
 	public AST_EXP left;
 	public AST_EXP right;
 	
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_EXP_BINOP(AST_EXP left,AST_EXP right,int OP)
+	public AST_EXP_BINOP(AST_EXP left,AST_EXP right,Binop OP)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
@@ -34,13 +34,7 @@ public class AST_EXP_BINOP extends AST_EXP
 	/*************************************************/
 	public void PrintMe()
 	{
-		String sOP="";
-		
-		/*********************************/
-		/* CONVERT OP to a printable sOP */
-		/*********************************/
-		if (OP == 0) {sOP = "+";}
-		if (OP == 1) {sOP = "-";}
+		String sOP=this.OP.type;
 		
 		/*************************************/
 		/* AST NODE TYPE = AST BINOP EXP */

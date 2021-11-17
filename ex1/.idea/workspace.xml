@@ -6,16 +6,53 @@
   <component name="ChangeListManager">
     <list default="true" id="eb8431c0-2812-4692-9263-41c23b93991a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/../LICENSE" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/LEXER" beforeDir="false" afterPath="$PROJECT_DIR$/LEXER" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/Lexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Lexer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/input/TEST_02_Merge_Lists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/input/TEST_02_Merge_Lists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/input/TEST_03.txt" beforeDir="false" afterPath="$PROJECT_DIR$/input/TEST_03.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output/OutputTokens.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output/OutputTokens.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Lexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Lexer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TokenNames.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TokenNames.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/Makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/bin/batman.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/bin/batman.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/cup/CUP_FILE.cup" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/cup/CUP_FILE.cup" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_01_Print_Primes_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_01_Print_Primes_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_02_Bubble_Sort_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_02_Bubble_Sort_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_03_Merge_Lists_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_03_Merge_Lists_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_04_Matrices_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_04_Matrices_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_05_Classes_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_05_Classes_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_06_Print_Primes_Error_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_06_Print_Primes_Error_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_07_Bubble_Sort_Error_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_07_Bubble_Sort_Error_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_08_Merge_Lists_Error_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_08_Merge_Lists_Error_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_09_Matrices_Error_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_09_Matrices_Error_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/expected_output/TEST_10_Classes_Error_Expected_Output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/expected_output/TEST_10_Classes_Error_Expected_Output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/Input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/Input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_01_Print_Primes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_01_Print_Primes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_02_Bubble_Sort.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_02_Bubble_Sort.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_03_Merge_Lists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_03_Merge_Lists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_04_Matrices.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_04_Matrices.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_05_Classes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_05_Classes.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_06_Print_Primes_Error.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_06_Print_Primes_Error.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_07_Bubble_Sort_Error.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_07_Bubble_Sort_Error.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_08_Merge_Lists_Error.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_08_Merge_Lists_Error.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_09_Matrices_Error.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_09_Matrices_Error.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/input/TEST_10_Classes_Error.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/input/TEST_10_Classes_Error.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/jflex/LEX_FILE.lex" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/jflex/LEX_FILE.lex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/manifest/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/manifest/MANIFEST.MF" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_EXP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_EXP.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_EXP_BINOP.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_EXP_BINOP.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_EXP_INT.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_EXP_INT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_EXP_VAR.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_EXP_VAR.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_GRAPHVIZ.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_GRAPHVIZ.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_Node_Serial_Number.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_Node_Serial_Number.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT_ASSIGN.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT_ASSIGN.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT_IF.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT_IF.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT_LIST.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT_LIST.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT_WHILE.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_STMT_WHILE.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_VAR.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_VAR.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_VAR_FIELD.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_VAR_FIELD.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_VAR_SIMPLE.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_VAR_SIMPLE.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/AST/AST_VAR_SUBSCRIPT.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/AST/AST_VAR_SUBSCRIPT.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ids.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ids.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../names.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../names.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../users.txt" afterDir="false" />
@@ -51,7 +88,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/external_jars" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ex2" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -73,6 +110,7 @@
       <workItem from="1635168127045" duration="1532000" />
       <workItem from="1635169851898" duration="23026000" />
       <workItem from="1635588267317" duration="6303000" />
+      <workItem from="1637140621263" duration="63000" />
     </task>
     <servers />
   </component>
