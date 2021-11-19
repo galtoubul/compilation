@@ -5,13 +5,13 @@ public class AST_PARM_LIST extends AST_Node
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
-	public AST_PARM head;
+	public AST_EXP head;
 	public AST_PARM_LIST tail;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_PARM_LIST(AST_PARM head, AST_PARM_LIST tail)
+	public AST_PARM_LIST(AST_EXP head, AST_PARM_LIST tail)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */

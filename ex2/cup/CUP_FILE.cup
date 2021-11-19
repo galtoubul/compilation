@@ -68,6 +68,20 @@ terminal LBRACE;
 terminal RBRACE;
 terminal SEMICOLON;
 terminal ASSIGN;
+terminal RETURN;
+terminal CLASS;
+terminal EXTENDS;
+terminal TYPE_INT;
+terminal TYPE_STRING;
+terminal TYPE_VOID;
+terminal LT;
+terminal GT;
+terminal NIL;
+terminal STRING;
+terminal NEW;
+terminal COMMA;
+terminal ARRAY;
+
 
 /*************/
 /* TERMINALS */
@@ -82,8 +96,17 @@ non terminal AST_EXP exp;
 non terminal AST_VAR var;
 non terminal AST_STMT stmt;
 non terminal AST_STMT_LIST stmtList;
-non terminal AST_STMT_LIST stmtList;
-
+non terminal AST_PROGRAM program;
+non terminal AST_DEC dec;
+non terminal AST_DEC_LIST decList;
+non terminal AST_VAR_DEC varDec;
+non terminal AST_CLASS_DEC classDec;
+non terminal AST_FUNC_DEC funcDec;
+non terminal AST_NEW_EXP newExp;
+non terminal AST_CFIELD cField;
+non terminal AST_ARRAY_TYPEDEF arrayTypedef;
+non terminal AST_PARM_LIST parmList;
+non terminal AST_TYPE type;
 
 /***********************/
 /* OPERATOR PRECEDENCE */
@@ -96,17 +119,17 @@ precedence left DIVIDE;
 /************************/
 /* START WITH: stmtList */
 /************************/
-start with Program;
+start with program;
 
 /********************/
 /* DERIVATION RULES */
 /********************/
 
-Program     ::=     decList:dl              {: RESULT = new AST_DEC_LIST(dl);    :}
+program     ::=     decList:dl              {: RESULT = new AST_PROGRM(dl);    :}
                     ;
 
 decList     ::=     dec:d	decList:l		{: RESULT = new AST_DEC_LIST(d, l);    :}
-                    | dec:s			    	{: RESULT = new AST_DEC_LIST(d, null); :}
+                    | dec:d			    	{: RESULT = new AST_DEC_LIST(d, null); :}
                     ;
 
 stmtList	::=		stmt:s	stmtList:l		{: RESULT = new AST_STMT_LIST(s,l);    :}
@@ -119,7 +142,7 @@ var			::=		ID:name								{: RESULT = new AST_VAR_SIMPLE(name);       :}
 					;
 
 
-dec         ::=     varDec:v                            {: RESULT = new AST_VAR_DEC(v); :}
+dec         ::=     varDec:v                            {: RESULT = v; :}
                     | classDec:v                         {: RESULT = new AST_CLASS_DEC(v); :}
                     | funcDec:v                          {: RESULT = new AST_FUNC_DEC(v); :}
                     | arrayTypedef:v                     {: RESULT = new AST_ARRAY_TYPEDEF(v); :}
@@ -128,31 +151,31 @@ dec         ::=     varDec:v                            {: RESULT = new AST_VAR_
 stmt		::=		var:v ASSIGN exp:e SEMICOLON								{: RESULT = new AST_STMT_ASSIGN(v,e); :}
 					| IF    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_IF(   cond,body); :}
 					| WHILE LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_WHILE(cond,body); :}
-					| varDec:v                                                  {: RESULT = new AST_VAR_DEC(v); :}
+					| varDec:v                                                  {: RESULT = v; :}
 					| var:v ASSIGN newExp:e SEMICOLON							{: RESULT = new AST_STMT_ASSIGN_NEW(v,e); :}
 					| RETURN SEMICOLON                                          {: RESULT = new AST_STMT_RETURN(); :}
 					| RETURN exp:e SEMICOLON                                    {: RESULT = new AST_STMT_RETURN_EXP(e); :}
-					| ID:s LPAREN paramList:pl RPAREN SEMICOLON                 {: RESULT = new AST_STMT_FUNC(s, pl);:}
-                    | var:v DOT ID:s LPAREN paramList:pl RPAREN SEMICOLON       {: RESULT = new AST_STMT_METHOD(v, s, pl);:}
+					| ID:s LPAREN parmList:pl RPAREN SEMICOLON                 {: RESULT = new AST_STMT_FUNC(s, pl);:}
+                    | var:v DOT ID:s LPAREN parmList:pl RPAREN SEMICOLON       {: RESULT = new AST_STMT_METHOD(v, s, pl);:}
 					;
 
-varDec      ::=     type:t ID:s                         {: RESULT = new AST_VAR_DECLER(t,s) :}
-                    | type:t ID:s ASSIGN exp:e          {: RESULT = new AST_VAR_INT(t,s,e) :}
-                    | type:t ID:s ASSIGN newExp:e       {: RESULT = new AST_VAR_NEW(t,s,e) :}
+varDec      ::=     type:t ID:s                         {: RESULT = new AST_VAR_DECLER(t,s); :}
+                    | type:t ID:s ASSIGN exp:e          {: RESULT = new AST_VAR_INT(t,s,e); :}
+                    | type:t ID:s ASSIGN newExp:e       {: RESULT = new AST_VAR_NEW(t,s,e); :}
                     ;
 
-funcDec      ::=     type:t ID:s LPAREN RPAREN LBRACE stmt:st stmtList:stl RBRACE  {: RESULT = new AST_FUNC_DECLER(t,s, st, stl) :}
-                    | type:t ID:s LPAREN paramList:pl RPAREN LBRACE stmt:st stmtList:stl RBRACE  {: RESULT = new AST_FUNC_DECLER_PARML(t,s, st, stl, pl) :}
+funcDec      ::=     type:t ID:s LPAREN RPAREN LBRACE stmt:st stmtList:stl RBRACE  {: RESULT = new AST_FUNC_DECLER(t,s, st, stl); :}
+                    | type:t ID:s LPAREN parmList:pl RPAREN LBRACE stmt:st stmtList:stl RBRACE  {: RESULT = new AST_FUNC_DECLER_PARML(t,s, st, stl, pl); :}
                     ;
 
-classDec      ::=   CLASS ID:s LBRACE cField:cf stmtList:sl RBRACE {: RESULT = new AST_CLASS_DECLER(s, cf, sl) :}
-                    | CLASS ID:s1 EXTENDS ID:s2 LBRACE cField:cf stmtList:sl RBRACE {: RESULT = new AST_CLASS_EXTENDS_DECLER(s1, s2, cf, sl) :}
+classDec      ::=   CLASS ID:s LBRACE cField:cf stmtList:sl RBRACE {: RESULT = new AST_CLASS_DECLER(s, cf, sl); :}
+                    | CLASS ID:s1 EXTENDS ID:s2 LBRACE cField:cf stmtList:sl RBRACE {: RESULT = new AST_CLASS_EXTENDS_DECLER(s1, s2, cf, sl); :}
                     ;
 
-type        ::=     TYPE_INT                            {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_INT) :}
-                    | TYPE_STRING                         {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_STRING) :}
-                    | TYPE_VOID                           {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_VOID) :}
-                    | ID:s                                {: RESULT = new AST_TYPE_WITH_VALUE(s) :}
+type        ::=     TYPE_INT                            {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_INT); :}
+                    | TYPE_STRING                         {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_STRING); :}
+                    | TYPE_VOID                           {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_VOID); :}
+                    | ID:s                                {: RESULT = new AST_TYPE_WITH_VALUE(s); :}
                     ;
 
 exp			::=		INT:i								{: RESULT = new AST_EXP_INT(i);          :}
@@ -165,8 +188,8 @@ exp			::=		INT:i								{: RESULT = new AST_EXP_INT(i);          :}
 					| exp:e1 LT exp:e2				    {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.LT);:}
 					| exp:e1 GT exp:e2				    {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.GT);:}
 					| exp:e1 EQ exp:e2				    {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.EQ);:}
-					| ID:s LPAREN paramList:pl RPAREN   {: RESULT = new AST_EXP_FUNC(s, pl);:}
-					| var:v DOT ID:s LPAREN paramList:pl RPAREN {: RESULT = new AST_EXP_METHOD(v, s, pl);:}
+					| ID:s LPAREN parmList:pl RPAREN   {: RESULT = new AST_EXP_FUNC(s, pl);:}
+					| var:v DOT ID:s LPAREN parmList:pl RPAREN {: RESULT = new AST_EXP_METHOD(v, s, pl);:}
 					| MINUS INT:i						{: RESULT = new AST_EXP_INT(-i);          :}
 					| NIL                               {: RESULT = new AST_EXP_NIL();            :}
 					| STRING:s                          {: RESULT = new AST_EXP_STRING(s);        :}
@@ -180,12 +203,13 @@ cField      ::=     varDec:v                              {: RESULT = new AST_CF
                     | funcDec:v                           {: RESULT = new AST_CFIELD_FUNC_DEC(v);          :}
                     ;
 
-paramList   ::=     parm:p	COMMA parmList:pl		{: RESULT = new AST_PARM_LIST(p,pl);    :}
-                    | parm:p				        {: RESULT = new AST_PARM_LIST(p,null); :}
+parmList   ::=     exp:p	COMMA parmList:pl		{: RESULT = new AST_PARM_LIST(p,pl);    :}
+                    | exp:p				        {: RESULT = new AST_PARM_LIST(p,null); :}
                     ;
 
-               /* int ::= //TODO
-                                      ;*/
+/*
+int ::= //TODO;
+*/
 
 arrayTypedef   ::=     ARRAY ID:s EQ type:t LBRACK RBRACK SEMICOLON {: RESULT = new AST_ARRAY_TYPEDEF(s, t);    :}
                     ;
