@@ -111,10 +111,17 @@ non terminal AST_TYPE type;
 /***********************/
 /* OPERATOR PRECEDENCE */
 /***********************/
+precedence ASSIGN;
+precedence left EQ;
+precedence left LT;
+precedence left GT;
 precedence left PLUS;
 precedence left MINUS;
 precedence left TIMES;
 precedence left DIVIDE;
+precedence LBRACK;
+precedence LPAREN;
+precedence left DOT;
 
 /************************/
 /* START WITH: stmtList */
