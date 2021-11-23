@@ -1,11 +1,11 @@
 package AST;
 
 public class AST_NEW_EXP_WITH_SUBSCRIPT extends AST_NEW_EXP{
-    public String id;
+    public AST_TYPE type;
     public AST_EXP exp;
 
-    public AST_NEW_EXP_WITH_SUBSCRIPT(String id, AST_EXP exp) {
-        this.id = id;
+    public AST_NEW_EXP_WITH_SUBSCRIPT(AST_TYPE type, AST_EXP exp) {
+        this.type = type;
         this.exp = exp;
     }
 }
