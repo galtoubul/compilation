@@ -1,6 +1,6 @@
 package AST;
 
-public class AST_CLASS_DECLER extends AST_CLASS_DEC{
+public class AST_CLASS_DECLER extends AST_DEC_CLASS_DEC{
     public String id;
     public AST_CFIELD_LIST cf;
 

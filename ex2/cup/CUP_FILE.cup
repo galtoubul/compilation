@@ -155,9 +155,9 @@ var			::=		ID:name								 {: RESULT = new AST_VAR_SIMPLE(name);        :}
 					| var:v LBRACK exp:e RBRACK			 {: RESULT = new AST_VAR_SUBSCRIPT(v, e);     :}
 					;
 
-dec         ::=     varDec:v                            {: RESULT = v; :}
+dec         ::=     varDec:v                             {: RESULT = new AST_DEC_VAR_DEC(v); :}
                     | classDec:v                         {: RESULT = v; :}
-                    | funcDec:v                          {: RESULT = v; :}
+                    | funcDec:v                          {: RESULT = new AST_DEC_FUNC_DEC(v); :}
                     | arrayTypedef:v                     {: RESULT = v; :}
                     ;
 
@@ -168,8 +168,8 @@ stmt		::=		varDec:v                                                    {: RESULT
 					| var:v ASSIGN newExp:e SEMICOLON							{: RESULT = new AST_STMT_ASSIGN_NEW(v,e);   :}
 					| RETURN SEMICOLON                                          {: RESULT = new AST_STMT_RETURN();          :}
 					| RETURN exp:e SEMICOLON                                    {: RESULT = new AST_STMT_RETURN_EXP(e);     :}
-					| ID:s LPAREN expList:pl RPAREN SEMICOLON                  {: RESULT = new AST_STMT_FUNC(s, pl);       :}
-                    | var:v DOT ID:s LPAREN expList:pl RPAREN SEMICOLON        {: RESULT = new AST_STMT_METHOD(v, s, pl);  :}
+					| ID:s LPAREN expList:pl RPAREN SEMICOLON                   {: RESULT = new AST_STMT_FUNC(s, pl);       :}
+                    | var:v DOT ID:s LPAREN expList:pl RPAREN SEMICOLON         {: RESULT = new AST_STMT_METHOD(v, s, pl);  :}
 					;
 
 varDec      ::=     type:t ID:s SEMICOLON                                                 {: RESULT = new AST_VAR_DECLERATION(t,s); :}
