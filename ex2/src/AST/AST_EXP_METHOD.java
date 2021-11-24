@@ -9,6 +9,5 @@ public class AST_EXP_METHOD extends AST_EXP{
         this.var = var;
         this.id = id;
         this.pl = pl;
-        System.out.println("exp method");
     }
 }

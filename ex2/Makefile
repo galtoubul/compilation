@@ -48,7 +48,7 @@ CUP_FLAGS =                                \
 #########################
 # DEFINITIONS :: PARSER #
 #########################
-INPUT    = ${INPUT_DIR}/TEST_02_Bubble_Sort.txt
+INPUT    = ${INPUT_DIR}/array_typedef.txt
 OUTPUT   = ${OUTPUT_DIR}/ParseStatus.txt
 
 ##########

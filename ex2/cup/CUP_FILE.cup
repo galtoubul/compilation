@@ -84,11 +84,6 @@ terminal NEW;
 terminal COMMA;
 terminal ARRAY;
 terminal ERROR;
-
-
-/*************/
-/* TERMINALS */
-/*************/
 terminal Integer INT;
 terminal String STRING;
 terminal String ID;
@@ -170,11 +165,13 @@ stmt		::=		varDec:v                                                    {: RESULT
 					| RETURN exp:e SEMICOLON                                    {: RESULT = new AST_STMT_RETURN_EXP(e);     :}
 					| ID:s LPAREN expList:pl RPAREN SEMICOLON                   {: RESULT = new AST_STMT_FUNC(s, pl);       :}
                     | var:v DOT ID:s LPAREN expList:pl RPAREN SEMICOLON         {: RESULT = new AST_STMT_METHOD(v, s, pl);  :}
+                    | ID:s LPAREN RPAREN SEMICOLON                              {: RESULT = new AST_STMT_FUNC(s, null);       :}
+                    | var:v DOT ID:s LPAREN RPAREN SEMICOLON                    {: RESULT = new AST_STMT_METHOD(v, s, null);  :}
 					;
 
 varDec      ::=     type:t ID:s SEMICOLON                                                 {: RESULT = new AST_VAR_DECLERATION(t,s); :}
                     | type:t ID:s ASSIGN exp:e SEMICOLON                                  {: RESULT = new AST_VAR_INITIALIZATION(t,s,e); :}
-                    | type:t ID:s ASSIGN newExp:e SEMICOLON                              {: RESULT = new AST_VAR_NEW(t,s,e); :}
+                    | type:t ID:s ASSIGN newExp:e SEMICOLON                               {: RESULT = new AST_VAR_NEW(t,s,e); :}
                     ;
 
 funcDec     ::=     type:t ID:s LPAREN RPAREN LBRACE stmtList:stl RBRACE                  {: RESULT = new AST_FUNC_WITHOUT_PARAM(t, s, null, stl); :}
@@ -201,17 +198,17 @@ exp		    ::=		INT:i								         {: RESULT = new AST_EXP_INT(i);          :}
 					| exp:e1 LT exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.LT);:}
 					| exp:e1 GT exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.GT);:}
 					| exp:e1 EQ exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.EQ);:}
-					| ID:s LPAREN expList:pl RPAREN             {: RESULT = new AST_EXP_FUNC(s, pl);:}
-					| ID:s LPAREN RPAREN             {: RESULT = new AST_EXP_FUNC(s, null);         :}
-					| var:v DOT ID:s LPAREN expList:pl RPAREN   {: RESULT = new AST_EXP_METHOD(v, s, pl);:}
-					| var:v DOT ID:s LPAREN RPAREN   {: RESULT = new AST_EXP_METHOD(v, s, null);:}
+					| ID:s LPAREN expList:pl RPAREN              {: RESULT = new AST_EXP_FUNC(s, pl);:}
+					| ID:s LPAREN RPAREN                         {: RESULT = new AST_EXP_FUNC(s, null);         :}
+					| var:v DOT ID:s LPAREN expList:pl RPAREN    {: RESULT = new AST_EXP_METHOD(v, s, pl);:}
+					| var:v DOT ID:s LPAREN RPAREN               {: RESULT = new AST_EXP_METHOD(v, s, null);:}
 					| MINUS INT:i						         {: RESULT = new AST_EXP_INT(-i);          :}
 					| NIL                                        {: RESULT = new AST_EXP_NIL();            :}
 					| STRING:s                                   {: RESULT = new AST_EXP_STRING(s);        :}
 					;
 
-newExp		::=		NEW type:t						             {: RESULT = new AST_NEW_EXP_WITHOUT_SUBSCRIPT(t);               :}
-                    | NEW type:t LBRACK exp:e RBRACK		         {: RESULT = new AST_NEW_EXP_WITH_SUBSCRIPT(t, e); :}
+newExp		::=		NEW type:t						             {: RESULT = new AST_NEW_EXP_WITHOUT_SUBSCRIPT(t); :}
+                    | NEW type:t LBRACK exp:e RBRACK		     {: RESULT = new AST_NEW_EXP_WITH_SUBSCRIPT(t, e); :}
                     ;
 
 cField      ::=     varDec:v                                     {: RESULT = new AST_CFIELD_VAR_DEC(v);          :}
@@ -230,7 +227,7 @@ expList    ::=    exp:e COMMA expList:el		             {: RESULT = new AST_EXP_L
                    ;
 
 cFieldList    ::=    cField:c  cFieldList:cl		         {: RESULT = new AST_CFIELD_LIST(c, cl);    :}
-                   | cField:c				                     {: RESULT = new AST_CFIELD_LIST(c, null);  :}
+                   | cField:c				                 {: RESULT = new AST_CFIELD_LIST(c, null);  :}
                    ;
 
 arrayTypedef  ::=   ARRAY ID:s EQ type:t LBRACK RBRACK SEMICOLON {: RESULT = new AST_ARRAY_TYPEDEF(s, t);    :}
