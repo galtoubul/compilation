@@ -156,9 +156,9 @@ var			::=		ID:name								 {: RESULT = new AST_VAR_SIMPLE(name);        :}
 					;
 
 dec         ::=     varDec:v                             {: RESULT = new AST_DEC_VAR_DEC(v); :}
-                    | classDec:v                         {: RESULT = v; :}
+                    | classDec:v                         {: RESULT = new AST_DEC_CLASS_DEC(v); :}
                     | funcDec:v                          {: RESULT = new AST_DEC_FUNC_DEC(v); :}
-                    | arrayTypedef:v                     {: RESULT = v; :}
+                    | arrayTypedef:v                     {: RESULT = new AST_DEC_ARRAY_TYPEDEF(v); :}
                     ;
 
 stmt		::=		varDec:v                                                    {: RESULT = new AST_STMT_VAR_DEC(v); :}
