@@ -122,21 +122,21 @@ all:
 	@echo "*****************************"
 	java -jar PARSER ${INPUT} ${OUTPUT}
 	@echo "\n"
-	@echo "***************************************"
-	@echo "*                                     *"
-	@echo "*                                     *"
-	@echo "* [7] Create a jpeg AST visualization *"
-	@echo "*                                     *"
-	@echo "*                                     *"
-	@echo "***************************************"
-	dot -Tjpeg -o${OUTPUT_DIR}/AST.jpeg ${OUTPUT_DIR}/AST_IN_GRAPHVIZ_DOT_FORMAT.txt
-	@echo "\n"
-	@echo "************************************************"
-	@echo "*                                              *"
-	@echo "*                                              *"
-	@echo "* [8] Open the jpeg AST visualization with eog *"
-	@echo "*                                              *"
-	@echo "*                                              *"
-	@echo "************************************************"
-	eog ${OUTPUT_DIR}/AST.jpeg &
+	# @echo "***************************************"
+	# @echo "*                                     *"
+	# @echo "*                                     *"
+	# @echo "* [7] Create a jpeg AST visualization *"
+	# @echo "*                                     *"
+	# @echo "*                                     *"
+	# @echo "***************************************"
+	# dot -Tjpeg -o${OUTPUT_DIR}/AST.jpeg ${OUTPUT_DIR}/AST_IN_GRAPHVIZ_DOT_FORMAT.txt
+	# @echo "\n"
+	# @echo "************************************************"
+	# @echo "*                                              *"
+	# @echo "*                                              *"
+	# @echo "* [8] Open the jpeg AST visualization with eog *"
+	# @echo "*                                              *"
+	# @echo "*                                              *"
+	# @echo "************************************************"
+	# eog ${OUTPUT_DIR}/AST.jpeg &
 
