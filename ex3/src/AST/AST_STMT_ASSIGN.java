@@ -1,19 +1,17 @@
 package AST;
 
-import TYPES.*;
-
 public class AST_STMT_ASSIGN extends AST_STMT
 {
 	/***************/
 	/*  var := exp */
 	/***************/
-	public AST_EXP_VAR var;
+	public AST_VAR var;
 	public AST_EXP exp;
 
 	/*******************/
 	/*  CONSTRUCTOR(S) */
 	/*******************/
-	public AST_STMT_ASSIGN(AST_EXP_VAR var,AST_EXP exp)
+	public AST_STMT_ASSIGN(AST_VAR var,AST_EXP exp)
 	{
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
@@ -60,19 +58,5 @@ public class AST_STMT_ASSIGN extends AST_STMT
 		/****************************************/
 		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
 		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,exp.SerialNumber);
-	}
-	public TYPE SemantMe()
-	{
-		TYPE t1 = null;
-		TYPE t2 = null;
-		
-		if (var != null) t1 = var.SemantMe();
-		if (exp != null) t2 = exp.SemantMe();
-		
-		if (t1 != t2)
-		{
-			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n",6,6);				
-		}
-		return null;
 	}
 }

@@ -1,0 +1,4 @@
+int IsPrime(int p)
+{
+     int i := 0;
+}

@@ -1,7 +1,5 @@
 package AST;
 
-import TYPES.*;
-
 public class AST_STMT_LIST extends AST_Node
 {
 	/****************/
@@ -63,11 +61,4 @@ public class AST_STMT_LIST extends AST_Node
 		if (tail != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,tail.SerialNumber);
 	}
 	
-	public TYPE SemantMe()
-	{
-		if (head != null) head.SemantMe();
-		if (tail != null) tail.SemantMe();
-		
-		return null;
-	}
 }
