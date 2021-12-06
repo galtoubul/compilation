@@ -1,7 +1,6 @@
 package AST;
 
-import TYPES.TYPE;
-import TYPES.TYPE_INT;
+import TYPES.*;
 
 public class AST_EXP_INT extends AST_EXP
 {
@@ -17,14 +16,7 @@ public class AST_EXP_INT extends AST_EXP
 		/******************************/
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
 		System.out.format("====================== exp -> INT( %d )\n", value);
-
-		/*******************************/
-		/* COPY INPUT DATA NENBERS ... */
-		/*******************************/
 		this.value = value;
 	}
 
@@ -38,9 +30,9 @@ public class AST_EXP_INT extends AST_EXP
 		/*******************************/
 		System.out.format("AST NODE INT( %d )\n",value);
 
-		/*********************************/
-		/* Print to AST GRAPHIZ DOT file */
-		/*********************************/
+		/***************************************/
+		/* PRINT Node to AST GRAPHVIZ DOT file */
+		/***************************************/
 		AST_GRAPHVIZ.getInstance().logNode(
 			SerialNumber,
 			String.format("INT(%d)",value));
