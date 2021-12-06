@@ -1,13 +1,66 @@
 package AST;
 
-public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC{
-    public String id;
-    public String id_extends;
-    public AST_CFIELD_LIST cf;
+import SYMBOL_TABLE.SYMBOL_TABLE;
+import TYPES.TYPE;
+import TYPES.TYPE_CLASS;
 
-    public AST_CLASS_EXTENDS_DECLER(String id, String id_extends, AST_CFIELD_LIST cf) {
-        this.id = id;
+public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
+    public String id_extends;
+
+    public AST_CLASS_EXTENDS_DECLER(String id, String id_extends, AST_CFIELD_LIST fields) {
+        super(id, fields);
         this.id_extends = id_extends;
-        this.cf = cf;
+    }
+
+    /*********************************************************/
+    /* The printing message for a class declaration AST node */
+    /*********************************************************/
+    public void PrintMe() {
+        /*************************************/
+        /* RECURSIVELY PRINT HEAD + TAIL ... */
+        /*************************************/
+        System.out.format("CLASS DECLER = %s EXTENDS %s\n", id, id_extends);
+        if (fields != null) {
+            fields.PrintMe();
+        }
+
+        /***************************************/
+        /* PRINT Node to AST GRAPHVIZ DOT file */
+        /***************************************/
+        AST_GRAPHVIZ.getInstance().logNode(
+                SerialNumber,
+                String.format("CLASS\n%s", id));
+
+        /****************************************/
+        /* PRINT Edges to AST GRAPHVIZ DOT file */
+        /****************************************/
+        AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, fields.SerialNumber);
+    }
+
+    public TYPE SemantMe() {
+        /*************************/
+        /* [1] Begin Class Scope */
+        /*************************/
+        SYMBOL_TABLE.getInstance().beginScope();
+
+        /***************************/
+        /* [2] Semant Data Members */
+        /***************************/
+        TYPE_CLASS t = new TYPE_CLASS(null, id, fields.SemantMe());
+
+        /*****************/
+        /* [3] End Scope */
+        /*****************/
+        SYMBOL_TABLE.getInstance().endScope();
+
+        /************************************************/
+        /* [4] Enter the Class Type to the Symbol Table */
+        /************************************************/
+        SYMBOL_TABLE.getInstance().enter(id, t);
+
+        /*********************************************************/
+        /* [5] Return value is irrelevant for class declarations */
+        /*********************************************************/
+        return null;
     }
 }

@@ -1,7 +1,8 @@
 package AST;
 
-public class AST_DEC_LIST extends AST_Node
-{
+import TYPES.TYPE;
+
+public class AST_DEC_LIST extends AST_Node {
 	/****************/
 	/* DATA MEMBERS */
 	/****************/
@@ -11,8 +12,7 @@ public class AST_DEC_LIST extends AST_Node
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_DEC_LIST(AST_DEC head, AST_DEC_LIST tail)
-	{
+	public AST_DEC_LIST(AST_DEC head, AST_DEC_LIST tail) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -21,8 +21,10 @@ public class AST_DEC_LIST extends AST_Node
 		/***************************************/
 		/* PRINT CORRESPONDING DERIVATION RULE */
 		/***************************************/
-		if (tail != null) System.out.print("====================== DECs -> DEC DECs\n");
-		if (tail == null) System.out.print("====================== DECs -> DEC      \n");
+		if (tail != null)
+			System.out.print("====================== DECs -> DEC DECs\n");
+		if (tail == null)
+			System.out.print("====================== DECs -> DEC      \n");
 
 		/*******************************/
 		/* COPY INPUT DATA NENBERS ... */
@@ -31,34 +33,49 @@ public class AST_DEC_LIST extends AST_Node
 		this.tail = tail;
 	}
 
-	/******************************************************/
-	/* The printing message for a statement list AST node */
-	/******************************************************/
-	public void PrintMe()
-	{
-		/**************************************/
-		/* AST NODE TYPE = AST STATEMENT LIST */
-		/**************************************/
+	public TYPE SemantMe() {
+		/*************************************/
+		/* RECURSIVELY PRINT HEAD + TAIL ... */
+		/*************************************/
+		if (head != null)
+			head.SemantMe();
+		if (tail != null)
+			tail.SemantMe();
+
+		return null;
+	}
+
+	/********************************************************/
+	/* The printing message for a declaration list AST node */
+	/********************************************************/
+	public void PrintMe() {
+		/********************************/
+		/* AST NODE TYPE = AST DEC LIST */
+		/********************************/
 		System.out.print("AST NODE DEC LIST\n");
 
 		/*************************************/
 		/* RECURSIVELY PRINT HEAD + TAIL ... */
 		/*************************************/
-		if (head != null) head.PrintMe();
-		if (tail != null) tail.PrintMe();
+		if (head != null)
+			head.PrintMe();
+		if (tail != null)
+			tail.PrintMe();
 
 		/**********************************/
 		/* PRINT to AST GRAPHVIZ DOT file */
 		/**********************************/
 		AST_GRAPHVIZ.getInstance().logNode(
-			SerialNumber,
-			"DEC\nLIST\n");
-		
+				SerialNumber,
+				"DEC\nLIST\n");
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (head != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,head.SerialNumber);
-		if (tail != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,tail.SerialNumber);
+		if (head != null)
+			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, head.SerialNumber);
+		if (tail != null)
+			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, tail.SerialNumber);
 	}
-	
+
 }
