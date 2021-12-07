@@ -1,1 +1,5 @@
-string left := 1;
+class father {
+    int foo() {
+        return 8/0;
+    }
+}

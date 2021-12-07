@@ -23,7 +23,7 @@ public class AST_PROGRAM extends AST_Node {
         /*******************************/
         String className = this.getClass().getName();
         // System.out.format("AST NODE %s( %s, %s)\n", className, type, id);
-        System.out.format("AST NODE PROGRAM");
+        System.out.format("AST NODE PROGRAM\n");
 
         /*********************************/
         /* Print to AST GRAPHIZ DOT file */

@@ -1,7 +1,7 @@
 int IsPrime(int p)
 {
     int i := 2;
-    int j := 2;
+    int IsPrime := 2;
     
     while (i<p)
     {
@@ -16,22 +16,4 @@ int IsPrime(int p)
         i := i+1;
     }
     return 0;
-}
-
-void PrintPrimes(int start, int end)
-{
-    int p := start;
-    
-    while (p < end+1)
-    {
-        if (IsPrime(p))
-        {
-            PrintInt(p);
-        }
-    }
-}
-
-void main()
-{
-    PrintPrimes(2,100);
 }

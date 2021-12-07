@@ -1,5 +1,7 @@
 package AST;
 
+import TYPES.TYPE;
+
 public class AST_CFIELD_FUNC_DEC extends AST_CFIELD {
     public AST_FUNC_DEC func;
 
@@ -30,5 +32,10 @@ public class AST_CFIELD_FUNC_DEC extends AST_CFIELD {
         /****************************************/
         if (func != null)
             AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, func.SerialNumber);
+    }
+
+    @Override
+    public TYPE SemantMe() {
+        return this.func.SemantMe();
     }
 }

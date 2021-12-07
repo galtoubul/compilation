@@ -65,6 +65,10 @@ public class AST_EXP_BINOP extends AST_EXP {
 	}
 
 	public TYPE SemantMe() {
+		if (OP == Binop.DIVIDE && right instanceof AST_EXP_INT && ((AST_EXP_INT) right).value == 0) {
+			System.out.format(">> ERROR [%d:%d] zero division\n", 2, 2);
+		}
+
 		TYPE t1 = null;
 		TYPE t2 = null;
 

@@ -1,5 +1,7 @@
 package AST;
 
+import TYPES.TYPE;
+
 public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
     public AST_VAR_DEC var;
 
@@ -30,5 +32,10 @@ public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
         /****************************************/
         if (var != null)
             AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, var.SerialNumber);
+    }
+
+    @Override
+    public TYPE SemantMe() {
+        return this.var.SemantMe();
     }
 }

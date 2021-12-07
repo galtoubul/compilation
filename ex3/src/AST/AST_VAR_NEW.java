@@ -53,6 +53,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         /****************************/
         /* [1] Check If Type exists */
         /****************************/
+        System.out.println("\n"+type.name());
         t = SYMBOL_TABLE.getInstance().find(type.name());
         if (t == null) {
             System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, type.name());
