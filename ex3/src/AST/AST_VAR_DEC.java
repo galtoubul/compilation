@@ -2,7 +2,7 @@ package AST;
 
 import TYPES.TYPE;
 
-public class AST_VAR_DEC extends AST_Node {
+public abstract class AST_VAR_DEC extends AST_Node {
     public AST_TYPE type;
     public String id;
 
@@ -11,7 +11,5 @@ public class AST_VAR_DEC extends AST_Node {
         this.id = id;
     }
 
-    public TYPE SemantMe() {
-        return null;
-    }
+    public abstract TYPE SemantMe();
 }
