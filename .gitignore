@@ -3,3 +3,4 @@
 *.bazel
 */jflex-1.8.2
 */COMPILER
+.vscode/settings.json
