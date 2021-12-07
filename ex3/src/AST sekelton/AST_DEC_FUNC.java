@@ -72,7 +72,7 @@ public class AST_DEC_FUNC extends AST_DEC {
 		/*******************/
 		/* [0] return type */
 		/*******************/
-		returnType = SYMBOL_TABLE.getInstance().find(this.returnTypeName);
+		returnType = SYMBOL_TABLE.getInstance().find(returnTypeName);
 		if (returnType == null) {
 			System.out.format(">> ERROR [%d:%d] non existing return type %s\n", 6, 6, returnType);
 		}
