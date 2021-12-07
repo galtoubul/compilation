@@ -1,1 +1,5 @@
-ex2/bin
+*/bin
+*.class
+*.bazel
+*/jflex-1.8.2
+*/COMPILER
