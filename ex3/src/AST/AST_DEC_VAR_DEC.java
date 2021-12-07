@@ -10,9 +10,9 @@ public class AST_DEC_VAR_DEC extends AST_DEC {
     }
 
     public TYPE SemantMe() {
-        // if (varDec != null) {
-        // varDec.SemantMe();
-        // }
+        if (varDec != null) {
+            varDec.SemantMe();
+        }
         return null;
     }
 }

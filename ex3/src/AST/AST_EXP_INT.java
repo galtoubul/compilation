@@ -3,15 +3,13 @@ package AST;
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
 
-public class AST_EXP_INT extends AST_EXP
-{
+public class AST_EXP_INT extends AST_EXP {
 	public int value;
-	
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_EXP_INT(int value)
-	{
+	public AST_EXP_INT(int value) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -31,22 +29,21 @@ public class AST_EXP_INT extends AST_EXP
 	/************************************************/
 	/* The printing message for an INT EXP AST node */
 	/************************************************/
-	public void PrintMe()
-	{
+	public void PrintMe() {
 		/*******************************/
 		/* AST NODE TYPE = AST INT EXP */
 		/*******************************/
-		System.out.format("AST NODE INT( %d )\n",value);
+		System.out.format("AST NODE INT( %d )\n", value);
 
 		/*********************************/
 		/* Print to AST GRAPHIZ DOT file */
 		/*********************************/
 		AST_GRAPHVIZ.getInstance().logNode(
-			SerialNumber,
-			String.format("INT(%d)",value));
+				SerialNumber,
+				String.format("INT(%d)", value));
 	}
-	public TYPE SemantMe()
-	{
+
+	public TYPE SemantMe() {
 		return TYPE_INT.getInstance();
 	}
 }

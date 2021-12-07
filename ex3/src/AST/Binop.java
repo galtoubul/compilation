@@ -9,7 +9,8 @@ public enum Binop {
     GT(">"),
     EQ("=");
 
-    public String type;
+    public final String type;
+
     Binop(String s) {
         type = s;
     }

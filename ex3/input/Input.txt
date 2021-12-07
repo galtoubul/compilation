@@ -1,1 +1,1 @@
-string left := "LEFT";
+string left := 1;

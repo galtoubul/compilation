@@ -1,18 +1,18 @@
 package AST;
 
-public class AST_STMT_ASSIGN extends AST_STMT
-{
+import TYPES.TYPE;
+
+public class AST_STMT_ASSIGN extends AST_STMT {
 	/***************/
-	/*  var := exp */
+	/* var := exp */
 	/***************/
 	public AST_VAR var;
 	public AST_EXP exp;
 
 	/*******************/
-	/*  CONSTRUCTOR(S) */
+	/* CONSTRUCTOR(S) */
 	/*******************/
-	public AST_STMT_ASSIGN(AST_VAR var,AST_EXP exp)
-	{
+	public AST_STMT_ASSIGN(AST_VAR var, AST_EXP exp) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -33,8 +33,7 @@ public class AST_STMT_ASSIGN extends AST_STMT
 	/*********************************************************/
 	/* The printing message for an assign statement AST node */
 	/*********************************************************/
-	public void PrintMe()
-	{
+	public void PrintMe() {
 		/********************************************/
 		/* AST NODE TYPE = AST ASSIGNMENT STATEMENT */
 		/********************************************/
@@ -43,34 +42,37 @@ public class AST_STMT_ASSIGN extends AST_STMT
 		/***********************************/
 		/* RECURSIVELY PRINT VAR + EXP ... */
 		/***********************************/
-		if (var != null) var.PrintMe();
-		if (exp != null) exp.PrintMe();
+		if (var != null)
+			var.PrintMe();
+		if (exp != null)
+			exp.PrintMe();
 
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
 		/***************************************/
 		AST_GRAPHVIZ.getInstance().logNode(
-			SerialNumber,
-			"ASSIGN\nleft := right\n");
-		
+				SerialNumber,
+				"ASSIGN\nleft := right\n");
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
-		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,exp.SerialNumber);
+		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, var.SerialNumber);
+		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, exp.SerialNumber);
 	}
 
-	public TYPE SemantMe()
-	{
+	public TYPE SemantMe() {
+		System.out.format("ASSIGN");
 		TYPE t1 = null;
 		TYPE t2 = null;
 
-		if (var != null) t1 = var.SemantMe();
-		if (exp != null) t2 = exp.SemantMe();
+		if (var != null)
+			t1 = var.SemantMe();
+		if (exp != null)
+			t2 = exp.SemantMe();
 
-		if (t1 != t2)
-		{
-			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n",6,6);
+		if (t1 != t2) {
+			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n", 6, 6);
 		}
 		return null;
 	}

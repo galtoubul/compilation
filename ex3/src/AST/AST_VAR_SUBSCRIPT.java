@@ -1,15 +1,15 @@
 package AST;
 
-public class AST_VAR_SUBSCRIPT extends AST_VAR
-{
+import TYPES.TYPE;
+
+public class AST_VAR_SUBSCRIPT extends AST_VAR {
 	public AST_VAR var;
 	public AST_EXP subscript;
-	
+
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_VAR_SUBSCRIPT(AST_VAR var,AST_EXP subscript)
-	{
+	public AST_VAR_SUBSCRIPT(AST_VAR var, AST_EXP subscript) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -30,8 +30,7 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR
 	/*****************************************************/
 	/* The printing message for a subscript var AST node */
 	/*****************************************************/
-	public void PrintMe()
-	{
+	public void PrintMe() {
 		/*************************************/
 		/* AST NODE TYPE = AST SUBSCRIPT VAR */
 		/*************************************/
@@ -40,20 +39,28 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR
 		/****************************************/
 		/* RECURSIVELY PRINT VAR + SUBSRIPT ... */
 		/****************************************/
-		if (var != null) var.PrintMe();
-		if (subscript != null) subscript.PrintMe();
-		
+		if (var != null)
+			var.PrintMe();
+		if (subscript != null)
+			subscript.PrintMe();
+
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
 		/***************************************/
 		AST_GRAPHVIZ.getInstance().logNode(
-			SerialNumber,
-			"SUBSCRIPT\nVAR\n...[...]");
-		
+				SerialNumber,
+				"SUBSCRIPT\nVAR\n...[...]");
+
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (var       != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
-		if (subscript != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,subscript.SerialNumber);
+		if (var != null)
+			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, var.SerialNumber);
+		if (subscript != null)
+			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, subscript.SerialNumber);
+	}
+
+	public TYPE SemantMe() {
+		return null; // TODO
 	}
 }

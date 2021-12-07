@@ -1,21 +1,22 @@
 package AST;
 
-public class AST_STMT_IF extends AST_STMT
-{
+import SYMBOL_TABLE.SYMBOL_TABLE;
+import TYPES.TYPE;
+import TYPES.TYPE_INT;
+
+public class AST_STMT_IF extends AST_STMT {
 	public AST_EXP cond;
 	public AST_STMT_LIST body;
 
 	/*******************/
-	/*  CONSTRUCTOR(S) */
+	/* CONSTRUCTOR(S) */
 	/*******************/
-	public AST_STMT_IF(AST_EXP cond,AST_STMT_LIST body)
-	{
+	public AST_STMT_IF(AST_EXP cond, AST_STMT_LIST body) {
 		this.cond = cond;
 		this.body = body;
 	}
 
-	public void PrintMe()
-	{
+	public void PrintMe() {
 		/*************************************/
 		/* AST NODE TYPE = AST SUBSCRIPT VAR */
 		/*************************************/
@@ -24,8 +25,10 @@ public class AST_STMT_IF extends AST_STMT
 		/**************************************/
 		/* RECURSIVELY PRINT left + right ... */
 		/**************************************/
-		if (cond != null) cond.PrintMe();
-		if (body != null) body.PrintMe();
+		if (cond != null)
+			cond.PrintMe();
+		if (body != null)
+			body.PrintMe();
 
 		/***************************************/
 		/* PRINT Node to AST GRAPHVIZ DOT file */
@@ -37,18 +40,18 @@ public class AST_STMT_IF extends AST_STMT
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		if (cond != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,cond.SerialNumber);
-		if (body != null) AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,body.SerialNumber);
+		if (cond != null)
+			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, cond.SerialNumber);
+		if (body != null)
+			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, body.SerialNumber);
 	}
 
-	public TYPE SemantMe()
-	{
+	public TYPE SemantMe() {
 		/****************************/
 		/* [0] Semant the Condition */
 		/****************************/
-		if (cond.SemantMe() != TYPE_INT.getInstance())
-		{
-			System.out.format(">> ERROR [%d:%d] condition inside IF is not integral\n",2,2);
+		if (cond.SemantMe() != TYPE_INT.getInstance()) {
+			System.out.format(">> ERROR [%d:%d] condition inside IF is not integral\n", 2, 2);
 		}
 
 		/*************************/

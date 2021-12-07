@@ -1,6 +1,8 @@
 package AST;
 
-public class AST_STMT_METHOD extends AST_STMT{
+import TYPES.TYPE;
+
+public class AST_STMT_METHOD extends AST_STMT {
     public String id;
     public AST_EXP_LIST pl;
     public AST_VAR var;
@@ -10,4 +12,11 @@ public class AST_STMT_METHOD extends AST_STMT{
         this.pl = pl;
         this.var = var;
     }
+
+    @Override
+    public TYPE SemantMe() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

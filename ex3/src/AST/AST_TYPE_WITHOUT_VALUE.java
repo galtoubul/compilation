@@ -1,5 +1,7 @@
 package AST;
 
+import TYPES.TYPE;
+
 public class AST_TYPE_WITHOUT_VALUE extends AST_TYPE {
     public Type type;
 
@@ -10,5 +12,9 @@ public class AST_TYPE_WITHOUT_VALUE extends AST_TYPE {
     @Override
     public String name() {
         return this.type.name();
+    }
+
+    public TYPE SemantMe() {
+        return null; // TODO
     }
 }

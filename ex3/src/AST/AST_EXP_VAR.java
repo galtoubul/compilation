@@ -1,14 +1,14 @@
 package AST;
 
-public class AST_EXP_VAR extends AST_EXP
-{
+import TYPES.TYPE;
+
+public class AST_EXP_VAR extends AST_EXP {
 	public AST_VAR var;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
-	public AST_EXP_VAR(AST_VAR var)
-	{
+	public AST_EXP_VAR(AST_VAR var) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
 		/******************************/
@@ -24,12 +24,11 @@ public class AST_EXP_VAR extends AST_EXP
 		/*******************************/
 		this.var = var;
 	}
-	
+
 	/***********************************************/
 	/* The default message for an exp var AST node */
 	/***********************************************/
-	public void PrintMe()
-	{
+	public void PrintMe() {
 		/************************************/
 		/* AST NODE TYPE = EXP VAR AST NODE */
 		/************************************/
@@ -38,19 +37,25 @@ public class AST_EXP_VAR extends AST_EXP
 		/*****************************/
 		/* RECURSIVELY PRINT var ... */
 		/*****************************/
-		if (var != null) var.PrintMe();
-		
+		if (var != null)
+			var.PrintMe();
+
 		/*********************************/
 		/* Print to AST GRAPHIZ DOT file */
 		/*********************************/
 		AST_GRAPHVIZ.getInstance().logNode(
-			SerialNumber,
-			"EXP\nVAR");
+				SerialNumber,
+				"EXP\nVAR");
 
 		/****************************************/
 		/* PRINT Edges to AST GRAPHVIZ DOT file */
 		/****************************************/
-		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber,var.SerialNumber);
-			
+		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, var.SerialNumber);
+
+	}
+
+	public TYPE SemantMe() {
+		// TODO
+		return this.var.SemantMe();
 	}
 }
