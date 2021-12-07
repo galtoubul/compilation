@@ -11,7 +11,7 @@ public class AST_TYPE_WITHOUT_VALUE extends AST_TYPE {
 
     @Override
     public String name() {
-        return this.type.name();
+        return this.type.typeName;
     }
 
     public TYPE SemantMe() {
