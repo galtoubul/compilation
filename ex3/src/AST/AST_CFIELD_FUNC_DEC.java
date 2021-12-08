@@ -9,13 +9,7 @@ public class AST_CFIELD_FUNC_DEC extends AST_CFIELD {
         this.func = func;
     }
 
-    /*******************************************************************/
-    /* The printing message for a cfield function declaration AST node */
-    /*******************************************************************/
     public void PrintMe() {
-        /***************************************/
-        /* AST NODE TYPE = AST CFIELD FUNC DEC */
-        /***************************************/
         System.out.print("AST NODE CFIELD FUNC DEC\n");
         if (func != null)
             func.PrintMe();

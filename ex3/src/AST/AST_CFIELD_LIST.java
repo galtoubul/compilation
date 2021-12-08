@@ -3,19 +3,10 @@ package AST;
 import TYPES.TYPE_LIST;
 
 public class AST_CFIELD_LIST extends AST_Node {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
 	public AST_CFIELD head;
 	public AST_CFIELD_LIST tail;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
 	public AST_CFIELD_LIST(AST_CFIELD head, AST_CFIELD_LIST tail) {
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
 		/***************************************/
@@ -27,19 +18,13 @@ public class AST_CFIELD_LIST extends AST_Node {
 			System.out.print("====================== CFIELDs -> CFIELD      \n");
 
 		/*******************************/
-		/* COPY INPUT DATA NENBERS ... */
+		/* COPY INPUT DATA MEMBERS ... */
 		/*******************************/
 		this.head = head;
 		this.tail = tail;
 	}
 
-	/******************************************************/
-	/* The printing message for a cfield list AST node */
-	/******************************************************/
 	public void PrintMe() {
-		/**************************************/
-		/* AST NODE TYPE = AST CFIELD LIST */
-		/**************************************/
 		System.out.print("AST NODE CFIELD LIST\n");
 
 		/*************************************/

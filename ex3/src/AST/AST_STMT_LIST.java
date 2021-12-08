@@ -3,15 +3,10 @@ package AST;
 import TYPES.TYPE;
 
 public class AST_STMT_LIST extends AST_Node {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
+
 	public AST_STMT head;
 	public AST_STMT_LIST tail;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
 	public AST_STMT_LIST(AST_STMT head, AST_STMT_LIST tail) {
 		/******************************/
 		/* SET A UNIQUE SERIAL NUMBER */
@@ -33,9 +28,6 @@ public class AST_STMT_LIST extends AST_Node {
 		this.tail = tail;
 	}
 
-	/******************************************************/
-	/* The printing message for a statement list AST node */
-	/******************************************************/
 	public void PrintMe() {
 		/**************************************/
 		/* AST NODE TYPE = AST STATEMENT LIST */
@@ -67,6 +59,7 @@ public class AST_STMT_LIST extends AST_Node {
 	}
 
 	public TYPE SemantMe() {
+		System.out.println("-- AST_STMT_LIST SemantMe");
 		if (head != null)
 			head.SemantMe();
 		if (tail != null)

@@ -20,13 +20,7 @@ public class AST_FUNC_DEC extends AST_Node {
         this.params = params;
     }
 
-    /************************************************************/
-    /* The printing message for a function declaration AST node */
-    /************************************************************/
     public void PrintMe() {
-        /*************************************************/
-        /* AST NODE TYPE = AST NODE FUNCTION DECLARATION */
-        /*************************************************/
         System.out.format("FUNC(%s):%s\n", id, returnTypeName);
 
         /***************************************/
@@ -54,6 +48,7 @@ public class AST_FUNC_DEC extends AST_Node {
     }
 
     public TYPE SemantMe() {
+        System.out.println("-- AST_FUNC_DEC SemantMe");
         TYPE t;
         TYPE returnType = null;
         TYPE_LIST type_list = null;

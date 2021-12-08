@@ -13,9 +13,6 @@ public class AST_PARM_LIST extends AST_Node
 	/******************/
 	public AST_PARM_LIST(AST_PARAM head, AST_PARM_LIST tail)
 	{
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
 		/***************************************/
@@ -31,14 +28,8 @@ public class AST_PARM_LIST extends AST_Node
 		this.tail = tail;
 	}
 
-	/******************************************************/
-	/* The printing message for a statement list AST node */
-	/******************************************************/
 	public void PrintMe()
 	{
-		/**************************************/
-		/* AST NODE TYPE = AST STATEMENT LIST */
-		/**************************************/
 		System.out.print("AST NODE PARM LIST\n");
 
 		/*************************************/
