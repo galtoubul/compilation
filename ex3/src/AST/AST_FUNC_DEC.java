@@ -87,6 +87,12 @@ public class AST_FUNC_DEC extends AST_Node {
             System.out.format(">> ERROR [%d:%d] non existing return type %s\n", 6, 6, returnType);
         }
 
+        // Check That id does NOT exist
+        if (SYMBOL_TABLE.getInstance().find(id) != null) {
+            System.out.format(">> ERROR [line] function %s already exists in scope\n", id);
+            throw new semanticErrorException("line");
+        }
+
         /****************************/
         /* [1] Begin Function Scope */
         /****************************/
@@ -139,6 +145,12 @@ public class AST_FUNC_DEC extends AST_Node {
         returnType = SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
         if (returnType == null) {
             System.out.format(">> ERROR [%d:%d] non existing return type %s\n", 6, 6, returnType);
+        }
+
+        // Check That id does NOT exist
+        if (SYMBOL_TABLE.getInstance().find(id) != null) {
+            System.out.format(">> ERROR [line] function %s already exists in scope\n", id);
+            throw new semanticErrorException("line");
         }
 
         /****************************/
