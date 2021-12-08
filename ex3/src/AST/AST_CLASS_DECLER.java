@@ -9,13 +9,8 @@ public class AST_CLASS_DECLER extends AST_CLASS_DEC {
         super(id, fields);
     }
 
-    /*********************************************************/
-    /* The printing message for a class declaration AST node */
-    /*********************************************************/
     public void PrintMe() {
-        /******************/
-        /* PRINT CHILDREN */
-        /******************/
+
         System.out.format("CLASS DECLER = %s\n", id);
         if (fields != null)
             fields.PrintMe();
@@ -34,6 +29,7 @@ public class AST_CLASS_DECLER extends AST_CLASS_DEC {
     }
 
     public TYPE SemantMe() {
+        System.out.println("-- AST_CLASS_DECLER SemantMe");
         /*************************/
         /* [1] Begin Class Scope */
         /*************************/

@@ -41,14 +41,16 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         try {
             fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.id_extends);
         }catch (ClassCastException exc) {
-            System.out.format(">> ERROR [line:col] class extends\n");
-            return null;
+            System.out.println("--------------------- ClassCastException");
+            System.out.format(">> ERROR [line] class -- extends\n");
+            throw new semanticErrorException("line");
         }
 
         // Didn't find father in the lookup
         if (fatherType == null) {
-            System.out.format(">> ERROR [line:col] class extends\n");
-            return null;
+            System.out.println("--------------------- fatherType == null");
+            System.out.format(">> ERROR [line] class extends\n");
+            throw new semanticErrorException("line");
         } else {
             System.out.println("-- AST_CLASS_EXTENDS_DECLER fatherType isnt null");
         }
@@ -61,7 +63,7 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         /***************************/
         /* [2] Semant Data Members */
         /***************************/
-        TYPE_CLASS t = new TYPE_CLASS(fatherType, id, fields.SemantMe());
+        TYPE_CLASS t = new TYPE_CLASS(fatherType, id, fields.SemantMe(fatherType.name));
 
         /*****************/
         /* [3] End Scope */

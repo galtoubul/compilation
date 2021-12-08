@@ -3,19 +3,10 @@ package AST;
 import TYPES.TYPE_LIST;
 
 public class AST_EXP_LIST extends AST_Node {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
 	public AST_EXP head;
 	public AST_EXP_LIST tail;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
 	public AST_EXP_LIST(AST_EXP head, AST_EXP_LIST tail) {
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
 		/***************************************/
@@ -33,9 +24,6 @@ public class AST_EXP_LIST extends AST_Node {
 		this.tail = tail;
 	}
 
-	/******************************************************/
-	/* The printing message for a statement list AST node */
-	/******************************************************/
 	public void PrintMe() {
 		/**************************************/
 		/* AST NODE TYPE = AST STATEMENT LIST */
@@ -50,9 +38,6 @@ public class AST_EXP_LIST extends AST_Node {
 		if (tail != null)
 			tail.PrintMe();
 
-		/**********************************/
-		/* PRINT to AST GRAPHVIZ DOT file */
-		/**********************************/
 		AST_GRAPHVIZ.getInstance().logNode(
 				SerialNumber,
 				"EXP\nLIST\n");
@@ -67,6 +52,8 @@ public class AST_EXP_LIST extends AST_Node {
 	}
 
 	public TYPE_LIST SemantMe() {
+		System.out.println("-- AST_EXP_LIST SemantMe");
+
 		if (tail == null) {
 			return new TYPE_LIST(
 					head.SemantMe(),

@@ -12,4 +12,5 @@ public abstract class AST_VAR_DEC extends AST_Node {
     }
 
     public abstract TYPE SemantMe();
+    public abstract TYPE SemantMe(String classId);
 }

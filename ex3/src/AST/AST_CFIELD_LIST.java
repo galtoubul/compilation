@@ -51,17 +51,35 @@ public class AST_CFIELD_LIST extends AST_Node {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, tail.SerialNumber);
 	}
 
+	public TYPE_LIST SemantMe(String classId) {
+		System.out.println("-- AST_CFIELD_LIST SemantMe");
+
+		if (tail == null) {
+			System.out.println("tail is null");
+			TYPE_LIST list = new TYPE_LIST(head.SemantMe(classId),null);
+			System.out.println(list.head.name);
+			return list;
+		} else {
+			System.out.println("tail isnt null");
+			TYPE_LIST list = new TYPE_LIST(head.SemantMe(classId), tail.SemantMe(classId));
+			System.out.println(list.head.name);
+			return list;
+		}
+	}
+
 	public TYPE_LIST SemantMe() {
 		System.out.println("-- AST_CFIELD_LIST SemantMe");
 
 		if (tail == null) {
-			return new TYPE_LIST(
-					head.SemantMe(),
-					null);
+			System.out.println("tail is null");
+			TYPE_LIST list = new TYPE_LIST(head.SemantMe(),null);
+			System.out.println(list.head.name);
+			return list;
 		} else {
-			return new TYPE_LIST(
-					head.SemantMe(),
-					tail.SemantMe());
+			System.out.println("tail isnt null");
+			TYPE_LIST list = new TYPE_LIST(head.SemantMe(), tail.SemantMe());
+			System.out.println(list.head.name);
+			return list;
 		}
 	}
 

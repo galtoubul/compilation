@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
+import TYPES.TYPE_CLASS;
 import TYPES.TYPE_FUNCTION;
 import TYPES.TYPE_LIST;
 
@@ -47,7 +48,86 @@ public class AST_FUNC_DEC extends AST_Node {
             AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, body.SerialNumber);
     }
 
+    public TYPE SemantMe(String fatherClassId) {
+        System.out.println("-- AST_FUNC_DEC SemantMe extends");
+
+        TYPE_CLASS fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(fatherClassId);
+        System.out.println(fatherType.name);
+        TYPE_LIST dataMembers = fatherType.data_members;
+
+        while (dataMembers != null && dataMembers.head != null) {
+            System.out.println("-- AST_FUNC_DEC SemantMe extends while (dataMembers.head != null)");
+            if (dataMembers.head instanceof TYPE_FUNCTION) {
+                System.out.println("is instance of TYPE_FUNCTION");
+                TYPE_FUNCTION dm = (TYPE_FUNCTION)dataMembers.head;
+
+                System.out.format("id = %s\n", id);
+                System.out.format("dm.name = %s\n", dm.name);
+
+                System.out.format("this.returnTypeName.name() = %s\n", this.returnTypeName.name());
+                System.out.format("dm.returnType.name = %s\n", dm.returnType.name);
+
+                if (dm.name.equals(id) && !dm.returnType.name.equals(this.returnTypeName.name())) {
+                    System.out.println(">> ERROR [line] overloading isnt allowed");
+                    throw new semanticErrorException("line");
+                }
+            }
+            dataMembers = dataMembers.tail;
+        }
+
+        TYPE t;
+        TYPE returnType = null;
+        TYPE_LIST type_list = null;
+
+        /*******************/
+        /* [0] return type */
+        /*******************/
+        returnType = SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
+        if (returnType == null) {
+            System.out.format(">> ERROR [%d:%d] non existing return type %s\n", 6, 6, returnType);
+        }
+
+        /****************************/
+        /* [1] Begin Function Scope */
+        /****************************/
+        SYMBOL_TABLE.getInstance().beginScope();
+
+        /***************************/
+        /* [2] Semant Input Params */
+        /***************************/
+        if (params.isPresent()) {
+            for (AST_PARM_LIST it = params.get(); it != null; it = it.tail) {
+                t = SYMBOL_TABLE.getInstance().find(it.head.type.name());
+                if (t == null) {
+                    System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, it.head.type.name());
+                } else {
+                    type_list = new TYPE_LIST(t, type_list);
+                    SYMBOL_TABLE.getInstance().enter(it.head.id, t);
+                }
+            }
+        }
+
+        /*******************/
+        /* [3] Semant Body */
+        /*******************/
+        body.SemantMe();
+
+        /*****************/
+        /* [4] End Scope */
+        /*****************/
+        SYMBOL_TABLE.getInstance().endScope();
+
+        /***************************************************/
+        /* [5] Enter the Function Type to the Symbol Table */
+        /***************************************************/
+        TYPE_FUNCTION funcType =new TYPE_FUNCTION(returnType, id, type_list);
+        SYMBOL_TABLE.getInstance().enter(id, funcType);
+
+        return funcType;
+    }
+
     public TYPE SemantMe() {
+
         System.out.println("-- AST_FUNC_DEC SemantMe");
         TYPE t;
         TYPE returnType = null;
@@ -94,11 +174,9 @@ public class AST_FUNC_DEC extends AST_Node {
         /***************************************************/
         /* [5] Enter the Function Type to the Symbol Table */
         /***************************************************/
-        SYMBOL_TABLE.getInstance().enter(id, new TYPE_FUNCTION(returnType, id, type_list));
+        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, type_list);
+        SYMBOL_TABLE.getInstance().enter(id, funcType);
 
-        /*********************************************************/
-        /* [6] Return value is irrelevant for class declarations */
-        /*********************************************************/
-        return null;
+        return funcType;
     }
 }

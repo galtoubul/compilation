@@ -32,4 +32,9 @@ public class AST_CFIELD_FUNC_DEC extends AST_CFIELD {
     public TYPE SemantMe() {
         return this.func.SemantMe();
     }
+
+    @Override
+    public TYPE SemantMe(String classId) {
+        return this.func.SemantMe(classId);
+    }
 }

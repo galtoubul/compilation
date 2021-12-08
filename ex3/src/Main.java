@@ -21,6 +21,8 @@ public class Main
 
 		try
 		{
+			String output = "OK";
+
 			/********************************/
 			/* [1] Initialize a file reader */
 			/********************************/
@@ -55,7 +57,12 @@ public class Main
 			/* [7] Semant the AST ... */
 			/**************************/
 			System.out.println("before AST.SemantMe();");
-			AST.SemantMe();
+			try {
+				AST.SemantMe();
+			} catch (semanticErrorException e) {
+				output = "ERROR("+e.getMessage()+")";
+			}
+			file_writer.write(output);
 			
 			/*************************/
 			/* [8] Close output file */

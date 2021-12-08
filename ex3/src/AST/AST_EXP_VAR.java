@@ -5,13 +5,8 @@ import TYPES.TYPE;
 public class AST_EXP_VAR extends AST_EXP {
 	public AST_VAR var;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
 	public AST_EXP_VAR(AST_VAR var) {
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
+
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
 		/***************************************/
@@ -25,13 +20,7 @@ public class AST_EXP_VAR extends AST_EXP {
 		this.var = var;
 	}
 
-	/***********************************************/
-	/* The default message for an exp var AST node */
-	/***********************************************/
 	public void PrintMe() {
-		/************************************/
-		/* AST NODE TYPE = EXP VAR AST NODE */
-		/************************************/
 		System.out.print("AST NODE EXP VAR\n");
 
 		/*****************************/
@@ -55,7 +44,9 @@ public class AST_EXP_VAR extends AST_EXP {
 	}
 
 	public TYPE SemantMe() {
-		// TODO
-		return this.var.SemantMe();
+		System.out.println("-- AST_EXP_VAR SemantMe");
+		TYPE t = this.var.SemantMe();
+		System.out.println(t);
+		return t;
 	}
 }

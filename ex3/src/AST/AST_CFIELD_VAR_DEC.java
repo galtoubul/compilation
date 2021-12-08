@@ -38,4 +38,9 @@ public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
     public TYPE SemantMe() {
         return this.var.SemantMe();
     }
+
+    @Override
+    public TYPE SemantMe(String classId) {
+        return this.var.SemantMe(classId);
+    }
 }

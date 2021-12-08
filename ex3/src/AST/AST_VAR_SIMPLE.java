@@ -4,18 +4,11 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 
 public class AST_VAR_SIMPLE extends AST_VAR {
-	/************************/
-	/* simple variable name */
-	/************************/
+
 	public String name;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
 	public AST_VAR_SIMPLE(String name) {
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
+
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
 		/***************************************/
@@ -29,13 +22,7 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		this.name = name;
 	}
 
-	/**************************************************/
-	/* The printing message for a simple var AST node */
-	/**************************************************/
 	public void PrintMe() {
-		/**********************************/
-		/* AST NODE TYPE = AST SIMPLE VAR */
-		/**********************************/
 		System.out.format("AST NODE SIMPLE VAR( %s )\n", name);
 
 		/*********************************/
@@ -47,6 +34,9 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 	}
 
 	public TYPE SemantMe() {
-		return SYMBOL_TABLE.getInstance().find(name);
+		System.out.format("-- AST_VAR_SIMPLE SemantMe, var name = %s\n", name);
+		TYPE t = SYMBOL_TABLE.getInstance().find(name);
+		System.out.println(t);
+		return t;
 	}
 }
