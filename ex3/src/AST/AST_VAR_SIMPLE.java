@@ -36,7 +36,6 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 	public TYPE SemantMe() {
 		System.out.format("-- AST_VAR_SIMPLE SemantMe, var name = %s\n", name);
 		TYPE t = SYMBOL_TABLE.getInstance().find(name);
-		System.out.println(t.name);
 		return t;
 	}
 }

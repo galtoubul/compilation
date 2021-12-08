@@ -56,8 +56,7 @@ public class AST_FUNC_DEC extends AST_Node {
             System.out.println("-- AST_FUNC_DEC SemantMe extends while (dataMembers.head != null)");
             if (dataMembers.head instanceof TYPE_FUNCTION ||
                     dataMembers.head instanceof TYPE_VOID ||
-                    dataMembers.head instanceof TYPE_INT ||
-                    dataMembers.head instanceof TYPE_STRING) {
+                    dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
 
                 System.out.println("is instance of TYPE_...");
                 TYPE dm = dataMembers.head;
@@ -66,7 +65,7 @@ public class AST_FUNC_DEC extends AST_Node {
                 System.out.format("dm.name = %s\n", dm.name);
 
                 if (dm.name.equals(id)) {
-                    if (dataMembers.head instanceof TYPE_INT || dataMembers.head instanceof TYPE_STRING) {
+                    if (dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
                         System.out.println(">> ERROR [line] overloading var and func names isnt allowed");
                         throw new semanticErrorException("line");
                     } else if (dataMembers.head instanceof TYPE_VOID && !this.returnTypeName.name().equals("void")) {

@@ -1,8 +1,7 @@
 package AST;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
-import TYPES.TYPE;
-import TYPES.TYPE_CLASS_VAR_DEC;
+import TYPES.*;
 
 public class AST_VAR_DECLERATION extends AST_VAR_DEC {
     public AST_VAR_DECLERATION(AST_TYPE type, String id) {
@@ -21,8 +20,33 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
     }
 
     @Override
-    public TYPE SemantMe(String classId) {
+    public TYPE SemantMe(String fatherClassId) {
         System.out.println("-- AST_VAR_DECLERATION SemantMe extends");
+
+        TYPE_CLASS fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(fatherClassId);
+        System.out.println(fatherType.name);
+        TYPE_LIST dataMembers = fatherType.data_members;
+
+        while (dataMembers != null && dataMembers.head != null) {
+            System.out.println("-- AST_FUNC_DEC SemantMe extends while (dataMembers.head != null)");
+            if (dataMembers.head instanceof TYPE_FUNCTION ||
+                    dataMembers.head instanceof TYPE_VOID ||
+                    dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
+
+                System.out.println("is instance of TYPE_...");
+                TYPE dm = dataMembers.head;
+
+                System.out.format("id = %s\n", id);
+                System.out.format("dm.name = %s\n", dm.name);
+
+                if (dm.name.equals(id)) {
+                    System.out.println(">> ERROR [line] overloading var and func names isnt allowed");
+                    throw new semanticErrorException("line");
+                }
+            }
+            dataMembers = dataMembers.tail;
+        }
+
         TYPE t;
 
         /****************************/
@@ -43,8 +67,8 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
 
         SYMBOL_TABLE.getInstance().enter(id, t);
 
-        TYPE var = new TYPE_CLASS_VAR_DEC(t, id);
-        System.out.println(var.name);
+        TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
+        System.out.println("var.name = "  + var.name);
         return var;
     }
 
@@ -73,8 +97,9 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         /* [3] Enter the Function Type to the Symbol Table */
         /***************************************************/
         SYMBOL_TABLE.getInstance().enter(id, t);
-        TYPE var = SYMBOL_TABLE.getInstance().find(id);
-        System.out.println(var.name);
+        TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
+        System.out.println("var.name = "  + var.name);
         return var;
+
     }
 }
