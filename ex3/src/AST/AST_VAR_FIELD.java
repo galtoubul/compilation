@@ -1,5 +1,6 @@
 package AST;
 
+import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_LIST;
@@ -68,7 +69,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 		/******************************/
 		if (var != null)
 			t = var.SemantMe();
-
+		System.out.println("t.name = " + t.name);
 		/*********************************/
 		/* [2] Make sure type is a class */
 		/*********************************/
@@ -77,16 +78,23 @@ public class AST_VAR_FIELD extends AST_VAR {
 			System.exit(0);
 		} else {
 			tc = (TYPE_CLASS) t;
+			System.out.println("tc.name = " + tc.name);
+
 		}
 
 		/************************************/
 		/* [3] Look for fiedlName inside tc */
 		/************************************/
+
 		for (TYPE_LIST it = tc.data_members; it != null; it = it.tail) {
-			if (it.head.name == fieldName) {
+			System.out.println("it.name = " + it.head.name);
+			System.out.println("fieldName = " + fieldName);
+			if (it.head.name.equals(fieldName)) {
 				return it.head;
 			}
 		}
+
+
 
 		/*********************************************/
 		/* [4] fieldName does not exist in class var */

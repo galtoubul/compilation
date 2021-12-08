@@ -60,7 +60,7 @@ public class AST_EXP_LIST extends AST_Node {
 					null);
 		} else {
 			return new TYPE_LIST(
-					head.SemantMe(),
+					head.SemantMe() ,
 					tail.SemantMe());
 		}
 	}

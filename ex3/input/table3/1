@@ -1,0 +1,4 @@
+
+void foo(int i, int k) { PrintInt(1); }
+
+void main(){ foo(2, 1); }

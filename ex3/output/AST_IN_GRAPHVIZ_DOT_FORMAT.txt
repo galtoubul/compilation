@@ -1,5 +1,0 @@
-digraph
-{
-graph [ordering = "out"]
-v4 [label = "AST.AST_DEC_LIST@38af3868"];
-}

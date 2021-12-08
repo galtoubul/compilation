@@ -58,11 +58,13 @@ public class AST_CFIELD_LIST extends AST_Node {
 			System.out.println("tail is null");
 			TYPE_LIST list = new TYPE_LIST(head.SemantMe(classId),null);
 			System.out.println(list.head.name);
+			System.out.println("cfield list " + list.head.name);
 			return list;
 		} else {
 			System.out.println("tail isnt null");
 			TYPE_LIST list = new TYPE_LIST(head.SemantMe(classId), tail.SemantMe(classId));
 			System.out.println(list.head.name);
+			System.out.println("cfield list " + list.head.name);
 			return list;
 		}
 	}
@@ -73,11 +75,12 @@ public class AST_CFIELD_LIST extends AST_Node {
 		if (tail == null) {
 			System.out.println("tail is null");
 			TYPE_LIST list = new TYPE_LIST(head.SemantMe(),null);
-			System.out.println(list.head.name);
+			System.out.println("cfield list " + list.head.name);
 			return list;
 		} else {
 			System.out.println("tail isnt null");
 			TYPE_LIST list = new TYPE_LIST(head.SemantMe(), tail.SemantMe());
+			System.out.println("cfield list " + list.head.name);
 			System.out.println(list.head.name);
 			return list;
 		}

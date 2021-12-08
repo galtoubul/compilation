@@ -1,6 +1,7 @@
 package AST;
 
 import TYPES.TYPE;
+import TYPES.TYPE_NONE;
 
 public class AST_EXP_VAR extends AST_EXP {
 	public AST_VAR var;
@@ -46,6 +47,9 @@ public class AST_EXP_VAR extends AST_EXP {
 	public TYPE SemantMe() {
 		System.out.println("-- AST_EXP_VAR SemantMe");
 		TYPE t = this.var.SemantMe();
+		if (t == null) {
+			return new TYPE_NONE();
+		}
 		System.out.println(t);
 		return t;
 	}
