@@ -2,9 +2,6 @@ package TYPES;
 
 public class TYPE_LIST
 {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
 	public TYPE head;
 	public TYPE_LIST tail;
 

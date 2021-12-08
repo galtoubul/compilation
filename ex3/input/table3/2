@@ -1,0 +1,15 @@
+class Father
+{
+    int field;
+}
+
+void foo(int i, int k)
+{
+    PrintInt(1);
+}
+
+void main()
+{
+    Father father;
+    foo(2, father.field);
+}
