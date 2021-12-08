@@ -54,6 +54,7 @@ public class Main
 			/**************************/
 			/* [7] Semant the AST ... */
 			/**************************/
+			System.out.println("before AST.SemantMe();");
 			AST.SemantMe();
 			
 			/*************************/

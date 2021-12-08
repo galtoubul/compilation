@@ -3,19 +3,11 @@ package AST;
 import TYPES.TYPE;
 
 public class AST_DEC_LIST extends AST_Node {
-	/****************/
-	/* DATA MEMBERS */
-	/****************/
 	public AST_DEC head;
 	public AST_DEC_LIST tail;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
 	public AST_DEC_LIST(AST_DEC head, AST_DEC_LIST tail) {
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
+
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
 		/***************************************/
@@ -27,7 +19,7 @@ public class AST_DEC_LIST extends AST_Node {
 			System.out.print("====================== DECs -> DEC      \n");
 
 		/*******************************/
-		/* COPY INPUT DATA NENBERS ... */
+		/* COPY INPUT DATA MEMBERS ... */
 		/*******************************/
 		this.head = head;
 		this.tail = tail;
@@ -35,19 +27,17 @@ public class AST_DEC_LIST extends AST_Node {
 
 	public TYPE SemantMe() {
 		/*************************************/
-		/* RECURSIVELY PRINT HEAD + TAIL ... */
+		/* RECURSIVELY semant HEAD + TAIL ... */
 		/*************************************/
+		System.out.println("-- AST_DEC_LIST SemantMe");
 		if (head != null)
 			head.SemantMe();
 		if (tail != null)
 			tail.SemantMe();
 
-		return null;
+		return null; // won't reach this
 	}
 
-	/********************************************************/
-	/* The printing message for a declaration list AST node */
-	/********************************************************/
 	public void PrintMe() {
 		/********************************/
 		/* AST NODE TYPE = AST DEC LIST */

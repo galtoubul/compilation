@@ -67,6 +67,8 @@ public class AST_CFIELD_LIST extends AST_Node {
 	}
 
 	public TYPE_LIST SemantMe() {
+		System.out.println("-- AST_CFIELD_LIST SemantMe");
+
 		if (tail == null) {
 			return new TYPE_LIST(
 					head.SemantMe(),

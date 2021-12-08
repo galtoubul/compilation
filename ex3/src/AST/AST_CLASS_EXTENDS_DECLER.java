@@ -12,9 +12,6 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         this.id_extends = id_extends;
     }
 
-    /*********************************************************/
-    /* The printing message for a class declaration AST node */
-    /*********************************************************/
     public void PrintMe() {
         /*************************************/
         /* RECURSIVELY PRINT HEAD + TAIL ... */
@@ -38,6 +35,24 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
     }
 
     public TYPE SemantMe() {
+        System.out.println("-- AST_CLASS_EXTENDS_DECLER SemantMe");
+
+        TYPE_CLASS fatherType;
+        try {
+            fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.id_extends);
+        }catch (ClassCastException exc) {
+            System.out.format(">> ERROR [line:col] class extends\n");
+            return null;
+        }
+
+        // Didn't find father in the lookup
+        if (fatherType == null) {
+            System.out.format(">> ERROR [line:col] class extends\n");
+            return null;
+        } else {
+            System.out.println("-- AST_CLASS_EXTENDS_DECLER fatherType isnt null");
+        }
+
         /*************************/
         /* [1] Begin Class Scope */
         /*************************/
@@ -46,7 +61,7 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         /***************************/
         /* [2] Semant Data Members */
         /***************************/
-        TYPE_CLASS t = new TYPE_CLASS(null, id, fields.SemantMe());
+        TYPE_CLASS t = new TYPE_CLASS(fatherType, id, fields.SemantMe());
 
         /*****************/
         /* [3] End Scope */
