@@ -1,0 +1,10 @@
+class Father
+{
+    int foo;
+}
+class Son extends Father
+{
+    void foo() {
+        int i := 3;
+    }
+}

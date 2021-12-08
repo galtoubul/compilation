@@ -3,10 +3,7 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
-import TYPES.TYPE;
-import TYPES.TYPE_CLASS;
-import TYPES.TYPE_FUNCTION;
-import TYPES.TYPE_LIST;
+import TYPES.*;
 
 public class AST_FUNC_DEC extends AST_Node {
     public AST_TYPE returnTypeName;
@@ -57,19 +54,31 @@ public class AST_FUNC_DEC extends AST_Node {
 
         while (dataMembers != null && dataMembers.head != null) {
             System.out.println("-- AST_FUNC_DEC SemantMe extends while (dataMembers.head != null)");
-            if (dataMembers.head instanceof TYPE_FUNCTION) {
-                System.out.println("is instance of TYPE_FUNCTION");
-                TYPE_FUNCTION dm = (TYPE_FUNCTION)dataMembers.head;
+            if (dataMembers.head instanceof TYPE_FUNCTION ||
+                    dataMembers.head instanceof TYPE_VOID ||
+                    dataMembers.head instanceof TYPE_INT ||
+                    dataMembers.head instanceof TYPE_STRING) {
+
+                System.out.println("is instance of TYPE_...");
+                TYPE dm = dataMembers.head;
 
                 System.out.format("id = %s\n", id);
                 System.out.format("dm.name = %s\n", dm.name);
 
-                System.out.format("this.returnTypeName.name() = %s\n", this.returnTypeName.name());
-                System.out.format("dm.returnType.name = %s\n", dm.returnType.name);
-
-                if (dm.name.equals(id) && !dm.returnType.name.equals(this.returnTypeName.name())) {
-                    System.out.println(">> ERROR [line] overloading isnt allowed");
-                    throw new semanticErrorException("line");
+                if (dm.name.equals(id)) {
+                    if (dataMembers.head instanceof TYPE_INT || dataMembers.head instanceof TYPE_STRING) {
+                        System.out.println(">> ERROR [line] overloading var and func names isnt allowed");
+                        throw new semanticErrorException("line");
+                    } else if (dataMembers.head instanceof TYPE_VOID && !this.returnTypeName.name().equals("void")) {
+                        System.out.println(">> ERROR [line] overloading func names isnt allowed");
+                        throw new semanticErrorException("line");
+                    } else if (dataMembers.head instanceof TYPE_FUNCTION &&
+                            !((TYPE_FUNCTION)dm).returnType.name.equals(this.returnTypeName.name())) {
+                        System.out.format("this.returnTypeName.name() = %s\n", this.returnTypeName.name());
+                        System.out.format("dm.returnType.name = %s\n", ((TYPE_FUNCTION)dm).returnType.name);
+                        System.out.println(">> ERROR [line] overloading isnt allowed");
+                        throw new semanticErrorException("line");
+                    }
                 }
             }
             dataMembers = dataMembers.tail;
@@ -126,7 +135,7 @@ public class AST_FUNC_DEC extends AST_Node {
         /***************************************************/
         /* [5] Enter the Function Type to the Symbol Table */
         /***************************************************/
-        TYPE_FUNCTION funcType =new TYPE_FUNCTION(returnType, id, type_list);
+        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, type_list);
         SYMBOL_TABLE.getInstance().enter(id, funcType);
 
         return funcType;

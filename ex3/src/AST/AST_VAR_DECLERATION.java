@@ -2,15 +2,13 @@ package AST;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
+import TYPES.TYPE_CLASS_VAR_DEC;
 
 public class AST_VAR_DECLERATION extends AST_VAR_DEC {
     public AST_VAR_DECLERATION(AST_TYPE type, String id) {
         super(type, id);
     }
 
-    /********************************************************/
-    /* The printing message for a declaration list AST node */
-    /********************************************************/
     public void PrintMe() {
         System.out.format("VAR-DEC(%s):%s                \n", id, type);
 
@@ -24,6 +22,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
 
     @Override
     public TYPE SemantMe(String classId) {
+        System.out.println("-- AST_VAR_DECLERATION SemantMe extends");
         TYPE t;
 
         /****************************/
@@ -42,19 +41,16 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
             System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n", 2, 2, id);
         }
 
-        /***************************************************/
-        /* [3] Enter the Function Type to the Symbol Table */
-        /***************************************************/
         SYMBOL_TABLE.getInstance().enter(id, t);
 
-        /*********************************************************/
-        /* [4] Return value is irrelevant for class declarations */
-        /*********************************************************/
-        return null;
+        TYPE var = new TYPE_CLASS_VAR_DEC(t, id);
+        System.out.println(var.name);
+        return var;
     }
 
     @Override
     public TYPE SemantMe() {
+        System.out.println("-- AST_VAR_DECLERATION SemantMe");
         TYPE t;
 
         /****************************/
@@ -77,10 +73,8 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         /* [3] Enter the Function Type to the Symbol Table */
         /***************************************************/
         SYMBOL_TABLE.getInstance().enter(id, t);
-
-        /*********************************************************/
-        /* [4] Return value is irrelevant for class declarations */
-        /*********************************************************/
-        return null;
+        TYPE var = SYMBOL_TABLE.getInstance().find(id);
+        System.out.println(var.name);
+        return var;
     }
 }
