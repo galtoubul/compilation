@@ -65,23 +65,50 @@ public class AST_EXP_BINOP extends AST_EXP {
 	}
 
 	public TYPE SemantMe() {
-		if (OP == Binop.DIVIDE && right instanceof AST_EXP_INT && ((AST_EXP_INT) right).value == 0) {
-			System.out.format(">> ERROR [%d:%d] zero division\n", 2, 2);
-		}
-
 		TYPE t1 = null;
 		TYPE t2 = null;
 
-		if (left != null)
+		if (left != null) {
 			t1 = left.SemantMe();
-		if (right != null)
-			t2 = right.SemantMe();
-
-		if ((t1 == TYPE_INT.getInstance()) && (t2 == TYPE_INT.getInstance())) {
-			return TYPE_INT.getInstance();
 		}
-		System.exit(0);
-		return null;
+		if (right != null) {
+			t2 = right.SemantMe();
+		}
+
+		switch (OP) {
+			case EQ:
+				if (!t2.isSubtype(t1)) {
+					System.out.format(">> ERROR [%d:%d] comparing values with different types\n",
+							2, 2);
+					System.exit(0);
+				}
+				break;
+			case PLUS:
+				if ((t1 == TYPE_STRING.getInstance()) && (t2 == TYPE_STRING.getInstance())) {
+					return TYPE_STRING.getInstance();
+				}
+				if (!(t1 == TYPE_INT.getInstance()) || !(t2 == TYPE_INT.getInstance())) {
+					System.out.format(">> ERROR [%d:%d] invalid types for '%s' operation\n", 2, 2, OP.type);
+					System.exit(0);
+				}
+				break;
+			case DIVIDE:
+				if (!(t1 == TYPE_INT.getInstance()) || !(t2 == TYPE_INT.getInstance())) {
+					System.out.format(">> ERROR [%d:%d] invalid types for '%s' operation\n", 2, 2, OP.type);
+					System.exit(0);
+				}
+				if (right instanceof AST_EXP_INT && ((AST_EXP_INT) right).value == 0) {
+					System.out.format(">> ERROR [%d:%d] division by zero\n", 2, 2);
+					System.exit(0);
+				}
+			default:
+				if (!(t1 == TYPE_INT.getInstance()) || !(t2 == TYPE_INT.getInstance())) {
+					System.out.format(">> ERROR [%d:%d] invalid types for '%s' operation\n", 2, 2, OP.type);
+					System.exit(0);
+				}
+		}
+
+		return TYPE_INT.getInstance();
 	}
 
 }
