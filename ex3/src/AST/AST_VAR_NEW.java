@@ -4,8 +4,6 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 
 public class AST_VAR_NEW extends AST_VAR_DEC {
-    public AST_TYPE type;
-    public String id;
     public AST_NEW_EXP initialValue;
 
     public AST_VAR_NEW(AST_TYPE type, String id, AST_NEW_EXP initialValue) {
@@ -53,31 +51,35 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         /****************************/
         /* [1] Check If Type exists */
         /****************************/
-        System.out.println("\n"+type.name());
         t = SYMBOL_TABLE.getInstance().find(type.name());
         if (t == null) {
             System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, type.name());
             System.exit(0);
         }
 
-        /**************************************/
+        /************************************/
         /* [2] Check That id does NOT exist */
-        /**************************************/
+        /************************************/
         if (SYMBOL_TABLE.getInstance().find(id) != null) {
             System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n", 2, 2, id);
         }
 
-        if (t != initialValue.SemantMe()) {
+        /******************************************************/
+        /* [3] Match the variable type with the initial value */
+        /******************************************************/
+        TYPE tInitial = initialValue.SemantMe();
+        // TODO apply polymorphism
+        if (t != tInitial) {
             System.out.format(">> ERROR [%d:%d] type mismatch\n", 2, 2, id);
         }
 
         /***************************************************/
-        /* [3] Enter the variable name to the Symbol Table */
+        /* [4] Enter the variable name to the Symbol Table */
         /***************************************************/
         SYMBOL_TABLE.getInstance().enter(id, t);
 
         /************************************************************/
-        /* [4] Return value is irrelevant for variable declarations */
+        /* [5] Return value is irrelevant for variable declarations */
         /************************************************************/
         return null;
     }
@@ -89,7 +91,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         /****************************/
         /* [1] Check If Type exists */
         /****************************/
-        System.out.println("\n"+type.name());
+        System.out.println("\n" + type.name());
         t = SYMBOL_TABLE.getInstance().find(type.name());
         if (t == null) {
             System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, type.name());
