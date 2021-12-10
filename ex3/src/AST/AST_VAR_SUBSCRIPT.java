@@ -1,6 +1,8 @@
 package AST;
 
 import TYPES.TYPE;
+import TYPES.TYPE_ARRAY;
+import TYPES.TYPE_INT;
 
 public class AST_VAR_SUBSCRIPT extends AST_VAR {
 	public AST_VAR var;
@@ -61,6 +63,20 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 	}
 
 	public TYPE SemantMe() {
-		return null; // TODO
+		TYPE type = this.var.SemantMe();
+
+		// Check that the variable is an array
+		if (!type.isArray()) {
+			System.out.format(">> ERROR [%d:%d] not an array\n", 2, 2);
+			System.exit(0);
+		}
+
+		// Validate the subscript to be integral
+		if (subscript.SemantMe() != TYPE_INT.getInstance()) {
+			System.out.format(">> ERROR [%d:%d] non integral array length\n", 2, 2);
+			System.exit(0);
+		}
+
+		return ((TYPE_ARRAY) type).type;
 	}
 }

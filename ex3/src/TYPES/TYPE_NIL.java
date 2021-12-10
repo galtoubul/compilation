@@ -25,8 +25,7 @@ public class TYPE_NIL extends TYPE {
 	}
 
 	public static boolean convertible(TYPE type) {
-		// TODO Add check for arrays
-		return type instanceof TYPE_CLASS /* || type instanceof TYPE_ARRAY */;
+		return type.isClass() || type.isArray();
 	}
 
 	public static boolean nil_match(TYPE convertible, TYPE matchedType) {
