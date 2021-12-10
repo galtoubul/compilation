@@ -25,7 +25,7 @@ public class TYPE_NIL extends TYPE {
 	}
 
 	public static boolean convertible(TYPE type) {
-		return type.isClass() || type.isArray();
+		return type.isClass() || type.isArray() || type instanceof TYPE_NIL;
 	}
 
 	public static boolean nil_match(TYPE convertible, TYPE matchedType) {

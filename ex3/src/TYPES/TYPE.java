@@ -19,4 +19,9 @@ public abstract class TYPE {
 	public boolean isArray() {
 		return this instanceof TYPE_ARRAY;
 	}
+
+	public boolean isSubtype(TYPE other) {
+		// TODO support subtyping
+		return this.name.equals(other.name) || TYPE_NIL.nil_match(other, this);
+	}
 }
