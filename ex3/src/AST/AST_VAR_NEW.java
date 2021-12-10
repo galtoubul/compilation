@@ -2,6 +2,7 @@ package AST;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
+import TYPES.TYPE_ARRAY;
 
 public class AST_VAR_NEW extends AST_VAR_DEC {
     public AST_NEW_EXP initialValue;
@@ -69,8 +70,16 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         /******************************************************/
         TYPE tInitial = initialValue.SemantMe();
         // TODO apply polymorphism
-        if (t != tInitial) {
+        if (initialValue.subscript.isEmpty() && t != tInitial) {
             System.out.format(">> ERROR [%d:%d] type mismatch\n", 2, 2, id);
+        }
+
+        // Validate arrays
+        if (initialValue.subscript.isPresent()
+                && (!t.isArray() || (t.isArray() && !tInitial.isSubtype(((TYPE_ARRAY) t).type)))) {
+            System.out.format(">> ERROR [%d:%d] type mismatch: type %s is not an array of %s\n",
+                    2, 2, t.name, tInitial.name);
+            System.exit(0);
         }
 
         /***************************************************/

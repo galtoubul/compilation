@@ -16,6 +16,8 @@ public class AST_NEW_EXP extends AST_Node {
     }
 
     public TYPE SemantMe() {
+        System.out.println("-- AST_NEW_EXP SemantMe");
+
         // Get the new type
         TYPE t = SYMBOL_TABLE.getInstance().find(type.name());
 
@@ -26,19 +28,23 @@ public class AST_NEW_EXP extends AST_Node {
         }
 
         // Check that the type can be allocated (i.e., class or array)
-        if (!t.isClass() && !t.isArray()) {
+        if (!t.isClass() && this.subscript.isEmpty()) {
             System.out.format(">> ERROR [%d:%d] type %s cannot be allocated\n", 2, 2, type.name());
             System.exit(0);
         }
 
         // Validate subscript for arrays
         if (this.subscript.isPresent()) {
-            if (!t.isArray()) {
-                System.out.format(">> ERROR [%d:%d] type %s is not an array typedef\n", 2, 2, type.name());
+            // Validate integral subscript value
+            if (this.subscript.get().SemantMe() != TYPE_INT.getInstance()) {
+                System.out.format(">> ERROR [%d:%d] non integral array length\n", 2, 2);
                 System.exit(0);
             }
-            if (subscript.get().SemantMe() != TYPE_INT.getInstance()) {
-                System.out.format(">> ERROR [%d:%d] non integral array length\n", 2, 2);
+
+            // Validate positive constant subscript
+            if (this.subscript.get() instanceof AST_EXP_INT &&
+                    ((AST_EXP_INT) this.subscript.get()).value <= 0) {
+                System.out.format(">> ERROR [%d:%d] non-positive constant array length\n", 2, 2);
                 System.exit(0);
             }
         }
