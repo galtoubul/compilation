@@ -1,6 +1,7 @@
 package AST;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 
@@ -33,7 +34,7 @@ public class AST_CLASS_DECLER extends AST_CLASS_DEC {
         /*************************/
         /* [1] Begin Class Scope */
         /*************************/
-        SYMBOL_TABLE.getInstance().beginScope();
+        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class);
 
         /***************************/
         /* [2] Semant Data Members */

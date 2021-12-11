@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.ScopeType;
 import TYPES.*;
 
 public class AST_FUNC_DEC extends AST_Node {
@@ -72,9 +73,9 @@ public class AST_FUNC_DEC extends AST_Node {
                         System.out.println(">> ERROR [line] overloading func names isnt allowed");
                         throw new semanticErrorException("line");
                     } else if (dataMembers.head instanceof TYPE_FUNCTION &&
-                            !((TYPE_FUNCTION)dm).returnType.name.equals(this.returnTypeName.name())) {
+                            !((TYPE_FUNCTION) dm).returnType.name.equals(this.returnTypeName.name())) {
                         System.out.format("this.returnTypeName.name() = %s\n", this.returnTypeName.name());
-                        System.out.format("dm.returnType.name = %s\n", ((TYPE_FUNCTION)dm).returnType.name);
+                        System.out.format("dm.returnType.name = %s\n", ((TYPE_FUNCTION) dm).returnType.name);
                         System.out.println(">> ERROR [line] overloading isnt allowed");
                         throw new semanticErrorException("line");
                     }
@@ -104,7 +105,7 @@ public class AST_FUNC_DEC extends AST_Node {
         /****************************/
         /* [1] Begin Function Scope */
         /****************************/
-        SYMBOL_TABLE.getInstance().beginScope();
+        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function);
 
         /***************************/
         /* [2] Semant Input Params */
@@ -164,7 +165,7 @@ public class AST_FUNC_DEC extends AST_Node {
         /****************************/
         /* [1] Begin Function Scope */
         /****************************/
-        SYMBOL_TABLE.getInstance().beginScope();
+        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function);
 
         /***************************/
         /* [2] Semant Input Params */

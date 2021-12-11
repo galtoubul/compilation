@@ -1,6 +1,7 @@
 package AST;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 
@@ -40,7 +41,7 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         TYPE_CLASS fatherType;
         try {
             fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.id_extends);
-        }catch (ClassCastException exc) {
+        } catch (ClassCastException exc) {
             System.out.println("--------------------- ClassCastException");
             System.out.format(">> ERROR [line] class -- extends\n");
             throw new semanticErrorException("line");
@@ -58,7 +59,7 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         /*************************/
         /* [1] Begin Class Scope */
         /*************************/
-        SYMBOL_TABLE.getInstance().beginScope();
+        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class);
 
         /***************************/
         /* [2] Semant Data Members */

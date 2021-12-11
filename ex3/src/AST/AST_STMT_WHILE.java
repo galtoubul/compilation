@@ -1,6 +1,7 @@
 package AST;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
 
@@ -27,7 +28,7 @@ public class AST_STMT_WHILE extends AST_STMT {
 		/*************************/
 		/* [1] Begin Loop Scope */
 		/*************************/
-		SYMBOL_TABLE.getInstance().beginScope();
+		SYMBOL_TABLE.getInstance().beginScope(ScopeType.Block);
 
 		/***************************/
 		/* [2] Semant Loop body */
