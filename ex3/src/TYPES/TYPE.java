@@ -21,7 +21,8 @@ public abstract class TYPE {
 	}
 
 	public boolean isSubtype(TYPE other) {
-		// TODO support subtyping
+		// TODO subtype
 		return this.name.equals(other.name) || TYPE_NIL.nil_match(other, this);
 	}
+
 }

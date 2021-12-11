@@ -28,7 +28,7 @@ public class AST_NEW_EXP extends AST_Node {
         }
 
         // Check that the type can be allocated (i.e., class or array)
-        if (!t.isClass() && this.subscript.isEmpty()) {
+        if (!t.isClass() && !this.subscript.isPresent()) {
             System.out.format(">> ERROR [%d:%d] type %s cannot be allocated\n", 2, 2, type.name());
             System.exit(0);
         }

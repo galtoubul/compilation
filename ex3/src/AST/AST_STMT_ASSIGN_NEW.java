@@ -28,7 +28,7 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
 
         // Compate the two types
         // TODO apply polymorphism
-        if (exp.subscript.isEmpty() && t1 != t2) {
+        if (!exp.subscript.isPresent() && t1 != t2) {
             System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n", 6, 6);
         }
 

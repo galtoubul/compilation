@@ -12,10 +12,7 @@ public class AST_STMT_FUNC extends AST_STMT {
         this.argsList = argsList;
     }
 
-    @Override
-    public TYPE SemantMe() {
-        System.out.println("-- AST_STMT_FUNC SemantMe");
-
+    public TYPE_FUNCTION getFuncType() {
         // function name lookup
         TYPE_FUNCTION funcType = null;
         try {
@@ -24,18 +21,27 @@ public class AST_STMT_FUNC extends AST_STMT {
             System.out.format(">> ERROR [line] class extends\n");
             throw new semanticErrorException("line");
         }
+        return funcType;
+    }
+
+    // diff between args to params: foo(<args>) | puclic int foo(<params>)
+
+    @Override
+    public TYPE SemantMe() {
+        System.out.println("-- AST_STMT_FUNC SemantMe");
+
+        TYPE_FUNCTION funcType = getFuncType();
 
         // Didn't find function in the lookup
         if (funcType == null) {
             System.out.format(">> ERROR [line] function use before define\n");
             throw new semanticErrorException("line");
         } else {
-            System.out.println("-- AST_STMT_FUNC funcType isnt null");
+            System.out.println("-- AST_STMT_FUNC \n\t\tfuncType = " + funcType.name);
         }
 
-        TYPE_FUNCTION typeFunction = (TYPE_FUNCTION) SYMBOL_TABLE.getInstance().find(id);
-        TYPE_LIST paramsList = typeFunction.params;
-        if (argsList != null) {
+        TYPE_LIST funcParamsList = funcType.params;
+        if (this.argsList != null) {
 
             TYPE_LIST argsTypes = this.argsList.SemantMe();
             while (argsTypes != null && argsTypes.head != null) {
@@ -45,7 +51,7 @@ public class AST_STMT_FUNC extends AST_STMT {
                     throw new semanticErrorException("line");
                 }
                 else {
-                    System.out.println("-- AST_STMT_FUNC parameter was defined before using it");
+                    System.out.println("-- AST_STMT_FUNC \n\t\tparameter was defined before using it");
                     System.out.println("-- AST_STMT_FUNC \n\t\targsTypes.head.name = " + argsTypes.head.name);
 
                     // The following search is meant to find objects
@@ -57,26 +63,30 @@ public class AST_STMT_FUNC extends AST_STMT {
                         // <object_name>.<field_name> = <varSimple><varSimpleField>
                         AST_VAR_SIMPLE varSimple = ((AST_EXP_VAR) argsList.head).var.getSimple();
                         String varSimpleField = ((AST_VAR_FIELD)((AST_EXP_VAR) argsList.head).var).fieldName;
+                        System.out.println("-- AST_STMT_FUNC \n\t\tvarSimple.name = " + varSimple.name);
+                        System.out.println("-- AST_STMT_FUNC \n\t\tvarSimpleField.name" + varSimpleField);
+
+                        // varSimpleClassType = the class from which varSimple was created
                         TYPE_CLASS varSimpleClassType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(varSimple.name);
-                        TYPE_LIST varSimpleClassTypeDataMembers = varSimpleClassType.data_members;
-
                         System.out.println("-- AST_STMT_FUNC \n\t\tclassType.name = " + varSimpleClassType.name);
-                        System.out.println("-- AST_STMT_FUNC \n\t\tclassType.data_members.head.name" + varSimpleClassType.data_members.head);
 
-                        // Check if varSimpleField is a data member of varSimpleClassType
+                        // varSimpleClassTypeDataMembers = the data members of class varSimpleClassType
+                        TYPE_LIST varSimpleClassTypeDataMembers = varSimpleClassType.data_members;
+                        System.out.println("-- AST_STMT_FUNC \n\t\tvarSimpleClassType.data_members.head.name" + varSimpleClassType.data_members.head.name);
+
+                        // check if varSimpleField is a data member of varSimpleClassType
                         boolean argIsEqual = false;
                         while (varSimpleClassTypeDataMembers != null && varSimpleClassTypeDataMembers.head != null) {
 
-                            // check for name equality between class data member and the argument
-                            System.out.println("-- AST_STMT_FUNC \n\t\tdataMembers.head.name = " + varSimpleClassTypeDataMembers.head.name);
-                            System.out.println("-- AST_STMT_FUNC \n\t\tvarSimpleField = " + varSimpleField);
+                            // name(varSimpleClassType data member) != name(varSimpleField)
                             if(!varSimpleClassTypeDataMembers.head.name.equals(varSimpleField)){
                                 varSimpleClassTypeDataMembers = varSimpleClassTypeDataMembers.tail;
                             }
+                            // name(varSimpleClassType data member) == name(varSimpleField)
                             else {
                                 // check for type equality between the parameter and the argument
                                 TYPE fieldType = ((TYPE_CLASS_VAR_DEC) varSimpleClassTypeDataMembers.head).t;
-                                TYPE paramType = SYMBOL_TABLE.getInstance().find(paramsList.head.name);
+                                TYPE paramType = SYMBOL_TABLE.getInstance().find(funcParamsList.head.name);
 
                                 System.out.println("-- AST_STMT_FUNC \n\t\tfieldType = " + fieldType.name);
                                 System.out.println("-- AST_STMT_FUNC \n\t\tparamType = " + paramType.name);
@@ -93,7 +103,7 @@ public class AST_STMT_FUNC extends AST_STMT {
                             throw new semanticErrorException("line");
                         }
                         else {
-                            paramsList = paramsList.tail;
+                            funcParamsList = funcParamsList.tail;
                             argsTypes = argsTypes.tail;
 //                            if(paramsList.head == null) {
 //                                System.out.println("advancing paramsList is null");
@@ -112,21 +122,21 @@ public class AST_STMT_FUNC extends AST_STMT {
 
                     System.out.println("argsTypes.head.name = " + argsTypes.head.name);
                     System.out.println("argType.name = " + argType.name);
-                    if(paramsList == null || paramsList.head == null) {
+                    if(funcParamsList == null || funcParamsList.head == null) {
                         System.out.format(">> ERROR [line] number of args isnt match number of params\n");
                         throw new semanticErrorException("line");
                     }
-                    TYPE paramType = SYMBOL_TABLE.getInstance().find(paramsList.head.name);
-                    System.out.println("paramsList.head.name = " + paramsList.head.name);
+                    TYPE paramType = SYMBOL_TABLE.getInstance().find(funcParamsList.head.name);
+                    System.out.println("paramsList.head.name = " + funcParamsList.head.name);
 
                     if((!(argType instanceof TYPE_CLASS) && !paramType.getClass().equals(argType.getClass())) ||
-                            ((argType instanceof TYPE_CLASS && paramType instanceof TYPE_CLASS) && !isAncestor((TYPE_CLASS)paramType, (TYPE_CLASS) argType))) {
-                        System.out.format(">> ERROR [line] type of arg %s doesnt match type of param %s\n",argsTypes.head.name ,paramsList.head.name);
+                            ((argType instanceof TYPE_CLASS && paramType instanceof TYPE_CLASS) && !((TYPE_CLASS)paramType).isAncestor((TYPE_CLASS) argType))) {
+                        System.out.format(">> ERROR [line] type of arg %s doesnt match type of param %s\n",argsTypes.head.name ,funcParamsList.head.name);
                         throw new semanticErrorException("line");
                     }
                 }
                 System.out.println("advancing param and arg lists");
-                paramsList = paramsList.tail;
+                funcParamsList = funcParamsList.tail;
                 argsTypes = argsTypes.tail;
 //                if(paramsList.head == null) {
 //                    System.out.println("advancing paramsList is null");
@@ -142,23 +152,13 @@ public class AST_STMT_FUNC extends AST_STMT {
             }
 
         }
-        else if (paramsList != null) {
+        // empty arguments list, but non empty parameters list
+        else if (funcParamsList != null) {
             System.out.format(">> ERROR [line] number of args isnt match number of params\n");
             throw new semanticErrorException("line");
         }
         return null;
     }
 
-    public boolean isAncestor(TYPE_CLASS paramType, TYPE_CLASS argType) {
-        do  {
-            if(paramType.getClass().equals(argType.getClass())) {
-                return true;
-            }
-            argType = argType.father;
-        } while ((argType.father != null));
-        if(paramType.getClass().equals(argType.getClass())) {
-            return true;
-        }
-        return false;
-    }
+
 }

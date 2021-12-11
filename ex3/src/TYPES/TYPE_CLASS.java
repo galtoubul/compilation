@@ -23,4 +23,17 @@ public class TYPE_CLASS extends TYPE
 		this.father = father;
 		this.data_members = data_members;
 	}
+
+	public boolean isAncestor(TYPE_CLASS other) {
+		do  {
+			if(this.getClass().equals(other.getClass())) {
+				return true;
+			}
+			other = other.father;
+		} while (other != null && other.father != null);
+		if(this.getClass().equals(other.getClass())) {
+			return true;
+		}
+		return false;
+	}
 }

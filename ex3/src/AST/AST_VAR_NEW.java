@@ -70,7 +70,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         /******************************************************/
         TYPE tInitial = initialValue.SemantMe();
         // TODO apply polymorphism
-        if (initialValue.subscript.isEmpty() && t != tInitial) {
+        if (!initialValue.subscript.isPresent() && t != tInitial) {
             System.out.format(">> ERROR [%d:%d] type mismatch\n", 2, 2, id);
         }
 
