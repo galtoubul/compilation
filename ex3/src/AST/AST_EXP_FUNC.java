@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public class AST_EXP_FUNC extends AST_EXP {
@@ -38,7 +40,8 @@ public class AST_EXP_FUNC extends AST_EXP {
         AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, arguments.SerialNumber);
     }
 
-    public TYPE SemantMe() {
+    @Override
+    public TYPE SemantMe(Optional<String> classId) {
         return null;
     }
 }

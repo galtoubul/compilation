@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 
@@ -13,17 +15,17 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
     }
 
     @Override
-    public TYPE SemantMe() {
+    public TYPE SemantMe(Optional<String> classId) {
         System.out.format("ASSIGN");
         TYPE t1 = null;
         TYPE t2 = null;
 
         // Retrieve children types
         if (var != null) {
-            t1 = var.SemantMe();
+            t1 = var.SemantMe(classId);
         }
         if (exp != null) {
-            t2 = exp.SemantMe();
+            t2 = exp.SemantMe(classId);
         }
 
         // Compate the two types

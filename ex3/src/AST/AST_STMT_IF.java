@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
@@ -47,11 +49,11 @@ public class AST_STMT_IF extends AST_STMT {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, body.SerialNumber);
 	}
 
-	public TYPE SemantMe() {
+	public TYPE SemantMe(Optional<String> classId) {
 		/****************************/
 		/* [0] Semant the Condition */
 		/****************************/
-		if (cond.SemantMe() != TYPE_INT.getInstance()) {
+		if (cond.SemantMe(classId) != TYPE_INT.getInstance()) {
 			System.out.format(">> ERROR [%d:%d] condition inside IF is not integral\n", 2, 2);
 		}
 
@@ -63,7 +65,7 @@ public class AST_STMT_IF extends AST_STMT {
 		/***************************/
 		/* [2] Semant Data Members */
 		/***************************/
-		body.SemantMe();
+		body.SemantMe(classId);
 
 		/*****************/
 		/* [3] End Scope */

@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public class AST_STMT_LIST extends AST_Node {
@@ -58,12 +60,12 @@ public class AST_STMT_LIST extends AST_Node {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, tail.SerialNumber);
 	}
 
-	public TYPE SemantMe() {
+	public TYPE SemantMe(Optional<String> classId) {
 		System.out.println("-- AST_STMT_LIST SemantMe");
 		if (head != null)
-			head.SemantMe();
+			head.SemantMe(classId);
 		if (tail != null)
-			tail.SemantMe();
+			tail.SemantMe(classId);
 
 		return null;
 	}

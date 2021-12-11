@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public class AST_STMT_ASSIGN extends AST_STMT {
@@ -61,10 +63,10 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, exp.SerialNumber);
 	}
 
-	public TYPE SemantMe() {
+	public TYPE SemantMe(Optional<String> classId) {
 		System.out.format("ASSIGN");
-		TYPE t1 = var.SemantMe();
-		TYPE t2 = exp.SemantMe();
+		TYPE t1 = var.SemantMe(classId);
+		TYPE t2 = exp.SemantMe(classId);
 
 		// Compate the two types
 		if (!TYPE.isSubtype(t2, t1)) {

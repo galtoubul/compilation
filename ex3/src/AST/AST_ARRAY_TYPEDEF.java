@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;

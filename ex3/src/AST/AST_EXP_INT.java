@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
 
@@ -43,7 +45,8 @@ public class AST_EXP_INT extends AST_EXP {
 				String.format("INT(%d)", value));
 	}
 
-	public TYPE SemantMe() {
+	@Override
+	public TYPE SemantMe(Optional<String> classId) {
 		return TYPE_INT.getInstance();
 	}
 }

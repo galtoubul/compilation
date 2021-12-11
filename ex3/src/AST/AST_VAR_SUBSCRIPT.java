@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_INT;
@@ -62,8 +64,9 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, subscript.SerialNumber);
 	}
 
-	public TYPE SemantMe() {
-		TYPE type = this.var.SemantMe();
+	@Override
+	public TYPE SemantMe(Optional<String> classId) {
+		TYPE type = this.var.SemantMe(classId);
 
 		// Check that the variable is an array
 		if (!type.isArray()) {
@@ -72,7 +75,7 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 		}
 
 		// Validate the subscript to be integral
-		if (subscript.SemantMe() != TYPE_INT.getInstance()) {
+		if (subscript.SemantMe(classId) != TYPE_INT.getInstance()) {
 			System.out.format(">> ERROR [%d:%d] non integral array length\n", 2, 2);
 			System.exit(0);
 		}

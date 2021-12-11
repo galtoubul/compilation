@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public class AST_STMT_VAR_DEC extends AST_STMT {
@@ -9,7 +11,8 @@ public class AST_STMT_VAR_DEC extends AST_STMT {
         this.varDec = v;
     }
 
-    public TYPE SemantMe() {
-        return this.varDec.SemantMe();
+    @Override
+    public TYPE SemantMe(Optional<String> classId) {
+        return this.varDec.SemantMe(classId);
     }
 }

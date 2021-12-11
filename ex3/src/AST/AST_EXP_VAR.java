@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 import TYPES.TYPE_NONE;
 
@@ -44,9 +46,10 @@ public class AST_EXP_VAR extends AST_EXP {
 
 	}
 
-	public TYPE SemantMe() {
+	@Override
+	public TYPE SemantMe(Optional<String> classId) {
 		System.out.println("-- AST_EXP_VAR SemantMe");
-		TYPE t = this.var.SemantMe();
+		TYPE t = this.var.SemantMe(classId);
 		if (t == null) {
 			return new TYPE_NONE();
 		}

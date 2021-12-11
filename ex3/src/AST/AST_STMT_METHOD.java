@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public class AST_STMT_METHOD extends AST_STMT {
@@ -14,7 +16,7 @@ public class AST_STMT_METHOD extends AST_STMT {
     }
 
     @Override
-    public TYPE SemantMe() {
+    public TYPE SemantMe(Optional<String> classId) {
         // TODO Auto-generated method stub
         return null;
     }

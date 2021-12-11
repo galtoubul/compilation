@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
@@ -57,7 +59,8 @@ public class AST_VAR_FIELD extends AST_VAR {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, var.SerialNumber);
 	}
 
-	public TYPE SemantMe() {
+	@Override
+	public TYPE SemantMe(Optional<String> classId) {
 		TYPE t = null;
 		TYPE_CLASS tc = null;
 
@@ -65,7 +68,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 		/* [1] Recursively semant var */
 		/******************************/
 		if (var != null)
-			t = var.SemantMe();
+			t = var.SemantMe(classId);
 		System.out.println("t.name = " + t.name);
 		/*********************************/
 		/* [2] Make sure type is a class */
@@ -90,8 +93,6 @@ public class AST_VAR_FIELD extends AST_VAR {
 				return it.head;
 			}
 		}
-
-
 
 		/*********************************************/
 		/* [4] fieldName does not exist in class var */

@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public class AST_DEC_VAR_DEC extends AST_DEC {
@@ -11,7 +13,7 @@ public class AST_DEC_VAR_DEC extends AST_DEC {
 
     public TYPE SemantMe() {
         if (varDec != null) {
-            varDec.SemantMe();
+            varDec.SemantMe(Optional.empty());
         }
         return null;
     }
