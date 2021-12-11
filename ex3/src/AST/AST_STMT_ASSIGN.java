@@ -63,18 +63,11 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 
 	public TYPE SemantMe() {
 		System.out.format("ASSIGN");
-		TYPE t1 = null;
-		TYPE t2 = null;
-
-		// Retrieve children types
-		if (var != null)
-			t1 = var.SemantMe();
-		if (exp != null)
-			t2 = exp.SemantMe();
+		TYPE t1 = var.SemantMe();
+		TYPE t2 = exp.SemantMe();
 
 		// Compate the two types
-		// TODO implement type comparison and instanceOf
-		if (!t2.isSubtype(t1)) {
+		if (!TYPE.isSubtype(t2, t1)) {
 			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n", 6, 6);
 			System.exit(0);
 		}

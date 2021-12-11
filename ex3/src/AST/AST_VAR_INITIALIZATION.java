@@ -69,7 +69,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         /* [3] Match the variable type with the initial value */
         /******************************************************/
         TYPE tInitial = initialValue.SemantMe();
-        if (!tInitial.isSubtype(t)) {
+        if (!TYPE.isSubtype(tInitial, t)) {
             System.out.format(">> ERROR [%d:%d] type mismatch\n", 2, 2, id);
             System.exit(0);
         }

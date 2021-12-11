@@ -22,13 +22,17 @@ public abstract class TYPE {
 
 	@Override
 	public boolean equals(Object obj) {
-		return (obj instanceof TYPE) && this.name.equals(((TYPE) obj).name);
+		return (obj instanceof TYPE)
+				&& (this.name == ((TYPE) obj).name || (this.name != null && this.name.equals(((TYPE) obj).name)));
 	}
 
-	public boolean isSubtype(TYPE other) {
-		return this.equals(other) || TYPE_NIL.nil_match(other, this) ||
-				(this instanceof TYPE_CLASS && other instanceof TYPE_CLASS &&
-						((TYPE_CLASS) other).isAncestor((TYPE_CLASS) this));
+	public static boolean isSubtype(TYPE thisType, TYPE otherType) {
+		if (thisType == null || otherType == null) {
+			return false;
+		}
+		return thisType.equals(otherType) || TYPE_NIL.nil_match(otherType, thisType) ||
+				(thisType instanceof TYPE_CLASS && otherType instanceof TYPE_CLASS &&
+						((TYPE_CLASS) otherType).isAncestor((TYPE_CLASS) thisType));
 	}
 
 }

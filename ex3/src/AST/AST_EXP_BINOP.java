@@ -77,7 +77,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 
 		switch (OP) {
 			case EQ:
-				if (!t2.isSubtype(t1) && !t1.isSubtype(t2)) {
+				if (!TYPE.isSubtype(t2, t1) && !TYPE.isSubtype(t1, t2)) {
 					System.out.format(">> ERROR [%d:%d] comparing values with different types\n",
 							2, 2);
 					System.exit(0);

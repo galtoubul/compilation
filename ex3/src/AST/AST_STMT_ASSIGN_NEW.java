@@ -28,13 +28,13 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
 
         // Compate the two types
         // TODO apply polymorphism
-        if (!exp.subscript.isPresent() && t1 != t2) {
+        if (!exp.subscript.isPresent() && TYPE.isSubtype(t2, t1)) {
             System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n", 6, 6);
         }
 
         // Validate arrays
         if (exp.subscript.isPresent() &&
-                (!t1.isArray() || (t1.isArray() && !t2.isSubtype(((TYPE_ARRAY) t1).type)))) {
+                (!t1.isArray() || (t1.isArray() && !TYPE.isSubtype(t2, ((TYPE_ARRAY) t1).type)))) {
             System.out.format(">> ERROR [%d:%d] type mismatch: type %s is not an array of %s\n",
                     2, 2, t1.name, t2.name);
             System.exit(0);
