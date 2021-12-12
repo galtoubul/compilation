@@ -2,7 +2,6 @@ package AST;
 
 import java.util.Optional;
 
-import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_CLASS_VAR_DEC;
@@ -92,14 +91,12 @@ public class AST_VAR_FIELD extends AST_VAR {
 			System.out.println("fieldName = " + fieldName);
 
 			if (it.head.name.equals(fieldName)) {
-				if (it.head instanceof TYPE_CLASS_VAR_DEC){
+				if (it.head instanceof TYPE_CLASS_VAR_DEC) {
 					return ((TYPE_CLASS_VAR_DEC) it.head).t;
 				}
 				return it.head;
 			}
 		}
-
-
 
 		/*********************************************/
 		/* [4] fieldName does not exist in class var */

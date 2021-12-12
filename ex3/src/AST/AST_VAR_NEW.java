@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.ScopeType;
 import SYMBOL_TABLE.SYMBOL_TABLE_ENTRY;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
@@ -86,6 +87,13 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
                 && (!t.isArray() || (t.isArray() && !TYPE.isSubtype(tInitial, ((TYPE_ARRAY) t).type)))) {
             System.out.format(">> ERROR [%d:%d] type mismatch: type %s is not an array of %s\n",
                     2, 2, t.name, tInitial.name);
+            System.exit(0);
+        }
+
+        // If the initialization is of a class field, it must be initialized with a
+        // constant; and a new-expression is not a constant
+        if (SYMBOL_TABLE.getInstance().currentScope() == ScopeType.Class) {
+            System.out.format(">> ERROR [%d:%d] class fields can only be initialized with constant values\n", 2, 2, id);
             System.exit(0);
         }
 
