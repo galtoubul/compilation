@@ -15,7 +15,7 @@ public class AST_NEW_EXP extends AST_Node {
         this.subscript = subscript;
     }
 
-    public TYPE SemantMe() {
+    public TYPE SemantMe(Optional<String> classId) {
         System.out.println("-- AST_NEW_EXP SemantMe");
 
         // Get the new type
@@ -36,7 +36,7 @@ public class AST_NEW_EXP extends AST_Node {
         // Validate subscript for arrays
         if (this.subscript.isPresent()) {
             // Validate integral subscript value
-            if (this.subscript.get().SemantMe() != TYPE_INT.getInstance()) {
+            if (this.subscript.get().SemantMe(classId) != TYPE_INT.getInstance()) {
                 System.out.format(">> ERROR [%d:%d] non integral array length\n", 2, 2);
                 System.exit(0);
             }

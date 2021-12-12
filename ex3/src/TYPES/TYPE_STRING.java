@@ -6,7 +6,6 @@ public class TYPE_STRING extends TYPE
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
 	private static TYPE_STRING instance = null;
-
 	/*****************************/
 	/* PREVENT INSTANTIATION ... */
 	/*****************************/

@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
@@ -35,12 +37,7 @@ public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
     }
 
     @Override
-    public TYPE SemantMe() {
-        return this.var.SemantMe();
-    }
-
-    @Override
-    public TYPE SemantMe(String classId) {
+    public TYPE SemantMe(Optional<String> classId) {
         return this.var.SemantMe(classId);
     }
 }

@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.*;
 
 public class AST_EXP_BINOP extends AST_EXP {
@@ -64,15 +66,16 @@ public class AST_EXP_BINOP extends AST_EXP {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, right.SerialNumber);
 	}
 
-	public TYPE SemantMe() {
+	@Override
+	public TYPE SemantMe(Optional<String> classId) {
 		TYPE t1 = null;
 		TYPE t2 = null;
 
 		if (left != null) {
-			t1 = left.SemantMe();
+			t1 = left.SemantMe(classId);
 		}
 		if (right != null) {
-			t2 = right.SemantMe();
+			t2 = right.SemantMe(classId);
 		}
 
 		switch (OP) {

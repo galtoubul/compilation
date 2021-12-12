@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public abstract class AST_STMT extends AST_Node {
@@ -7,5 +9,5 @@ public abstract class AST_STMT extends AST_Node {
 		System.out.print("UNKNOWN AST STATEMENT NODE");
 	}
 
-	abstract public TYPE SemantMe();
+	abstract public TYPE SemantMe(Optional<String> classId);
 }

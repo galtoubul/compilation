@@ -3,6 +3,8 @@ package AST;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.*;
 
+import java.util.Optional;
+
 public class AST_STMT_FUNC extends AST_STMT {
     public String id;
     public AST_EXP_LIST argsList;
@@ -27,7 +29,7 @@ public class AST_STMT_FUNC extends AST_STMT {
     // diff between args to params: foo(<args>) | puclic int foo(<params>)
 
     @Override
-    public TYPE SemantMe() {
+    public TYPE SemantMe(Optional<String> classId) {
         System.out.println("-- AST_STMT_FUNC SemantMe");
 
         TYPE_FUNCTION funcType = getFuncType();
@@ -48,7 +50,7 @@ public class AST_STMT_FUNC extends AST_STMT {
                 throw new semanticErrorException("line");
             }
 
-            TYPE_LIST argsTypes = this.argsList.SemantMe();
+            TYPE_LIST argsTypes = this.argsList.SemantMe(classId);
             while (argsTypes != null && argsTypes.head != null) {
 
                 System.out.println("-- AST_STMT_FUNC \n\t\targsTypes.head.name = " + argsTypes.head.name);
@@ -67,7 +69,7 @@ public class AST_STMT_FUNC extends AST_STMT {
 
                         // <object_name>.<field_name> = <varSimple>.<varSimpleField>
                         AST_VAR_SIMPLE varSimple = ((AST_EXP_VAR) argsList.head).var.getSimple();
-                        String varSimpleField = ((AST_VAR_FIELD)((AST_EXP_VAR) argsList.head).var).fieldName;
+                        String varSimpleField = ((AST_VAR_FIELD) ((AST_EXP_VAR) argsList.head).var).fieldName;
                         System.out.println("-- AST_STMT_FUNC \n\t\tvarSimple.name = " + varSimple.name);
                         System.out.println("-- AST_STMT_FUNC \n\t\tvarSimpleField.name" + varSimpleField);
 
@@ -83,7 +85,7 @@ public class AST_STMT_FUNC extends AST_STMT {
                         boolean argIsEqual = false;
                         while (varSimpleClassTypeDataMembers != null && varSimpleClassTypeDataMembers.head != null) {
 
-                            if(!varSimpleClassTypeDataMembers.head.name.equals(varSimpleField)){
+                            if (!varSimpleClassTypeDataMembers.head.name.equals(varSimpleField)){
                                 varSimpleClassTypeDataMembers = varSimpleClassTypeDataMembers.tail;
                             }
                             else {
@@ -94,13 +96,13 @@ public class AST_STMT_FUNC extends AST_STMT {
                                 System.out.println("-- AST_STMT_FUNC \n\t\tdataMemberType.name = " + dataMemberType.name);
                                 System.out.println("-- AST_STMT_FUNC \n\t\tparamType.name = " + paramType.name);
 
-                                if(paramType.getClass().equals(dataMemberType.getClass())) {
+                                if (paramType.getClass().equals(dataMemberType.getClass())) {
                                     argIsEqual = true;
                                     break;
                                 }
                             }
                         }
-                        if(!argIsEqual){
+                        if (!argIsEqual){
                             System.out.format(">> ERROR [line] arg class doesn't match param class\n");
                             throw new semanticErrorException("line");
                         }

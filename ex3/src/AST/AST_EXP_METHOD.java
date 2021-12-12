@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 
 public class AST_EXP_METHOD extends AST_EXP {
@@ -13,7 +15,8 @@ public class AST_EXP_METHOD extends AST_EXP {
         this.pl = pl;
     }
 
-    public TYPE SemantMe() {
+    @Override
+    public TYPE SemantMe(Optional<String> classId) {
         return null;
     }
 }

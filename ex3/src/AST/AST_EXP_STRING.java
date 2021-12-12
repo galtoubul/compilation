@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE;
 import TYPES.TYPE_STRING;
 
@@ -27,7 +29,8 @@ public class AST_EXP_STRING extends AST_EXP {
                 String.format("STRING\n%s", s.replace('"', '\'')));
     }
 
-    public TYPE SemantMe() {
+    @Override
+    public TYPE SemantMe(Optional<String> classId) {
         return TYPE_STRING.getInstance();
     }
 

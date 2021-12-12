@@ -1,8 +1,11 @@
 package AST;
 
+import java.util.Optional;
+
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
+import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_LIST;
 
 public class AST_VAR_FIELD extends AST_VAR {
@@ -57,7 +60,8 @@ public class AST_VAR_FIELD extends AST_VAR {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, var.SerialNumber);
 	}
 
-	public TYPE SemantMe() {
+	@Override
+	public TYPE SemantMe(Optional<String> classId) {
 		TYPE t = null;
 		TYPE_CLASS tc = null;
 
@@ -65,7 +69,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 		/* [1] Recursively semant var */
 		/******************************/
 		if (var != null)
-			t = var.SemantMe();
+			t = var.SemantMe(classId);
 		System.out.println("t.name = " + t.name);
 		/*********************************/
 		/* [2] Make sure type is a class */
@@ -86,7 +90,11 @@ public class AST_VAR_FIELD extends AST_VAR {
 		for (TYPE_LIST it = tc.data_members; it != null; it = it.tail) {
 			System.out.println("it.name = " + it.head.name);
 			System.out.println("fieldName = " + fieldName);
+
 			if (it.head.name.equals(fieldName)) {
+				if (it.head instanceof TYPE_CLASS_VAR_DEC){
+					return ((TYPE_CLASS_VAR_DEC) it.head).t;
+				}
 				return it.head;
 			}
 		}

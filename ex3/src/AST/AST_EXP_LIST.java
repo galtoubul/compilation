@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import TYPES.TYPE_LIST;
 
 public class AST_EXP_LIST extends AST_Node {
@@ -51,17 +53,17 @@ public class AST_EXP_LIST extends AST_Node {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, tail.SerialNumber);
 	}
 
-	public TYPE_LIST SemantMe() {
+	public TYPE_LIST SemantMe(Optional<String> classId) {
 		System.out.println("-- AST_EXP_LIST SemantMe");
 
 		if (tail == null) {
 			return new TYPE_LIST(
-					head.SemantMe(),
+					head.SemantMe(classId),
 					null);
 		} else {
 			return new TYPE_LIST(
-					head.SemantMe() ,
-					tail.SemantMe());
+					head.SemantMe(classId),
+					tail.SemantMe(classId));
 		}
 	}
 

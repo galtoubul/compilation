@@ -7,6 +7,8 @@ package SYMBOL_TABLE;
 /* GENERAL IMPORTS */
 /*******************/
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /*******************/
 /* PROJECT IMPORTS */
@@ -17,6 +19,9 @@ import TYPES.*;
 /* SYMBOL TABLE */
 /****************/
 public class SYMBOL_TABLE {
+	public static int currentScope = 0;
+	public static HashMap<Integer, ArrayList<SYMBOL_TABLE_ENTRY>> scopes = new HashMap<Integer,ArrayList<SYMBOL_TABLE_ENTRY>>();
+
 	private int hashArraySize = 13;
 
 	/**********************************************/
@@ -76,7 +81,7 @@ public class SYMBOL_TABLE {
 		/* [3] Prepare a new symbol table entry with name, type, next and prevtop */
 		/**************************************************************************/
 		SYMBOL_TABLE_ENTRY e = new SYMBOL_TABLE_ENTRY(name, t, hashValue, next, top, top_index++);
-
+		scopes.put(currentScope, addToScope(e,scopes.getOrDefault(currentScope, new ArrayList<SYMBOL_TABLE_ENTRY>())));
 		/**********************************************/
 		/* [4] Update the top of the symbol table ... */
 		/**********************************************/
@@ -125,6 +130,7 @@ public class SYMBOL_TABLE {
 	/* begine scope = Enter the <SCOPE-BOUNDARY> element to the data structure */
 	/***************************************************************************/
 	public void beginScope(ScopeType scopeType) {
+		currentScope++;
 		/************************************************************************/
 		/* Though <SCOPE-BOUNDARY> entries are present inside the symbol table, */
 		/* they are not really types. In order to be able to debug print them, */
@@ -284,8 +290,22 @@ public class SYMBOL_TABLE {
 							new TYPE_LIST(
 									TYPE_INT.getInstance(),
 									null)));
+			instance.enter(
+					"PrintString",
+					new TYPE_FUNCTION(
+							TYPE_VOID.getInstance(),
+							"PrintInt",
+							new TYPE_LIST(
+									TYPE_STRING.getInstance(),
+									null)));
+
 
 		}
 		return instance;
+	}
+
+	private ArrayList<SYMBOL_TABLE_ENTRY> addToScope(SYMBOL_TABLE_ENTRY entry, ArrayList<SYMBOL_TABLE_ENTRY> entries) {
+		entries.add(entry);
+		return entries;
 	}
 }

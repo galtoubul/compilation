@@ -1,5 +1,7 @@
 package AST;
 
+import java.util.Optional;
+
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
@@ -64,7 +66,7 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         /***************************/
         /* [2] Semant Data Members */
         /***************************/
-        TYPE_CLASS t = new TYPE_CLASS(fatherType, id, fields.SemantMe(fatherType.name));
+        TYPE_CLASS t = new TYPE_CLASS(fatherType, id, fields.SemantMe(Optional.of(fatherType.name)));
 
         /*****************/
         /* [3] End Scope */

@@ -43,9 +43,9 @@ public class AST_STMT_RETURN extends AST_STMT {
         }
     }
 
-    public TYPE SemantMe() {
+    public TYPE SemantMe(Optional<String> classId) {
         if (this.exp.isPresent()) {
-            return exp.get().SemantMe();
+            return exp.get().SemantMe(classId);
         }
         return null; // TODO return void type?
     }
