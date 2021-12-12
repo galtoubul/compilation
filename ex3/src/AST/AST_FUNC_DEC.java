@@ -63,7 +63,8 @@ public class AST_FUNC_DEC extends AST_Node {
                 System.out.format("-- AST_FUNC_DEC SemantMe\n\t\t%s is a method/field\n", dm.name);
 
                 if (dm.name.equals(id)) {
-                    System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tdata member name = %s == %s = method name\n", dm.name, id);
+                    System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tdata member name = %s == %s = method name\n",
+                            dm.name, id);
                     if (dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
                         System.out.println(">> ERROR [line] overloading field and method names isn't allowed");
                         throw new semanticErrorException("line");
@@ -73,8 +74,10 @@ public class AST_FUNC_DEC extends AST_Node {
                         throw new semanticErrorException("line");
                     } else if (dataMembers.head instanceof TYPE_FUNCTION &&
                             !((TYPE_FUNCTION) dm).returnType.name.equals(this.returnTypeName.name())) {
-                        System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tthis.returnTypeName.name() = %s\n", this.returnTypeName.name());
-                        System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tdm.returnType.name = %s\n", ((TYPE_FUNCTION) dm).returnType.name);
+                        System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tthis.returnTypeName.name() = %s\n",
+                                this.returnTypeName.name());
+                        System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tdm.returnType.name = %s\n",
+                                ((TYPE_FUNCTION) dm).returnType.name);
                         System.out.println(">> ERROR [line] overloading methods isn't allowed");
                         throw new semanticErrorException("line");
                     }
@@ -100,12 +103,13 @@ public class AST_FUNC_DEC extends AST_Node {
             throw new semanticErrorException("line");
         }
 
-        // if this is a method of a class that extends another class then check for overloading violations
+        // if this is a method of a class that extends another class then check for
+        // overloading violations
         if (fatherClassId.isPresent())
             checkOverloading(fatherClassId);
 
         // Begin Function Scope
-        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function);
+        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function, id);
         System.out.println("-- AST_FUNC_DEC\n\t\tStart of a new scope for function/method " + this.id);
 
         // Semant Input Params

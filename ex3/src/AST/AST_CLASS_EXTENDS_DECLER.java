@@ -31,6 +31,7 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, fields.SerialNumber);
     }
 
+    @Override
     public TYPE SemantMe() {
         System.out.println("-- AST_CLASS_EXTENDS_DECLER SemantMe");
 
@@ -49,7 +50,7 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
         }
 
         // Begin Class's Scope
-        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class);
+        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class, id);
         System.out.println("-- AST_CLASS_EXTENDS_DECLER\n\t\tBeginning of a new scope for class " + this.id);
 
         // Semant class's Data Members
@@ -61,7 +62,8 @@ public class AST_CLASS_EXTENDS_DECLER extends AST_CLASS_DEC {
 
         // Enter the Class Type to the Symbol Table
         SYMBOL_TABLE.getInstance().enter(id, t);
-        System.out.format("-- AST_CLASS_EXTENDS_DECLER\n\t\tinserted class %s of type %s to the symbol table\n", id, t.name);
+        System.out.format("-- AST_CLASS_EXTENDS_DECLER\n\t\tinserted class %s of type %s to the symbol table\n", id,
+                t.name);
 
         // Return value is irrelevant for class declarations
         return null;

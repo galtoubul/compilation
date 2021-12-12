@@ -30,7 +30,7 @@ public class AST_STMT_WHILE extends AST_STMT {
 		/*************************/
 		/* [1] Begin Loop Scope */
 		/*************************/
-		SYMBOL_TABLE.getInstance().beginScope(ScopeType.Block);
+		SYMBOL_TABLE.getInstance().beginScope(ScopeType.Block, null);
 
 		/***************************/
 		/* [2] Semant Loop body */

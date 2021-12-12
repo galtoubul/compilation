@@ -129,7 +129,7 @@ public class SYMBOL_TABLE {
 	/***************************************************************************/
 	/* begine scope = Enter the <SCOPE-BOUNDARY> element to the data structure */
 	/***************************************************************************/
-	public void beginScope(ScopeType scopeType) {
+	public void beginScope(ScopeType scopeType, String scopeName) {
 		currentScope++;
 		/************************************************************************/
 		/* Though <SCOPE-BOUNDARY> entries are present inside the symbol table, */
@@ -139,7 +139,7 @@ public class SYMBOL_TABLE {
 		/************************************************************************/
 		enter(
 				"SCOPE-BOUNDARY",
-				new TYPE_FOR_SCOPE_BOUNDARIES("NONE", scopeType));
+				new TYPE_FOR_SCOPE_BOUNDARIES("NONE", scopeType, scopeName));
 
 		/*********************************************/
 		/* Print the symbol table after every change */
@@ -298,7 +298,6 @@ public class SYMBOL_TABLE {
 							new TYPE_LIST(
 									TYPE_STRING.getInstance(),
 									null)));
-
 
 		}
 		return instance;

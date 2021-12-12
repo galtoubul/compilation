@@ -60,7 +60,7 @@ public class AST_STMT_IF extends AST_STMT {
 		/*************************/
 		/* [1] Begin Class Scope */
 		/*************************/
-		SYMBOL_TABLE.getInstance().beginScope(ScopeType.Block);
+		SYMBOL_TABLE.getInstance().beginScope(ScopeType.Block, null);
 
 		/***************************/
 		/* [2] Semant Data Members */

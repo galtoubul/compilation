@@ -31,12 +31,13 @@ public class AST_CLASS_DECLER extends AST_CLASS_DEC {
         AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, fields.SerialNumber);
     }
 
+    @Override
     public TYPE SemantMe() {
         System.out.println("-- AST_CLASS_DECLER SemantMe");
         /*************************/
         /* [1] Begin Class Scope */
         /*************************/
-        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class);
+        SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class, id);
 
         /***************************/
         /* [2] Semant Data Members */

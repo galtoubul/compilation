@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import TYPES.TYPE;
 
-public class AST_CLASS_DEC extends AST_Node {
+public abstract class AST_CLASS_DEC extends AST_Node {
     public String id;
     public AST_CFIELD_LIST fields;
 
@@ -13,7 +13,5 @@ public class AST_CLASS_DEC extends AST_Node {
         this.fields = fields;
     }
 
-    public TYPE SemantMe() {
-        return null;
-    }
+    public abstract TYPE SemantMe();
 }
