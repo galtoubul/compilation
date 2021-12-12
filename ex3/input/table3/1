@@ -1,4 +1,13 @@
 class Father { int i; }
+
 class Son extends Father { int j; }
+<<<<<<< HEAD
+
 void foo(Father f, int x) { PrintInt(f.i); }
+
 void main() { Son s; foo(s, 1); }
+=======
+void foo(Father f) { PrintInt(f.i); }
+void main() { Son s; foo(s); }
+
+>>>>>>> 0ba809dcbc88dea565952bebe4ef6214da54adc2

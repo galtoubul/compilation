@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
+import SYMBOL_TABLE.SYMBOL_TABLE_ENTRY;
 import TYPES.TYPE;
 
 public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
@@ -61,9 +62,12 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         /************************************/
         /* [2] Check That id does NOT exist */
         /************************************/
-        if (SYMBOL_TABLE.getInstance().find(id) != null) {
-            System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n", 2, 2, id);
-            System.exit(0);
+        for (SYMBOL_TABLE_ENTRY e : SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
+            System.out.println("e.name = " + e.name);
+            System.out.println("id = " + id);
+
+            if (e.name.equals(id))
+                System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n", 2, 2, id);
         }
 
         /******************************************************/
