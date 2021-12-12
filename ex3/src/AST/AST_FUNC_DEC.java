@@ -87,24 +87,20 @@ public class AST_FUNC_DEC extends AST_Node {
     public TYPE SemantMe(Optional<String> fatherClassId) {
         System.out.format("-- AST_FUNC_DEC SemantMe%s\n", fatherClassId.isPresent() ? " extends" : "");
 
-
-
-        TYPE t;
-        TYPE returnType = null;
-        TYPE_LIST type_list = null;
-
         // Check that the return type is legal
-        returnType = SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
+        TYPE returnType = SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
         if (returnType == null) {
-            System.out.format(">> ERROR [%d:%d] non existing return type %s\n", 6, 6, returnType);
-        }
-
-        // Check That the method/function name wasn't used at the outer scopes
-        if (SYMBOL_TABLE.getInstance().find(id) != null) {
-            System.out.format(">> ERROR [line] function %s already exists in scope\n", id);
+            System.out.format(">> ERROR [line] non existing return type\n");
             throw new semanticErrorException("line");
         }
 
+        // Check That the method/function name wasn't used at one of the outer scopes
+        if (SYMBOL_TABLE.getInstance().find(id) != null) {
+            System.out.format(">> ERROR [line] function %s is already exists at one of the outer scopes\n", id);
+            throw new semanticErrorException("line");
+        }
+
+        // if this is a method of a class that extends another class then check for overloading violations
         if (fatherClassId.isPresent())
             checkOverloading(fatherClassId);
 
@@ -112,34 +108,20 @@ public class AST_FUNC_DEC extends AST_Node {
         SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function);
         System.out.println("-- AST_FUNC_DEC\n\t\tStart of a new scope for function/method " + this.id);
 
-        /***************************/
-        /* [2] Semant Input Params */
-        /***************************/
-        if (params.isPresent()) {
-            for (AST_PARM_LIST it = params.get(); it != null; it = it.tail) {
-                t = SYMBOL_TABLE.getInstance().find(it.head.type.name());
-                if (t == null) {
-                    System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, it.head.type.name());
-                } else {
-                    type_list = new TYPE_LIST(t, type_list);
-                    SYMBOL_TABLE.getInstance().enter(it.head.id, t);
-                }
-            }
-        }
+        // Semant Input Params
+        TYPE_LIST paramsTypesList = null;
+        if (params.isPresent())
+            paramsTypesList = params.get().SemantMe();
 
-        /*******************/
-        /* [3] Semant Body */
-        /*******************/
+        // Sement function/method body
         body.SemantMe(Optional.empty());
 
         // End Function Scope
         SYMBOL_TABLE.getInstance().endScope();
         System.out.println("-- AST_FUNC_DEC\n\t\tEnding of a new scope for function/method " + this.id);
 
-        /***************************************************/
-        /* [5] Enter the Function Type to the Symbol Table */
-        /***************************************************/
-        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, type_list);
+        // Enter the fucntion/method Type to the Symbol Table
+        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList);
         SYMBOL_TABLE.getInstance().enter(id, funcType);
 
         return funcType;
