@@ -54,7 +54,8 @@ public class AST_CFIELD_LIST extends AST_Node {
 	}
 
 	public TYPE_LIST SemantMe(Optional<String> classId) {
-		System.out.println("-- AST_CFIELD_LIST SemantMe");
+		System.out.format("-- AST_CFIELD_LIST SemantMe%s",
+				classId.isPresent() ? "of class that extends class" + classId.get() : "");
 
 		if (tail == null) {
 			System.out.println("tail is null");
@@ -63,12 +64,12 @@ public class AST_CFIELD_LIST extends AST_Node {
 			// System.out.println("cfield list " + list.head.name);
 			return list;
 		} else {
-			System.out.println("tail isnt null");
+			System.out.println("-- AST_CFIELD_LIST SemantMe\n\t\tcfield list's tail isnt null");
 			TYPE_LIST list = new TYPE_LIST(head.SemantMe(classId), tail.SemantMe(classId));
-			// System.out.println(list.head.name);
-			// System.out.println("cfield list " + list.head.name);
 			return list;
 		}
 	}
 
 }
+// System.out.println(list.head.name);
+// System.out.println("cfield list " + list.head.name);
