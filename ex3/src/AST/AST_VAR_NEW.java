@@ -7,6 +7,7 @@ import SYMBOL_TABLE.ScopeType;
 import SYMBOL_TABLE.SYMBOL_TABLE_ENTRY;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
+import TYPES.TYPE_VOID;
 
 public class AST_VAR_NEW extends AST_VAR_DEC {
     public AST_NEW_EXP initialValue;
@@ -59,6 +60,12 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         t = SYMBOL_TABLE.getInstance().find(type.name());
         if (t == null) {
             System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, type.name());
+            System.exit(0);
+        }
+
+        // Check that the type isn't void
+        if (t == TYPE_VOID.getInstance()) {
+            System.out.format(">> ERROR [%d:%d] cannot declare a variable as void\n", 2, 2, type.name());
             System.exit(0);
         }
 

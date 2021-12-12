@@ -26,7 +26,9 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
 
         if (fatherClassId.isPresent()) {
             TYPE_CLASS fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(fatherClassId.get());
-            System.out.println("-- AST_VAR_DECLERATION\n\t\tthe variable is declared as part of the scope of class that extends class " + fatherType.name);
+            System.out.println(
+                    "-- AST_VAR_DECLERATION\n\t\tthe variable is declared as part of the scope of class that extends class "
+                            + fatherType.name);
             TYPE_LIST dataMembers = fatherType.data_members;
 
             // Check that the variable doesn't shadow a variable/method in a derrived class
@@ -55,6 +57,12 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         TYPE t = SYMBOL_TABLE.getInstance().find(type.name());
         if (t == null) {
             System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, type.name());
+            System.exit(0);
+        }
+
+        // Check that the type isn't void
+        if (t == TYPE_VOID.getInstance()) {
+            System.out.format(">> ERROR [%d:%d] cannot declare a variable as void\n", 2, 2, type.name());
             System.exit(0);
         }
 
