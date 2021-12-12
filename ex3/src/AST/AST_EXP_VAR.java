@@ -12,14 +12,8 @@ public class AST_EXP_VAR extends AST_EXP {
 
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
 		System.out.print("====================== exp -> var\n");
 
-		/*******************************/
-		/* COPY INPUT DATA NENBERS ... */
-		/*******************************/
 		this.var = var;
 	}
 
@@ -49,11 +43,17 @@ public class AST_EXP_VAR extends AST_EXP {
 	@Override
 	public TYPE SemantMe(Optional<String> classId) {
 		System.out.println("-- AST_EXP_VAR SemantMe");
-		TYPE t = this.var.SemantMe(classId);
-		if (t == null) {
-			return new TYPE_NONE();
+
+		TYPE varType = this.var.SemantMe(classId);
+
+		// won't reach this point if varType = null since the above SemantMe should throw an error
+		if (varType == null) {
+			System.out.format(">> ERROR [line] parameter use before define\n");
+			throw new semanticErrorException("line");
 		}
-		System.out.println(t);
-		return t;
+
+		System.out.println("-- AST_EXP_VAR\n\t\tvar type = " + varType.name);
+
+		return varType;
 	}
 }

@@ -1,3 +1,7 @@
 class Father { int i; }
 
-void foo(int x, Father f) { PrintInt(x); }
+class Son extends Father { int j; }
+
+void foo(int x) { PrintInt(x); }
+
+void main() { Son s; string x; foo(s.i); }

@@ -13,23 +13,14 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
 		System.out.format("====================== var -> ID( %s )\n", name);
 
-		/*******************************/
-		/* COPY INPUT DATA NENBERS ... */
-		/*******************************/
 		this.name = name;
 	}
 
 	public void PrintMe() {
 		System.out.format("AST NODE SIMPLE VAR( %s )\n", name);
 
-		/*********************************/
-		/* Print to AST GRAPHIZ DOT file */
-		/*********************************/
 		AST_GRAPHVIZ.getInstance().logNode(
 				SerialNumber,
 				String.format("SIMPLE\nVAR\n(%s)", name));
@@ -41,8 +32,8 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		// TODO find fields
 		TYPE t = SYMBOL_TABLE.getInstance().find(name);
 		if (t == null) {
-			System.out.format(">> ERROR [%d:%d] variable %s does not exists in scope\n", 2, 2, name);
-			System.exit(0);
+			System.out.format(">> ERROR [line] variable %s does not exist at the current scope/outer scopes\n", name);
+			throw new semanticErrorException("line");
 		}
 		return t;
 	}

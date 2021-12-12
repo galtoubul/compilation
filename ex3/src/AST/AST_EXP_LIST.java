@@ -11,9 +11,6 @@ public class AST_EXP_LIST extends AST_Node {
 	public AST_EXP_LIST(AST_EXP head, AST_EXP_LIST tail) {
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
 		if (tail != null)
 			System.out.print("====================== EXPs -> EXP EXPs\n");
 		if (tail == null)
@@ -27,9 +24,6 @@ public class AST_EXP_LIST extends AST_Node {
 	}
 
 	public void PrintMe() {
-		/**************************************/
-		/* AST NODE TYPE = AST STATEMENT LIST */
-		/**************************************/
 		System.out.print("AST NODE EXP LIST\n");
 
 		/*************************************/
