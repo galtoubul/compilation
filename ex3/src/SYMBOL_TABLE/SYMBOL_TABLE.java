@@ -21,10 +21,13 @@ import TYPES.*;
 /****************/
 public class SYMBOL_TABLE {
 	public static int currentScope = 0;
-	public static HashMap<Integer, ArrayList<SYMBOL_TABLE_ENTRY>> scopes = new HashMap<Integer, ArrayList<SYMBOL_TABLE_ENTRY>>();
+
+	public static HashMap<Integer, ArrayList<SYMBOL_TABLE_ENTRY>> scopes = new HashMap<Integer,ArrayList<SYMBOL_TABLE_ENTRY>>();
+	public static HashMap<Integer, ArrayList<Integer>> scopesGraph = new HashMap<Integer,ArrayList<Integer>>();
+	public static HashMap<Integer, Integer> scopeFather = new HashMap<Integer,Integer>();
 
 	private int hashArraySize = 13;
-
+	private int numOfScopes = 0;
 	/**********************************************/
 	/* The actual symbol table data structure ... */
 	/**********************************************/
@@ -146,7 +149,12 @@ public class SYMBOL_TABLE {
 	/* begine scope = Enter the <SCOPE-BOUNDARY> element to the data structure */
 	/***************************************************************************/
 	public void beginScope(ScopeType scopeType, String scopeName) {
-		currentScope++;
+		numOfScopes++;
+		scopesGraph.put(currentScope, addSon(scopesGraph.getOrDefault(currentScope, new ArrayList<Integer>())));
+		scopeFather.put(numOfScopes,currentScope);
+		currentScope = numOfScopes;
+
+		System.out.println("now begin scope " + currentScope);
 		/************************************************************************/
 		/* Though <SCOPE-BOUNDARY> entries are present inside the symbol table, */
 		/* they are not really types. In order to be able to debug print them, */
@@ -189,6 +197,10 @@ public class SYMBOL_TABLE {
 		/* Print the symbol table after every change */
 		/*********************************************/
 		PrintMe();
+		System.out.println("now ends scope " + currentScope);
+		currentScope = scopeFather.getOrDefault(currentScope,0);
+		System.out.println("back to scope scope " + currentScope);
+
 	}
 
 	public static int n = 0;
@@ -331,4 +343,10 @@ public class SYMBOL_TABLE {
 		entries.add(entry);
 		return entries;
 	}
+
+	private ArrayList<Integer> addSon(ArrayList<Integer> scopes) {
+		scopes.add(numOfScopes);
+		return scopes;
+	}
+
 }

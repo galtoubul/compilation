@@ -2,8 +2,7 @@ package AST;
 
 import java.util.Optional;
 
-import SYMBOL_TABLE.SYMBOL_TABLE;
-import SYMBOL_TABLE.ScopeType;
+import SYMBOL_TABLE.*;
 import TYPES.*;
 
 public class AST_FUNC_DEC extends AST_Node {
@@ -97,8 +96,23 @@ public class AST_FUNC_DEC extends AST_Node {
             throw new semanticErrorException("line");
         }
 
+        boolean isMethod = false;
         // Check That the method/function name wasn't used at one of the outer scopes
-        if (SYMBOL_TABLE.getInstance().find(id) != null) {
+        for (SYMBOL_TABLE_ENTRY e : SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
+            System.out.println("cheking for method, type is " + e.type + " name is " + e.name);
+            if (e.type.isClass()) {
+                isMethod = true;
+                for (SYMBOL_TABLE_ENTRY e2 : SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
+                    if (e2.name.equals(id)) {
+                        System.out.format(">> ERROR [line] method %s is already exists at one of the outer scopes\n", id);
+                        throw new semanticErrorException("line");
+                    }
+                }
+                break;
+            }
+        }
+
+        if (!isMethod && SYMBOL_TABLE.getInstance().find(id) != null) {
             System.out.format(">> ERROR [line] function %s is already exists at one of the outer scopes\n", id);
             throw new semanticErrorException("line");
         }

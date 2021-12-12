@@ -6,6 +6,7 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
+import TYPES.TYPE_LIST;
 
 public class AST_CLASS_DECLER extends AST_CLASS_DEC {
     public AST_CLASS_DECLER(String id, AST_CFIELD_LIST fields) {
@@ -38,6 +39,7 @@ public class AST_CLASS_DECLER extends AST_CLASS_DEC {
         /* [1] Begin Class Scope */
         /*************************/
         SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class, id);
+        SYMBOL_TABLE.getInstance().enter(id, new TYPE_CLASS(null, id, new TYPE_LIST(null, null)));
 
         /***************************/
         /* [2] Semant Data Members */
