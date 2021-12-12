@@ -47,34 +47,31 @@ public class AST_VAR_FIELD extends AST_VAR {
 	public TYPE SemantMe(Optional<String> classId) {
 		System.out.println("-- AST_VAR_FIELD SemantMe");
 
-		TYPE t = null;
-		TYPE_CLASS tc = null;
+		TYPE varType = null;
 
 		// Recursively semant var
 		if (var != null)
-			t = var.SemantMe(classId);
-		System.out.println("-- AST_VAR_FIELD\n\t\tt.name = " + t.name);
+			varType = var.SemantMe(classId);
+		System.out.println("-- AST_VAR_FIELD\n\t\tvariable type = " + varType.name);
 
-		// Make sure type is a class
-		if (t.isClass() == false) {
+		// Make sure varType is a class
+		if (varType.isClass() == false) {
 			System.out.format(">> ERROR [line] access %s field of a non-class variable\n", fieldName);
 			throw new semanticErrorException("line");
 		}
-		else {
-			tc = (TYPE_CLASS) t;
-			System.out.println("-- AST_VAR_FIELD\n\t\ttc.name = " + tc.name);
-		}
 
-		// Look for fieldName inside tc
-		for (TYPE_LIST it = tc.data_members; it != null; it = it.tail) {
-			System.out.println("-- AST_VAR_FIELD\n\t\tit.name = " + it.head.name);
+		TYPE_CLASS varTypeClass = (TYPE_CLASS) varType;
+
+		// Look for fieldName inside varTypeClass
+		for (TYPE_LIST dataMembersList = varTypeClass.data_members; dataMembersList != null; dataMembersList = dataMembersList.tail) {
+			System.out.println("-- AST_VAR_FIELD\n\t\tdata member name = " + dataMembersList.head.name);
 			System.out.println("-- AST_VAR_FIELD\n\t\tfieldName = " + fieldName);
 
-			if (it.head.name.equals(fieldName)) {
-				if (it.head instanceof TYPE_CLASS_VAR_DEC) {
-					return ((TYPE_CLASS_VAR_DEC) it.head).t;
+			if (dataMembersList.head.name.equals(fieldName)) {
+				if (dataMembersList.head instanceof TYPE_CLASS_VAR_DEC) {
+					return ((TYPE_CLASS_VAR_DEC) dataMembersList.head).t;
 				}
-				return it.head;
+				return dataMembersList.head;
 			}
 		}
 
