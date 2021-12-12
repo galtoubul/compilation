@@ -44,6 +44,7 @@ public class AST_EXP_VAR extends AST_EXP {
 	public TYPE SemantMe(Optional<String> classId) {
 		System.out.println("-- AST_EXP_VAR SemantMe");
 
+
 		TYPE varType = this.var.SemantMe(classId);
 
 		// won't reach this point if varType = null since the above SemantMe should throw an error

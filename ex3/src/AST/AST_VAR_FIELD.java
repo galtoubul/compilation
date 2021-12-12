@@ -2,6 +2,7 @@ package AST;
 
 import java.util.Optional;
 
+import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_CLASS_VAR_DEC;
@@ -43,26 +44,9 @@ public class AST_VAR_FIELD extends AST_VAR {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, var.SerialNumber);
 	}
 
-	@Override
-	public TYPE SemantMe(Optional<String> classId) {
-		System.out.println("-- AST_VAR_FIELD SemantMe");
-
-		TYPE varType = null;
-
-		// Recursively semant var
-		if (var != null)
-			varType = var.SemantMe(classId);
-		System.out.println("-- AST_VAR_FIELD\n\t\tvariable type = " + varType.name);
-
-		// Make sure varType is a class
-		if (varType.isClass() == false) {
-			System.out.format(">> ERROR [line] access %s field of a non-class variable\n", fieldName);
-			throw new semanticErrorException("line");
-		}
-
-		TYPE_CLASS varTypeClass = (TYPE_CLASS) varType;
-
-		// Look for fieldName inside varTypeClass
+	// look for the field name in the given TYPE_CLASS
+	// if found -> returns null. OW, returns null
+	public TYPE lookForFieldNameInClassDataMembers(TYPE_CLASS varTypeClass) {
 		for (TYPE_LIST dataMembersList = varTypeClass.data_members; dataMembersList != null; dataMembersList = dataMembersList.tail) {
 			System.out.println("-- AST_VAR_FIELD\n\t\tdata member name = " + dataMembersList.head.name);
 			System.out.println("-- AST_VAR_FIELD\n\t\tfieldName = " + fieldName);
@@ -73,6 +57,47 @@ public class AST_VAR_FIELD extends AST_VAR {
 				}
 				return dataMembersList.head;
 			}
+		}
+		return null;
+	}
+
+	@Override
+	public TYPE SemantMe(Optional<String> fatherClassId) {
+		System.out.println("-- AST_VAR_FIELD SemantMe");
+
+		TYPE varType = null;
+
+		// Recursively semant var
+		if (var != null)
+			varType = var.SemantMe(fatherClassId);
+		System.out.println("-- AST_VAR_FIELD\n\t\tvariable type = " + varType.name);
+
+		// Make sure varType is a class
+		if (varType.isClass() == false) {
+			System.out.format(">> ERROR [line] access %s field of a non-class variable\n", fieldName);
+			throw new semanticErrorException("line");
+		}
+
+		// Look for fieldName inside varTypeClass dataMembers
+		TYPE fieldType = lookForFieldNameInClassDataMembers((TYPE_CLASS) varType);
+		if (fieldType != null) {
+			return fieldType;
+		}
+
+		System.out.format("-- AST_VAR_FIELD\n\t\tfield %s does not exist in class %s\n", fieldName, varType.name);
+		TYPE_CLASS varTypeFather = ((TYPE_CLASS) varType).father;
+
+		// Look for fieldName inside varTypeClass's ancestors
+		while (varTypeFather != null) {
+			System.out.format("-- AST_VAR_FIELD\n\t\tclass %s extends class %s\n", varType.name, varTypeFather.name);
+
+			fieldType = lookForFieldNameInClassDataMembers(varTypeFather);
+			if (fieldType != null) {
+				return fieldType;
+			}
+			System.out.format("-- AST_VAR_FIELD\n\t\tfield %s does not exist in class %s\n", fieldName, varTypeFather.name);
+
+			varTypeFather = varTypeFather.father;
 		}
 
 		// fieldName does not exist in class var

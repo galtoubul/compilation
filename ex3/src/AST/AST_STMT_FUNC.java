@@ -137,7 +137,7 @@ public class AST_STMT_FUNC extends AST_STMT {
     // diff between args to params: foo(<args>) | puclic int foo(<params>)
 
     @Override
-    public TYPE SemantMe(Optional<String> classId) {
+    public TYPE SemantMe(Optional<String> fatherClassId) {
         System.out.println("-- AST_STMT_FUNC SemantMe");
 
         TYPE_FUNCTION funcType = checkFuncUseBeforeDefine();
@@ -146,7 +146,7 @@ public class AST_STMT_FUNC extends AST_STMT {
         TYPE_LIST paramsTypes = funcType.params;
         checkForEmptyAndNonEmptyLists(paramsTypes);
 
-        TYPE_LIST argsTypes = this.argsList.SemantMe(classId);
+        TYPE_LIST argsTypes = this.argsList.SemantMe(fatherClassId);
         checkMatchingParamsArgs(argsTypes, paramsTypes);
 
         return null;
