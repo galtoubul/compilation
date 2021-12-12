@@ -22,7 +22,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
 
     @Override
     public TYPE SemantMe(Optional<String> fatherClassId) {
-        System.out.format("-- AST_VAR_DECLERATION SemantMe %s\n", fatherClassId.isPresent() ? " extends" : "");
+        System.out.format("-- AST_VAR_DECLERATION SemantMe %s\n", fatherClassId.isPresent() ? "extends" : "");
 
         if (fatherClassId.isPresent()) {
             TYPE_CLASS fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(fatherClassId.get());
@@ -70,7 +70,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         // Done with all checks -> insert the variable to the Symbol Table
         SYMBOL_TABLE.getInstance().enter(id, t);
         TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
-        System.out.format("inserted variable %s of type %s to the symbol table\n", var.name, var.t.name);
+        System.out.format("-- AST_VAR_DECLERATION\n\t\tinserted variable %s of type %s to the symbol table\n", var.name, var.t.name);
         return var;
     }
 }
