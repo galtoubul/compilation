@@ -52,7 +52,7 @@ public class AST_CFIELD_LIST extends AST_Node {
 	}
 
 	public TYPE_LIST SemantMe(String classId) {
-		System.out.println("-- AST_CFIELD_LIST SemantMe");
+		System.out.println("-- AST_CFIELD_LIST SemantMe with classId");
 
 		if (tail == null) {
 			System.out.println("tail is null");
