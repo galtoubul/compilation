@@ -117,6 +117,10 @@ public class AST_FUNC_DEC extends AST_Node {
         if (params.isPresent())
             paramsTypesList = params.get().SemantMe();
 
+        // Enter the fucntion/method Type to the Symbol Table
+        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList);
+        SYMBOL_TABLE.getInstance().enter(id, funcType);
+
         // Sement function/method body
         body.SemantMe(Optional.empty());
 
@@ -124,8 +128,8 @@ public class AST_FUNC_DEC extends AST_Node {
         SYMBOL_TABLE.getInstance().endScope();
         System.out.println("-- AST_FUNC_DEC\n\t\tEnding of a new scope for function/method " + this.id);
 
-        // Enter the fucntion/method Type to the Symbol Table
-        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList);
+        // Enter the fucntion/method Type to the Symbol Table again, as it was
+        // popped-out with the rest of the scope
         SYMBOL_TABLE.getInstance().enter(id, funcType);
 
         return funcType;

@@ -9,6 +9,7 @@ package SYMBOL_TABLE;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 /*******************/
 /* PROJECT IMPORTS */
@@ -20,7 +21,7 @@ import TYPES.*;
 /****************/
 public class SYMBOL_TABLE {
 	public static int currentScope = 0;
-	public static HashMap<Integer, ArrayList<SYMBOL_TABLE_ENTRY>> scopes = new HashMap<Integer,ArrayList<SYMBOL_TABLE_ENTRY>>();
+	public static HashMap<Integer, ArrayList<SYMBOL_TABLE_ENTRY>> scopes = new HashMap<Integer, ArrayList<SYMBOL_TABLE_ENTRY>>();
 
 	private int hashArraySize = 13;
 
@@ -81,7 +82,7 @@ public class SYMBOL_TABLE {
 		/* [3] Prepare a new symbol table entry with name, type, next and prevtop */
 		/**************************************************************************/
 		SYMBOL_TABLE_ENTRY e = new SYMBOL_TABLE_ENTRY(name, t, hashValue, next, top, top_index++);
-		scopes.put(currentScope, addToScope(e,scopes.getOrDefault(currentScope, new ArrayList<SYMBOL_TABLE_ENTRY>())));
+		scopes.put(currentScope, addToScope(e, scopes.getOrDefault(currentScope, new ArrayList<SYMBOL_TABLE_ENTRY>())));
 		/**********************************************/
 		/* [4] Update the top of the symbol table ... */
 		/**********************************************/
@@ -124,6 +125,21 @@ public class SYMBOL_TABLE {
 
 		// There is only the global scope, so there are no scope entris to be found
 		return ScopeType.Global;
+	}
+
+	// Find the closest scope with the type `scopeType`
+	public Optional<TYPE_FOR_SCOPE_BOUNDARIES> findScopeType(ScopeType scopeType) {
+		for (SYMBOL_TABLE_ENTRY entry = this.top; entry != null; entry = entry.prevtop) {
+			if (entry.name == "SCOPE-BOUNDARY") {
+				// We've reached the scope boundry
+				TYPE_FOR_SCOPE_BOUNDARIES boundry = (TYPE_FOR_SCOPE_BOUNDARIES) entry.type;
+				if (boundry.scopeType == scopeType)
+					return Optional.of(boundry);
+			}
+		}
+
+		// There is only the global scope, so there are no scope entris to be found
+		return Optional.empty();
 	}
 
 	/***************************************************************************/
@@ -221,10 +237,18 @@ public class SYMBOL_TABLE {
 					/* [4b] Print entry(i,it) node */
 					/*******************************/
 					fileWriter.format("node_%d_%d ", i, j);
-					fileWriter.format("[label=\"<f0>%s|<f1>%s|<f2>prevtop=%d|<f3>next\"];\n",
-							it.name,
-							it.type.name,
-							it.prevtop_index);
+					if (it.type instanceof TYPE_FOR_SCOPE_BOUNDARIES) {
+						fileWriter.format("[label=\"<f0>%s|<f1>%s|<f2>name=%s|<f3>prevtop=%d|<f4>next\"];\n",
+								it.name,
+								it.type.name,
+								((TYPE_FOR_SCOPE_BOUNDARIES) it.type).scopeName,
+								it.prevtop_index);
+					} else {
+						fileWriter.format("[label=\"<f0>%s|<f1>%s|<f2>prevtop=%d|<f3>next\"];\n",
+								it.name,
+								it.type.name,
+								it.prevtop_index);
+					}
 
 					if (it.next != null) {
 						/***************************************************/
