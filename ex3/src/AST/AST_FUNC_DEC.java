@@ -46,69 +46,71 @@ public class AST_FUNC_DEC extends AST_Node {
             AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, body.SerialNumber);
     }
 
+    public void checkOverloading(Optional<String> fatherClassId) {
+
+        TYPE_CLASS fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(fatherClassId.get());
+        System.out.println("-- AST_FUNC_DEC\n\t\t the method is part of a class that extends class " + fatherType.name);
+
+        TYPE_LIST dataMembers = fatherType.data_members;
+
+        while (dataMembers != null && dataMembers.head != null) {
+            System.out.println("-- AST_FUNC_DEC SemantMe\n\t\twhile (dataMembers.head != null)");
+            if (dataMembers.head instanceof TYPE_FUNCTION ||
+                    dataMembers.head instanceof TYPE_VOID ||
+                    dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
+
+                TYPE dm = dataMembers.head;
+                System.out.format("-- AST_FUNC_DEC SemantMe\n\t\t%s is a method/field\n", dm.name);
+
+                if (dm.name.equals(id)) {
+                    System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tdata member name = %s == %s = method name\n", dm.name, id);
+                    if (dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
+                        System.out.println(">> ERROR [line] overloading field and method names isn't allowed");
+                        throw new semanticErrorException("line");
+                    } else if (dataMembers.head instanceof TYPE_VOID
+                            && !this.returnTypeName.name().equals("void")) {
+                        System.out.println(">> ERROR [line] overloading methods isn't allowed");
+                        throw new semanticErrorException("line");
+                    } else if (dataMembers.head instanceof TYPE_FUNCTION &&
+                            !((TYPE_FUNCTION) dm).returnType.name.equals(this.returnTypeName.name())) {
+                        System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tthis.returnTypeName.name() = %s\n", this.returnTypeName.name());
+                        System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tdm.returnType.name = %s\n", ((TYPE_FUNCTION) dm).returnType.name);
+                        System.out.println(">> ERROR [line] overloading methods isn't allowed");
+                        throw new semanticErrorException("line");
+                    }
+                }
+            }
+            dataMembers = dataMembers.tail;
+        }
+    }
+
     public TYPE SemantMe(Optional<String> fatherClassId) {
         System.out.format("-- AST_FUNC_DEC SemantMe%s\n", fatherClassId.isPresent() ? " extends" : "");
 
-        if (fatherClassId.isPresent()) {
-            TYPE_CLASS fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(fatherClassId.get());
-            System.out.println(fatherType.name);
-            TYPE_LIST dataMembers = fatherType.data_members;
 
-            while (dataMembers != null && dataMembers.head != null) {
-                System.out.println("-- AST_FUNC_DEC SemantMe extends while (dataMembers.head != null)");
-                if (dataMembers.head instanceof TYPE_FUNCTION ||
-                        dataMembers.head instanceof TYPE_VOID ||
-                        dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
-
-                    System.out.println("is instance of TYPE_...");
-                    TYPE dm = dataMembers.head;
-
-                    System.out.format("id = %s\n", id);
-                    System.out.format("dm.name = %s\n", dm.name);
-
-                    if (dm.name.equals(id)) {
-                        if (dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
-                            System.out.println(">> ERROR [line] overloading var and func names isnt allowed");
-                            throw new semanticErrorException("line");
-                        } else if (dataMembers.head instanceof TYPE_VOID
-                                && !this.returnTypeName.name().equals("void")) {
-                            System.out.println(">> ERROR [line] overloading func names isnt allowed");
-                            throw new semanticErrorException("line");
-                        } else if (dataMembers.head instanceof TYPE_FUNCTION &&
-                                !((TYPE_FUNCTION) dm).returnType.name.equals(this.returnTypeName.name())) {
-                            System.out.format("this.returnTypeName.name() = %s\n", this.returnTypeName.name());
-                            System.out.format("dm.returnType.name = %s\n", ((TYPE_FUNCTION) dm).returnType.name);
-                            System.out.println(">> ERROR [line] overloading isnt allowed");
-                            throw new semanticErrorException("line");
-                        }
-                    }
-                }
-                dataMembers = dataMembers.tail;
-            }
-        }
 
         TYPE t;
         TYPE returnType = null;
         TYPE_LIST type_list = null;
 
-        /*******************/
-        /* [0] return type */
-        /*******************/
+        // Check that the return type is legal
         returnType = SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
         if (returnType == null) {
             System.out.format(">> ERROR [%d:%d] non existing return type %s\n", 6, 6, returnType);
         }
 
-        // Check That id does NOT exist
+        // Check That the method/function name wasn't used at the outer scopes
         if (SYMBOL_TABLE.getInstance().find(id) != null) {
             System.out.format(">> ERROR [line] function %s already exists in scope\n", id);
             throw new semanticErrorException("line");
         }
 
-        /****************************/
-        /* [1] Begin Function Scope */
-        /****************************/
+        if (fatherClassId.isPresent())
+            checkOverloading(fatherClassId);
+
+        // Begin Function Scope
         SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function);
+        System.out.println("-- AST_FUNC_DEC\n\t\tStart of a new scope for function/method " + this.id);
 
         /***************************/
         /* [2] Semant Input Params */
@@ -130,10 +132,9 @@ public class AST_FUNC_DEC extends AST_Node {
         /*******************/
         body.SemantMe(Optional.empty());
 
-        /*****************/
-        /* [4] End Scope */
-        /*****************/
+        // End Function Scope
         SYMBOL_TABLE.getInstance().endScope();
+        System.out.println("-- AST_FUNC_DEC\n\t\tEnding of a new scope for function/method " + this.id);
 
         /***************************************************/
         /* [5] Enter the Function Type to the Symbol Table */
