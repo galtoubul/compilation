@@ -12,30 +12,17 @@ public class AST_VAR_FIELD extends AST_VAR {
 	public String fieldName;
 
 	public AST_VAR_FIELD(AST_VAR var, String fieldName) {
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
+
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
 		System.out.format("====================== var -> var DOT ID( %s )\n", fieldName);
 
-		/*******************************/
-		/* COPY INPUT DATA NENBERS ... */
-		/*******************************/
 		this.var = var;
 		this.fieldName = fieldName;
 	}
 
-	/*************************************************/
-	/* The printing message for a field var AST node */
-	/*************************************************/
 	public void PrintMe() {
-		/*********************************/
-		/* AST NODE TYPE = AST FIELD VAR */
-		/*********************************/
+
 		System.out.print("AST NODE FIELD VAR\n");
 
 		/**********************************************/
@@ -45,9 +32,6 @@ public class AST_VAR_FIELD extends AST_VAR {
 			var.PrintMe();
 		System.out.format("FIELD NAME( %s )\n", fieldName);
 
-		/***************************************/
-		/* PRINT Node to AST GRAPHVIZ DOT file */
-		/***************************************/
 		AST_GRAPHVIZ.getInstance().logNode(
 				SerialNumber,
 				String.format("FIELD\nVAR\n...->%s", fieldName));
@@ -61,34 +45,30 @@ public class AST_VAR_FIELD extends AST_VAR {
 
 	@Override
 	public TYPE SemantMe(Optional<String> classId) {
+		System.out.println("-- AST_VAR_FIELD SemantMe");
+
 		TYPE t = null;
 		TYPE_CLASS tc = null;
 
-		/******************************/
-		/* [1] Recursively semant var */
-		/******************************/
+		// Recursively semant var
 		if (var != null)
 			t = var.SemantMe(classId);
-		System.out.println("t.name = " + t.name);
-		/*********************************/
-		/* [2] Make sure type is a class */
-		/*********************************/
-		if (t.isClass() == false) {
-			System.out.format(">> ERROR [%d:%d] access %s field of a non-class variable\n", 6, 6, fieldName);
-			System.exit(0);
-		} else {
-			tc = (TYPE_CLASS) t;
-			System.out.println("tc.name = " + tc.name);
+		System.out.println("-- AST_VAR_FIELD\n\t\tt.name = " + t.name);
 
+		// Make sure type is a class
+		if (t.isClass() == false) {
+			System.out.format(">> ERROR [line] access %s field of a non-class variable\n", fieldName);
+			throw new semanticErrorException("line");
+		}
+		else {
+			tc = (TYPE_CLASS) t;
+			System.out.println("-- AST_VAR_FIELD\n\t\ttc.name = " + tc.name);
 		}
 
-		/************************************/
-		/* [3] Look for fiedlName inside tc */
-		/************************************/
-
+		// Look for fieldName inside tc
 		for (TYPE_LIST it = tc.data_members; it != null; it = it.tail) {
-			System.out.println("it.name = " + it.head.name);
-			System.out.println("fieldName = " + fieldName);
+			System.out.println("-- AST_VAR_FIELD\n\t\tit.name = " + it.head.name);
+			System.out.println("-- AST_VAR_FIELD\n\t\tfieldName = " + fieldName);
 
 			if (it.head.name.equals(fieldName)) {
 				if (it.head instanceof TYPE_CLASS_VAR_DEC) {
@@ -98,11 +78,8 @@ public class AST_VAR_FIELD extends AST_VAR {
 			}
 		}
 
-		/*********************************************/
-		/* [4] fieldName does not exist in class var */
-		/*********************************************/
-		System.out.format(">> ERROR [%d:%d] field %s does not exist in class\n", 6, 6, fieldName);
-		System.exit(0);
-		return null;
+		// fieldName does not exist in class var
+		System.out.format(">> ERROR [line] field %s does not exist in class\n", fieldName);
+		throw new semanticErrorException("line");
 	}
 }

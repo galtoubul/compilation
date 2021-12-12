@@ -26,6 +26,7 @@ public class AST_STMT_FUNC extends AST_STMT {
         return funcType;
     }
 
+    // throws an error if the function is used before definition
     public TYPE_FUNCTION checkFuncUseBeforeDefine() {
         TYPE_FUNCTION funcType = getFuncType();
 
@@ -38,6 +39,7 @@ public class AST_STMT_FUNC extends AST_STMT {
         return funcType;
     }
 
+    // throws an error if args list is empty and params list isn't, or vice versa
     public void checkForEmptyAndNonEmptyLists(TYPE_LIST funcParamsList) {
         // empty arguments list, but non-empty parameters list
         if (this.argsList == null && funcParamsList != null) {
@@ -51,6 +53,8 @@ public class AST_STMT_FUNC extends AST_STMT {
         }
     }
 
+    // throws an error if there isn't a match between the parameters list and arguments list
+    // (the match includes number of items and items' types)
     public void checkMatchingParamsArgs(TYPE_LIST argsTypes, TYPE_LIST paramsTypes) {
         while (argsTypes != null && argsTypes.head != null) {
 
