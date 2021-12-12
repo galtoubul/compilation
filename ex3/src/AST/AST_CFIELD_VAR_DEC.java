@@ -11,20 +11,11 @@ public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
         this.var = var;
     }
 
-    /**************************************************************/
-    /* The printing message for a cfield var declaration AST node */
-    /**************************************************************/
     public void PrintMe() {
-        /**************************************/
-        /* AST NODE TYPE = AST CFIELD VAR DEC */
-        /**************************************/
         System.out.print("AST NODE CFIELD VAR DEC\n");
         if (var != null)
             var.PrintMe();
 
-        /**********************************/
-        /* PRINT to AST GRAPHVIZ DOT file */
-        /**********************************/
         AST_GRAPHVIZ.getInstance().logNode(
                 SerialNumber,
                 "CFIELD\nVAR DEC\n");
@@ -38,6 +29,7 @@ public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
 
     @Override
     public TYPE SemantMe(Optional<String> classId) {
+        System.out.println("-- AST_CFIELD_VAR_DEC SemantMe");
         return this.var.SemantMe(classId);
     }
 }
