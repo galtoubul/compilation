@@ -3,7 +3,6 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
-import SYMBOL_TABLE.SYMBOL_TABLE_ENTRY;
 
 import TYPES.*;
 
@@ -67,18 +66,17 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         }
 
         // Check that id does NOT exist at the same scope
-        for (SYMBOL_TABLE_ENTRY e : SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
-            System.out.println("-- AST_VAR_DECLERATION\n\t\tsymbol table entry name = " + e.name);
-            System.out.println("-- AST_VAR_DECLERATION\n\t\tid = " + id);
-
-            if (e.name.equals(id))
-                System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n", 2, 2, id);
+        if (SYMBOL_TABLE.getInstance().isInScope(id)) {
+            System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n",
+                    2, 2, id);
+            throw new semanticErrorException("line");
         }
 
         // Done with all checks -> insert the variable to the Symbol Table
         SYMBOL_TABLE.getInstance().enter(id, t);
         TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
-        System.out.format("-- AST_VAR_DECLERATION\n\t\tinserted variable %s of type %s to the symbol table\n", var.name, var.t.name);
+        System.out.format("-- AST_VAR_DECLERATION\n\t\tinserted variable %s of type %s to the symbol table\n", var.name,
+                var.t.name);
         return var;
     }
 }

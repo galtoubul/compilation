@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
-import SYMBOL_TABLE.SYMBOL_TABLE_ENTRY;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_VOID;
@@ -69,15 +68,11 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
             System.exit(0);
         }
 
-        /************************************/
-        /* [2] Check That id does NOT exist */
-        /************************************/
-        for (SYMBOL_TABLE_ENTRY e : SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
-            System.out.println("e.name = " + e.name);
-            System.out.println("id = " + id);
-
-            if (e.name.equals(id))
-                System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n", 2, 2, id);
+        // Check that id does NOT exist at the same scope
+        if (SYMBOL_TABLE.getInstance().isInScope(id)) {
+            System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n",
+                    2, 2, id);
+            throw new semanticErrorException("line");
         }
 
         /******************************************************/

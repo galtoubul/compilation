@@ -85,19 +85,21 @@ public class AST_VAR_FIELD extends AST_VAR {
 		}
 
 		System.out.format("-- AST_VAR_FIELD\n\t\tfield %s does not exist in class %s\n", fieldName, varType.name);
-		TYPE_CLASS varTypeFather = ((TYPE_CLASS) varType).father;
+		Optional<TYPE_CLASS> varTypeFather = ((TYPE_CLASS) varType).father;
 
 		// Look for fieldName inside varTypeClass's ancestors
-		while (varTypeFather != null) {
-			System.out.format("-- AST_VAR_FIELD\n\t\tclass %s extends class %s\n", varType.name, varTypeFather.name);
+		while (varTypeFather.isPresent()) {
+			System.out.format("-- AST_VAR_FIELD\n\t\tclass %s extends class %s\n", varType.name,
+					varTypeFather.get().name);
 
-			fieldType = lookForFieldNameInClassDataMembers(varTypeFather);
+			fieldType = lookForFieldNameInClassDataMembers(varTypeFather.get());
 			if (fieldType != null) {
 				return fieldType;
 			}
-			System.out.format("-- AST_VAR_FIELD\n\t\tfield %s does not exist in class %s\n", fieldName, varTypeFather.name);
+			System.out.format("-- AST_VAR_FIELD\n\t\tfield %s does not exist in class %s\n", fieldName,
+					varTypeFather.get().name);
 
-			varTypeFather = varTypeFather.father;
+			varTypeFather = varTypeFather.get().father;
 		}
 
 		// fieldName does not exist in class var
