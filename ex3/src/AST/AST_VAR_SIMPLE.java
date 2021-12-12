@@ -38,7 +38,12 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 	@Override
 	public TYPE SemantMe(Optional<String> classId) {
 		System.out.format("-- AST_VAR_SIMPLE SemantMe, var name = %s\n", name);
+		// TODO find fields
 		TYPE t = SYMBOL_TABLE.getInstance().find(name);
+		if (t == null) {
+			System.out.format(">> ERROR [%d:%d] variable %s does not exists in scope\n", 2, 2, name);
+			System.exit(0);
+		}
 		return t;
 	}
 }
