@@ -89,7 +89,6 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         return null;
     }
 
-    @Override
     public TYPE SemantMe(String classId) {
         TYPE t;
 
