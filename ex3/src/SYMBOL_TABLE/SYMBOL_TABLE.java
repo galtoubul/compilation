@@ -114,7 +114,7 @@ public class SYMBOL_TABLE {
 	}
 
 	// Retreive the type of the current scope in the symbol table
-	public ScopeType currentScope() {
+	public ScopeType currentScopeType() {
 		for (SYMBOL_TABLE_ENTRY entry = this.top; entry != null; entry = entry.prevtop) {
 			if (entry.name == "SCOPE-BOUNDARY") {
 				// We've reached the scope boundry

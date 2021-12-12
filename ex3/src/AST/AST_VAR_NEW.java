@@ -99,7 +99,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
 
         // If the initialization is of a class field, it must be initialized with a
         // constant; and a new-expression is not a constant
-        if (SYMBOL_TABLE.getInstance().currentScope() == ScopeType.Class) {
+        if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class) {
             System.out.format(">> ERROR [%d:%d] class fields can only be initialized with constant values\n", 2, 2, id);
             System.exit(0);
         }

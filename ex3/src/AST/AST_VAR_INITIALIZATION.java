@@ -88,7 +88,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
 
         // If the initialization is of a class field, it must be initialized with a
         // constant
-        if (SYMBOL_TABLE.getInstance().currentScope() == ScopeType.Class &&
+        if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class &&
                 !(initialValue instanceof AST_EXP_INT) &&
                 !(initialValue instanceof AST_EXP_STRING) &&
                 !(initialValue instanceof AST_EXP_NIL)) {
