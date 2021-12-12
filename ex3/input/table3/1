@@ -1,1 +1,3 @@
-void foo(int x) { PrintInt(x); }
+class Father { int i; }
+
+void foo(int x, Father f) { PrintInt(x); }
