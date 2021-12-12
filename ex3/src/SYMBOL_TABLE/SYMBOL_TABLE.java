@@ -328,11 +328,14 @@ public class SYMBOL_TABLE {
 									null)));
 			instance.enter(
 					"PrintString",
+					new TYPE_FUNCTION(TYPE_VOID.getInstance(),"PrintString",new TYPE_LIST(TYPE_STRING.getInstance(),null)));
+			instance.enter(
+					"PrintTrace",
 					new TYPE_FUNCTION(
 							TYPE_VOID.getInstance(),
-							"PrintInt",
+							"PrintTrace",
 							new TYPE_LIST(
-									TYPE_STRING.getInstance(),
+									null,
 									null)));
 
 		}
