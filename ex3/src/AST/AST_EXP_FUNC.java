@@ -77,7 +77,8 @@ public class AST_EXP_FUNC extends AST_EXP {
         }
     }
 
-    // throws an error if there isn't a match between the parameters list and arguments list
+    // throws an error if there isn't a match between the parameters list and
+    // arguments list
     // (the match includes number of items and items' types)
     public void checkMatchingParamsArgs(TYPE_LIST argsTypes, TYPE_LIST paramsTypes) {
         while (argsTypes != null && argsTypes.head != null) {
@@ -88,7 +89,8 @@ public class AST_EXP_FUNC extends AST_EXP {
             // The following search is meant to find objects
             TYPE argType = SYMBOL_TABLE.getInstance().find(argsTypes.head.name);
 
-            // argType isn't a variable, trying to check if it is a field of an object (<object_name>.<field_name>)
+            // argType isn't a variable, trying to check if it is a field of an object
+            // (<object_name>.<field_name>)
             if (argType == null && argsList.head instanceof AST_EXP_VAR) {
 
                 // <object_name>.<field_name> = <varSimple>.<varSimpleField>
@@ -103,16 +105,16 @@ public class AST_EXP_FUNC extends AST_EXP {
 
                 // varSimpleClassTypeDataMembers = the data members of class varSimpleClassType
                 TYPE_LIST varSimpleClassTypeDataMembers = varSimpleClassType.data_members;
-                System.out.println("-- AST_STMT_FUNC \n\t\tvarSimpleClassType.data_members.head.name" + varSimpleClassType.data_members.head.name);
+                System.out.println("-- AST_STMT_FUNC \n\t\tvarSimpleClassType.data_members.head.name"
+                        + varSimpleClassType.data_members.head.name);
 
                 // check if varSimpleField is a data member of varSimpleClassType
                 boolean argIsEqual = false;
                 while (varSimpleClassTypeDataMembers != null && varSimpleClassTypeDataMembers.head != null) {
 
-                    if (!varSimpleClassTypeDataMembers.head.name.equals(varSimpleField)){
+                    if (!varSimpleClassTypeDataMembers.head.name.equals(varSimpleField)) {
                         varSimpleClassTypeDataMembers = varSimpleClassTypeDataMembers.tail;
-                    }
-                    else {
+                    } else {
                         // check for type equality between the parameter and the argument
                         TYPE dataMemberType = ((TYPE_CLASS_VAR_DEC) varSimpleClassTypeDataMembers.head).t;
                         TYPE paramType = SYMBOL_TABLE.getInstance().find(paramsTypes.head.name);
@@ -126,11 +128,10 @@ public class AST_EXP_FUNC extends AST_EXP {
                         }
                     }
                 }
-                if (!argIsEqual){
+                if (!argIsEqual) {
                     System.out.format(">> ERROR [line] arg class doesn't match param class\n");
                     throw new semanticErrorException("line");
-                }
-                else {
+                } else {
                     paramsTypes = paramsTypes.tail;
                     argsTypes = argsTypes.tail;
                     continue;
@@ -139,17 +140,21 @@ public class AST_EXP_FUNC extends AST_EXP {
 
             TYPE paramType = SYMBOL_TABLE.getInstance().find(paramsTypes.head.name);
 
-            // the argument isn't an instance of a class
-            boolean argIsntInstance = !(argType instanceof TYPE_CLASS);
-            // the parameter isn't of the same type of the argument
-            boolean argAndParamArentOfTheSameType = !paramType.getClass().equals(argType.getClass());
-            boolean condA = argIsntInstance && argAndParamArentOfTheSameType;
+            // // the argument isn't an instance of a class
+            // boolean argIsntInstance = !(argType instanceof TYPE_CLASS);
+            // // the parameter isn't of the same type of the argument
+            // boolean argAndParamArentOfTheSameType =
+            // !paramType.getClass().equals(argType.getClass());
+            // boolean condA = argIsntInstance && argAndParamArentOfTheSameType;
 
-            // the argument and the parameter are instances of different classes
-            boolean condB = (argType instanceof TYPE_CLASS && paramType instanceof TYPE_CLASS) && !((TYPE_CLASS)paramType).isAncestor((TYPE_CLASS) argType);
+            // // the argument and the parameter are instances of different classes
+            // boolean condB = (argType instanceof TYPE_CLASS && paramType instanceof
+            // TYPE_CLASS)
+            // && !((TYPE_CLASS) paramType).isAncestor((TYPE_CLASS) argType);
 
-            if (condA || condB) {
-                System.out.format(">> ERROR [line] type(arg) = %s != %s = type(param)\n",argsTypes.head.name ,paramsTypes.head.name);
+            if (!TYPE.isSubtype(argType, paramType)) {
+                System.out.format(">> ERROR [line] type(arg) = %s != %s = type(param)\n", argsTypes.head.name,
+                        paramsTypes.head.name);
                 throw new semanticErrorException("line");
             }
 

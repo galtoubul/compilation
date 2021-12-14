@@ -97,25 +97,40 @@ public class AST_FUNC_DEC extends AST_Node {
         }
 
         boolean isMethod = false;
-        // Check That the method/function name wasn't used at one of the outer scopes
-        for (SYMBOL_TABLE_ENTRY e : SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
-            System.out.println("cheking for method, type is " + e.type + " name is " + e.name);
-            if (e.type.isClass()) {
-                isMethod = true;
-                for (SYMBOL_TABLE_ENTRY e2 : SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
-                    if (e2.name.equals(id)) {
-                        System.out.format(">> ERROR [line] method %s is already exists at one of the outer scopes\n", id);
-                        throw new semanticErrorException("line");
-                    }
-                }
-                break;
-            }
-        }
 
-        if (!isMethod && SYMBOL_TABLE.getInstance().find(id) != null) {
+        // TODO Deal with methods
+
+        // Check that id does NOT exist at the same scope
+        if (SYMBOL_TABLE.getInstance().find(id) != null) {
             System.out.format(">> ERROR [line] function %s is already exists at one of the outer scopes\n", id);
             throw new semanticErrorException("line");
         }
+
+        // // Check That the method/function name wasn't used at one of the outer scopes
+        // for (SYMBOL_TABLE_ENTRY e :
+        // SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
+        // System.out.println("cheking for method, type is " + e.type + " name is " +
+        // e.name);
+        // if (e.type.isClass()) {
+        // isMethod = true;
+        // for (SYMBOL_TABLE_ENTRY e2 :
+        // SYMBOL_TABLE.scopes.get(SYMBOL_TABLE.currentScope)) {
+        // if (e2.name.equals(id)) {
+        // System.out.format(">> ERROR [line] method %s is already exists at one of the
+        // outer scopes\n",
+        // id);
+        // throw new semanticErrorException("line");
+        // }
+        // }
+        // break;
+        // }
+        // }
+
+        // if (!isMethod && SYMBOL_TABLE.getInstance().find(id) != null) {
+        // System.out.format(">> ERROR [line] function %s is already exists at one of
+        // the outer scopes\n", id);
+        // throw new semanticErrorException("line");
+        // }
 
         // if this is a method of a class that extends another class then check for
         // overloading violations

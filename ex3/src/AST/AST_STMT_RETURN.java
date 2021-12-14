@@ -3,10 +3,9 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
-import SYMBOL_TABLE.SYMBOL_TABLE_ENTRY;
+import SYMBOL_TABLE.ScopeEntry;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
-import TYPES.TYPE_FOR_SCOPE_BOUNDARIES;
 import TYPES.TYPE_FUNCTION;
 import TYPES.TYPE_VOID;
 
@@ -52,7 +51,7 @@ public class AST_STMT_RETURN extends AST_STMT {
     public TYPE SemantMe(Optional<String> classId) {
         // It is guaranteed syntacticly thet return statements are only present in
         // funciton declarations
-        TYPE_FOR_SCOPE_BOUNDARIES scope = SYMBOL_TABLE.getInstance().findScopeType(ScopeType.Function).get();
+        ScopeEntry scope = SYMBOL_TABLE.getInstance().findScopeType(ScopeType.Function).get();
         TYPE returnType = ((TYPE_FUNCTION) SYMBOL_TABLE.getInstance().find(scope.scopeName)).returnType;
 
         if (this.exp.isPresent()) {
