@@ -50,14 +50,12 @@ public class AST_EXP_LIST extends AST_Node {
 	public TYPE_LIST SemantMe(Optional<String> classId) {
 		System.out.println("-- AST_EXP_LIST SemantMe");
 
-		if (tail == null) {
-			return new TYPE_LIST(
-					head.SemantMe(classId),
-					null);
+		if (this.head == null) {
+			return new TYPE_LIST(null, null);
+		} else if (tail == null) {
+			return new TYPE_LIST(head.SemantMe(classId), null);
 		} else {
-			return new TYPE_LIST(
-					head.SemantMe(classId),
-					tail.SemantMe(classId));
+			return new TYPE_LIST(head.SemantMe(classId), tail.SemantMe(classId));
 		}
 	}
 
