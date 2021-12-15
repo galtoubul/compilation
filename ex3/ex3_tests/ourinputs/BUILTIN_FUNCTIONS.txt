@@ -1,0 +1,5 @@
+void foo() {
+    PrintTrace();
+    PrintInt(5);
+    PrintString("hello");
+}

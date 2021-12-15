@@ -1,0 +1,4 @@
+class Bar
+{
+    string s := "foo";
+}

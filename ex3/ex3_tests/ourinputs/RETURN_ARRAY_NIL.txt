@@ -1,0 +1,5 @@
+array IntArray = int[];
+
+IntArray foo() {
+    return nil;
+}

@@ -1,0 +1,12 @@
+void foo(int x, int y) {
+    int a := x - y;
+    int b := x + y;
+    int c := x * y;
+    int d := x / y;
+    int e := x < y;
+    int z := x > y;
+}
+
+void bar(string x, string y) {
+    string s := x + y;
+}

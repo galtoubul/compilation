@@ -1,0 +1,8 @@
+void foo() {
+    int x := 5;
+    if (x) {
+        while (x) {
+            x := x - 1;
+        }
+    }
+}

@@ -1,0 +1,4 @@
+class Foo
+{
+    int j := 1 + 2;
+}
