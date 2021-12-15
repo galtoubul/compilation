@@ -77,8 +77,12 @@ public class AST_EXP_FUNC extends AST_EXP {
         while (argsTypes != null && argsTypes.head != null) {
 
             if (!TYPE.isSubtype(argsTypes.head, paramsTypes.head)) {
+<<<<<<< HEAD
                 System.out.format(">> ERROR [" + lineNum + "] type(arg) = %s != %s = type(param)\n",
                         argsTypes.head.name,
+=======
+                System.out.format(">> ERROR [" + lineNum + "] type(arg) = %s != %s = type(param)\n", argsTypes.head.name,
+>>>>>>> 2e2d63a3f7a1d9fe318725355861e5921d7ff407
                         paramsTypes.head.name);
                 throw new SemanticErrorException("" + lineNum);
             }

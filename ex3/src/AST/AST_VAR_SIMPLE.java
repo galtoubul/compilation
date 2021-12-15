@@ -33,12 +33,12 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		Optional<TYPE> type = SYMBOL_TABLE.getInstance().findPotentialMember(name);
 		if (type.isPresent()) {
 			if (type.get().isFunction()) {
-				System.out.format(">> ERROR [%s] '%s' is a not a variable\n", lineNum, name);
+				System.out.format(">> ERROR [%d] '%s' is a not a variable\n", lineNum, name);
 			} else {
 				return type.get();
 			}
 		} else {
-			System.out.format(">> ERROR [%s] variable '%s' does not exist at the current scope/outer scopes\n", lineNum,
+			System.out.format(">> ERROR [%d] variable '%s' does not exist at the current scope/outer scopes\n", lineNum,
 					name);
 		}
 
