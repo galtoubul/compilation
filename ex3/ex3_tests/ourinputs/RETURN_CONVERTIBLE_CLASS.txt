@@ -1,0 +1,12 @@
+class Base {
+    int i;
+}
+
+class Derived extends Base {
+    int j;
+}
+
+Base foo() {
+    Derived result := new Derived;
+    return result;
+}

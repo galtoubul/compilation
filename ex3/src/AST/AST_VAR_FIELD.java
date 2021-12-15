@@ -74,8 +74,8 @@ public class AST_VAR_FIELD extends AST_VAR {
 
 		// Make sure varType is a class
 		if (!varType.isClass()) {
-			System.out.format(">> ERROR [line] access %s field of a non-class variable\n", fieldName);
-			throw new semanticErrorException("line");
+			System.out.format(">> ERROR [" + lineNum + "] access %s field of a non-class variable\n", fieldName);
+			throw new SemanticErrorException("" + lineNum);
 		}
 
 		Optional<TYPE> field = ((TYPE_CLASS) varType).lookupMemberInAncestors(this.fieldName);
@@ -83,11 +83,12 @@ public class AST_VAR_FIELD extends AST_VAR {
 			if (field.get() instanceof TYPE_CLASS_VAR_DEC) {
 				return ((TYPE_CLASS_VAR_DEC) field.get()).type;
 			}
-			System.out.format(">> ERROR [line] '%s' is a method, not a field variable\n", fieldName);
-			throw new semanticErrorException("line");
+			System.out.format(">> ERROR [" + lineNum + "] '%s' is a method, not a field variable\n", fieldName);
+			throw new SemanticErrorException("" + lineNum);
 		}
 
-		System.out.format(">> ERROR [line] there is no field named '%s' in class '%s'\n", fieldName, varType.name);
-		throw new semanticErrorException("line");
+		// fieldName does not exist in class var
+		System.out.format(">> ERROR [" + lineNum + "] there is no field named '%s' in class '%s'\n", fieldName, varType.name);
+		throw new SemanticErrorException("" + lineNum);
 	}
 }

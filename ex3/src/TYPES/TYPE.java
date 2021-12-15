@@ -27,6 +27,10 @@ public abstract class TYPE {
 		return this instanceof TYPE_FUNCTION;
 	}
 
+	public boolean isType() {
+		return this == TYPE_INT.getInstance() || this == TYPE_STRING.getInstance() || this.isClass() || this.isArray();
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof TYPE)

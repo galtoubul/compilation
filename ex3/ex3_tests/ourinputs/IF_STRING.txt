@@ -1,0 +1,6 @@
+void foo() {
+    string x := "asd";
+    if (x) {
+        x := x;
+    }
+}

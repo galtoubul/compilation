@@ -45,7 +45,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
                         System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tid = %s\n", id);
                         System.out.format("- AST_FUNC_DEC SemantMe\n\t\tdm.name = %s\n", dm.name);
                         System.out.println(">> ERROR [line] overloading var and func names isn't allowed");
-                        throw new semanticErrorException("line");
+                        throw new SemanticErrorException("" + lineNum);
                     }
                 }
                 dataMembers = dataMembers.tail;
@@ -69,7 +69,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         if (SYMBOL_TABLE.getInstance().isInScope(id)) {
             System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n",
                     2, 2, id);
-            throw new semanticErrorException("line");
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // Done with all checks -> insert the variable to the Symbol Table

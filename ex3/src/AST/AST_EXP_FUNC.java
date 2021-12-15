@@ -50,14 +50,14 @@ public class AST_EXP_FUNC extends AST_EXP {
             if (type.get().isFunction()) {
                 return (TYPE_FUNCTION) type.get();
             } else {
-                System.out.format(">> ERROR [line] '%s' is a not a funciton\n", this.id);
+                System.out.format(">> ERROR [%d] '%s' is a not a funciton\n", lineNum, this.id);
             }
         } else {
-            System.out.format(">> ERROR [line] funciton '%s' does not exist at the current scope/outer scopes\n",
-                    this.id);
+            System.out.format(">> ERROR [%d] funciton '%s' does not exist at the current scope/outer scopes\n",
+                    lineNum, this.id);
         }
 
-        throw new semanticErrorException("line");
+        throw new SemanticErrorException("" + lineNum);
     }
 
     // throws an error if there isn't a match between the parameters list and
@@ -67,19 +67,20 @@ public class AST_EXP_FUNC extends AST_EXP {
 
         // Compare the number of parameters and arguments
         if (argsTypes.length() != paramsTypes.length()) {
-            System.out.format(">> ERROR [line] %s arguments in call of '%s'\n",
+            System.out.format(">> ERROR [" + lineNum + "] %s arguments in call of '%s'\n",
                     argsTypes.length() < paramsTypes.length() ? "missing" : "too many",
                     this.id);
-            throw new semanticErrorException("line");
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // Match the types of each argument to that of a parameter
         while (argsTypes != null && argsTypes.head != null) {
 
             if (!TYPE.isSubtype(argsTypes.head, paramsTypes.head)) {
-                System.out.format(">> ERROR [line] type(arg) = %s != %s = type(param)\n", argsTypes.head.name,
+                System.out.format(">> ERROR [" + lineNum + "] type(arg) = %s != %s = type(param)\n",
+                        argsTypes.head.name,
                         paramsTypes.head.name);
-                throw new semanticErrorException("line");
+                throw new SemanticErrorException("" + lineNum);
             }
 
             paramsTypes = paramsTypes.tail;

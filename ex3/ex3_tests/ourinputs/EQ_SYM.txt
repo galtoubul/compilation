@@ -1,0 +1,10 @@
+class Foo { int j; }
+class Bar extends Foo { int i; }
+int foobar(Foo bar, Bar baz)
+{
+    return bar = baz;
+}
+int foobaz(Foo bar, Bar baz)
+{
+    return baz = bar;
+}

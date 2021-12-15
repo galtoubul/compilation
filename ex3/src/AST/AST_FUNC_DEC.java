@@ -66,11 +66,11 @@ public class AST_FUNC_DEC extends AST_Node {
                             dm.name, id);
                     if (dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
                         System.out.println(">> ERROR [line] overloading field and method names isn't allowed");
-                        throw new semanticErrorException("line");
+                        throw new SemanticErrorException("" + lineNum);
                     } else if (dataMembers.head instanceof TYPE_VOID
                             && !this.returnTypeName.name().equals("void")) {
                         System.out.println(">> ERROR [line] overloading methods isn't allowed");
-                        throw new semanticErrorException("line");
+                        throw new SemanticErrorException("" + lineNum);
                     } else if (dataMembers.head instanceof TYPE_FUNCTION &&
                             !((TYPE_FUNCTION) dm).returnType.name.equals(this.returnTypeName.name())) {
                         System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tthis.returnTypeName.name() = %s\n",
@@ -78,7 +78,7 @@ public class AST_FUNC_DEC extends AST_Node {
                         System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tdm.returnType.name = %s\n",
                                 ((TYPE_FUNCTION) dm).returnType.name);
                         System.out.println(">> ERROR [line] overloading methods isn't allowed");
-                        throw new semanticErrorException("line");
+                        throw new SemanticErrorException("" + lineNum);
                     }
                 }
             }
@@ -92,14 +92,14 @@ public class AST_FUNC_DEC extends AST_Node {
         // Check that the return type is legal
         TYPE returnType = SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
         if (returnType == null) {
-            System.out.format(">> ERROR [line] non existing return type\n");
-            throw new semanticErrorException("line");
+            System.out.format(">> ERROR [" + lineNum + "] non existing return type\n");
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // Check that id does NOT exist at the same scope
         if (SYMBOL_TABLE.getInstance().isInScope(id)) {
-            System.out.format(">> ERROR [line] '%s' is already defined\n", id);
-            throw new semanticErrorException("line");
+            System.out.format(">> ERROR [" + lineNum + "] '%s' is already defined\n", id);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // if this is a method of a class that extends another class then check for

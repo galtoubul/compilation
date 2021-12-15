@@ -1,0 +1,15 @@
+class Base {
+    int i;
+}
+
+class Derived extends Base {
+    int j;
+}
+
+array BaseArr = Base[];
+array DerivedArr = Derived[];
+
+BaseArr foo() {
+    DerivedArr result := new Derived[8];
+    return result;
+}

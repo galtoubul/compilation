@@ -46,13 +46,13 @@ public class AST_CLASS_DEC extends AST_Node {
 
             // Didn't find father in the lookup
             if (fatherType == null) {
-                System.out.format(">> ERROR [line] no class named '%s'", father.get());
-                throw new semanticErrorException("line");
+                System.out.format(">> ERROR [" + lineNum + "] no class named '%s'", father.get());
+                throw new SemanticErrorException("" + lineNum);
             }
 
             if (!fatherType.isClass()) {
-                System.out.format(">> ERROR [line] '%s' is not a class\n", father.get());
-                throw new semanticErrorException("line");
+                System.out.format(">> ERROR [" + lineNum + "] '%s' is not a class\n", father.get());
+                throw new SemanticErrorException("" + lineNum);
             }
 
             base = Optional.of((TYPE_CLASS) fatherType);

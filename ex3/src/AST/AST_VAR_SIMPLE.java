@@ -3,11 +3,7 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
-import SYMBOL_TABLE.ScopeEntry;
-import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
-import TYPES.TYPE_CLASS_VAR_DEC;
-import TYPES.TYPE_FUNCTION;
 
 public class AST_VAR_SIMPLE extends AST_VAR {
 
@@ -37,14 +33,15 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		Optional<TYPE> type = SYMBOL_TABLE.getInstance().findPotentialMember(name);
 		if (type.isPresent()) {
 			if (type.get().isFunction()) {
-				System.out.format(">> ERROR [line] '%s' is a not a variable\n", name);
+				System.out.format(">> ERROR [%s] '%s' is a not a variable\n", lineNum, name);
 			} else {
 				return type.get();
 			}
 		} else {
-			System.out.format(">> ERROR [line] variable '%s' does not exist at the current scope/outer scopes\n", name);
+			System.out.format(">> ERROR [%s] variable '%s' does not exist at the current scope/outer scopes\n", lineNum,
+					name);
 		}
 
-		throw new semanticErrorException("line");
+		throw new SemanticErrorException("" + lineNum);
 	}
 }

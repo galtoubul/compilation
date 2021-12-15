@@ -48,8 +48,8 @@ public class AST_EXP_VAR extends AST_EXP {
 
 		// won't reach this point if varType = null since the above SemantMe should throw an error
 		if (varType == null) {
-			System.out.format(">> ERROR [line] parameter use before define\n");
-			throw new semanticErrorException("line");
+			System.out.format(">> ERROR [" + lineNum + "] parameter use before define\n");
+			throw new SemanticErrorException("" + lineNum);
 		}
 
 		System.out.println("-- AST_EXP_VAR\n\t\tvar type = " + varType.name);

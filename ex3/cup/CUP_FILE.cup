@@ -8,11 +8,13 @@ import java.util.Optional;
 parser code 
 {:
 	public Lexer lexer;
+	public int prevTokenLine;
 
 	public Parser(Lexer lexer)
 	{
 		super(lexer);
 		this.lexer = lexer;
+		this.prevTokenLine = 0;
 	}
 	public void report_error(String message, Object info)
 	{
@@ -32,6 +34,7 @@ parser code
 scan with
 {:
 	Symbol s;
+	this.prevTokenLine = lexer.getLine();
 	s = lexer.next_token();
 	//System.out.print(s.sym);
 	System.out.print("[");
@@ -135,101 +138,101 @@ start with program;
 /* DERIVATION RULES */
 /********************/
 
-program     ::=     decList:dl                           {: RESULT = new AST_PROGRAM(dl);    :}
+program     ::=     decList:dl                           {: RESULT = new AST_PROGRAM(dl); RESULT.lineNum = parser.prevTokenLine;       :}
                     ;
 
-decList     ::=     dec:d decList:l		                 {: RESULT = new AST_DEC_LIST(d, l);    :}
-                    | dec:d			    	             {: RESULT = new AST_DEC_LIST(d, null); :}
+decList     ::=     dec:d decList:l		                 {: RESULT = new AST_DEC_LIST(d, l); RESULT.lineNum = parser.prevTokenLine;    :}
+                    | dec:d			    	             {: RESULT = new AST_DEC_LIST(d, null); RESULT.lineNum = parser.prevTokenLine; :}
                     ;
 
-stmtList	::=		stmt:s	stmtList:l		             {: RESULT = new AST_STMT_LIST(s, l);    :}
-					| stmt:s				             {: RESULT = new AST_STMT_LIST(s, null); :}
+stmtList	::=		stmt:s	stmtList:l		             {: RESULT = new AST_STMT_LIST(s, l); RESULT.lineNum = parser.prevTokenLine;   :}
+					| stmt:s				             {: RESULT = new AST_STMT_LIST(s, null); RESULT.lineNum = parser.prevTokenLine;:}
 					;
 
-var			::=		ID:name								 {: RESULT = new AST_VAR_SIMPLE(name);        :}
-					| var:v DOT ID:fieldName			 {: RESULT = new AST_VAR_FIELD(v, fieldName); :}
-					| var:v LBRACK exp:e RBRACK			 {: RESULT = new AST_VAR_SUBSCRIPT(v, e);     :}
+var			::=		ID:name								 {: RESULT = new AST_VAR_SIMPLE(name); RESULT.lineNum = parser.prevTokenLine;       :}
+					| var:v DOT ID:fieldName			 {: RESULT = new AST_VAR_FIELD(v, fieldName); RESULT.lineNum = parser.prevTokenLine;:}
+					| var:v LBRACK exp:e RBRACK			 {: RESULT = new AST_VAR_SUBSCRIPT(v, e); RESULT.lineNum = parser.prevTokenLine;    :}
 					;
 
-dec         ::=     varDec:v                             {: RESULT = new AST_DEC_VAR_DEC(v); :}
-                    | classDec:v                         {: RESULT = new AST_DEC_CLASS_DEC(v); :}
-                    | funcDec:v                          {: RESULT = new AST_DEC_FUNC_DEC(v); :}
-                    | arrayTypedef:v                     {: RESULT = new AST_DEC_ARRAY_TYPEDEF(v); :}
+dec         ::=     varDec:v                             {: RESULT = new AST_DEC_VAR_DEC(v); RESULT.lineNum = parser.prevTokenLine;:}
+                    | classDec:v                         {: RESULT = new AST_DEC_CLASS_DEC(v); RESULT.lineNum = parser.prevTokenLine;:}
+                    | funcDec:v                          {: RESULT = new AST_DEC_FUNC_DEC(v); RESULT.lineNum = parser.prevTokenLine;:}
+                    | arrayTypedef:v                     {: RESULT = new AST_DEC_ARRAY_TYPEDEF(v); RESULT.lineNum = parser.prevTokenLine;:}
                     ;
 
-stmt		::=		varDec:v                                                    {: RESULT = new AST_STMT_VAR_DEC(v); :}
-                    | var:v ASSIGN exp:e SEMICOLON								{: RESULT = new AST_STMT_ASSIGN(v,e);       :}
-					| IF    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_IF(   cond,body);  :}
-					| WHILE LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_WHILE(cond,body);  :}
-					| var:v ASSIGN newExp:e SEMICOLON							{: RESULT = new AST_STMT_ASSIGN_NEW(v,e);   :}
-					| RETURN SEMICOLON                                          {: RESULT = new AST_STMT_RETURN(Optional.empty());          :}
-					| RETURN exp:e SEMICOLON                                    {: RESULT = new AST_STMT_RETURN(Optional.of(e));     :}
-					| ID:s LPAREN expList:pl RPAREN SEMICOLON                   {: RESULT = new AST_STMT_FUNC(s, pl);       :}
-                    | var:v DOT ID:s LPAREN expList:pl RPAREN SEMICOLON         {: RESULT = new AST_STMT_METHOD(v, s, pl);  :}
-                    | ID:s LPAREN RPAREN SEMICOLON                              {: RESULT = new AST_STMT_FUNC(s, null);       :}
-                    | var:v DOT ID:s LPAREN RPAREN SEMICOLON                    {: RESULT = new AST_STMT_METHOD(v, s, null);  :}
+stmt		::=		varDec:v                                                    {: RESULT = new AST_STMT_VAR_DEC(v); RESULT.lineNum = parser.prevTokenLine;:}
+                    | var:v ASSIGN exp:e SEMICOLON								{: RESULT = new AST_STMT_ASSIGN(v,e); RESULT.lineNum = parser.prevTokenLine;:}
+					| IF    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_IF(   cond,body); RESULT.lineNum = parser.prevTokenLine;:}
+					| WHILE LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_WHILE(cond,body); RESULT.lineNum = parser.prevTokenLine;:}
+					| var:v ASSIGN newExp:e SEMICOLON							{: RESULT = new AST_STMT_ASSIGN_NEW(v,e); RESULT.lineNum = parser.prevTokenLine;:}
+					| RETURN SEMICOLON                                          {: RESULT = new AST_STMT_RETURN(Optional.empty()); RESULT.lineNum = parser.prevTokenLine;:}
+					| RETURN exp:e SEMICOLON                                    {: RESULT = new AST_STMT_RETURN(Optional.of(e)); RESULT.lineNum = parser.prevTokenLine;:}
+					| ID:s LPAREN expList:pl RPAREN SEMICOLON                   {: RESULT = new AST_STMT_FUNC(s, pl); RESULT.lineNum = parser.prevTokenLine;:}
+                    | var:v DOT ID:s LPAREN expList:pl RPAREN SEMICOLON         {: RESULT = new AST_STMT_METHOD(v, s, pl); RESULT.lineNum = parser.prevTokenLine;:}
+                    | ID:s LPAREN RPAREN SEMICOLON                              {: RESULT = new AST_STMT_FUNC(s, null); RESULT.lineNum = parser.prevTokenLine;:}
+                    | var:v DOT ID:s LPAREN RPAREN SEMICOLON                    {: RESULT = new AST_STMT_METHOD(v, s, null); RESULT.lineNum = parser.prevTokenLine;:}
 					;
 
-varDec      ::=     type:t ID:s SEMICOLON                                                 {: RESULT = new AST_VAR_DECLERATION(t,s); :}
-                    | type:t ID:s ASSIGN exp:e SEMICOLON                                  {: RESULT = new AST_VAR_INITIALIZATION(t,s,e); :}
-                    | type:t ID:s ASSIGN newExp:e SEMICOLON                               {: RESULT = new AST_VAR_NEW(t,s,e); :}
+varDec      ::=     type:t ID:s SEMICOLON                                                 {: RESULT = new AST_VAR_DECLERATION(t,s); RESULT.lineNum = parser.prevTokenLine;:}
+                    | type:t ID:s ASSIGN exp:e SEMICOLON                                  {: RESULT = new AST_VAR_INITIALIZATION(t,s,e); RESULT.lineNum = parser.prevTokenLine;:}
+                    | type:t ID:s ASSIGN newExp:e SEMICOLON                               {: RESULT = new AST_VAR_NEW(t,s,e); RESULT.lineNum = parser.prevTokenLine;:}
                     ;
 
-funcDec     ::=     type:t ID:s LPAREN RPAREN LBRACE stmtList:stl RBRACE                  {: RESULT = new AST_FUNC_DEC(t, s, stl, Optional.empty()); :}
-                    | type:t ID:s LPAREN parmList:pl RPAREN LBRACE stmtList:stl RBRACE    {: RESULT = new AST_FUNC_DEC(t, s, stl, Optional.of(pl)); :}
+funcDec     ::=     type:t ID:s LPAREN RPAREN LBRACE stmtList:stl RBRACE                  {: RESULT = new AST_FUNC_DEC(t, s, stl, Optional.empty()); RESULT.lineNum = parser.prevTokenLine;:}
+                    | type:t ID:s LPAREN parmList:pl RPAREN LBRACE stmtList:stl RBRACE    {: RESULT = new AST_FUNC_DEC(t, s, stl, Optional.of(pl)); RESULT.lineNum = parser.prevTokenLine;:}
                     ;
 
-classDec    ::=     CLASS ID:s LBRACE cFieldList:cl RBRACE                                {: RESULT = new AST_CLASS_DEC(s, Optional.empty(), cl); :}
-                    | CLASS ID:s1 EXTENDS ID:s2 LBRACE cFieldList:cl RBRACE               {: RESULT = new AST_CLASS_DEC(s1, Optional.of(s2), cl); :}
+classDec    ::=     CLASS ID:s LBRACE cFieldList:cl RBRACE                                {: RESULT = new AST_CLASS_DEC(s, Optional.empty(), cl); RESULT.lineNum = parser.prevTokenLine;:}
+                    | CLASS ID:s1 EXTENDS ID:s2 LBRACE cFieldList:cl RBRACE               {: RESULT = new AST_CLASS_DEC(s1, Optional.of(s2), cl); RESULT.lineNum = parser.prevTokenLine;:}
                     ;
 
-type        ::=     TYPE_INT                                     {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_INT); :}
-                    | TYPE_STRING                                {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_STRING); :}
-                    | TYPE_VOID                                  {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_VOID); :}
+type        ::=     TYPE_INT                                     {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_INT); RESULT.lineNum = parser.prevTokenLine;:}
+                    | TYPE_STRING                                {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_STRING); RESULT.lineNum = parser.prevTokenLine;:}
+                    | TYPE_VOID                                  {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_VOID); RESULT.lineNum = parser.prevTokenLine;:}
                     | ID:s                                       {: RESULT = new AST_TYPE_WITH_VALUE(s); :}
                     ;
 
-exp		    ::=		INT:i								         {: RESULT = new AST_EXP_INT(i);          :}
-					| var:v								         {: RESULT = new AST_EXP_VAR(v);          :}
-					| LPAREN exp:e RPAREN                        {: RESULT = new AST_EXP_PAREN(e);        :}
-					| exp:e1 PLUS  exp:e2				         {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.PLUS);:}
-					| exp:e1 MINUS exp:e2				         {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.MINUS);:}
-					| exp:e1 TIMES exp:e2			           	 {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.TIMES);:}
-					| exp:e1 DIVIDE exp:e2			             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.DIVIDE);:}
-					| exp:e1 LT exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.LT);:}
-					| exp:e1 GT exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.GT);:}
-					| exp:e1 EQ exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.EQ);:}
-					| ID:s LPAREN expList:pl RPAREN              {: RESULT = new AST_EXP_FUNC(s, pl);:}
-					| ID:s LPAREN RPAREN                         {: RESULT = new AST_EXP_FUNC(s, null);         :}
-					| var:v DOT ID:s LPAREN expList:pl RPAREN    {: RESULT = new AST_EXP_METHOD(v, s, pl);:}
-					| var:v DOT ID:s LPAREN RPAREN               {: RESULT = new AST_EXP_METHOD(v, s, null);:}
-					| MINUS INT:i						         {: RESULT = new AST_EXP_INT(-i);          :}
-					| NIL                                        {: RESULT = new AST_EXP_NIL();            :}
-					| STRING:s                                   {: RESULT = new AST_EXP_STRING(s);        :}
+exp		    ::=		INT:i								         {: RESULT = new AST_EXP_INT(i);          RESULT.lineNum = parser.prevTokenLine;:}
+					| var:v								         {: RESULT = new AST_EXP_VAR(v);          RESULT.lineNum = parser.prevTokenLine;:}
+					| LPAREN exp:e RPAREN                        {: RESULT = new AST_EXP_PAREN(e);        RESULT.lineNum = parser.prevTokenLine;:}
+					| exp:e1 PLUS  exp:e2				         {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.PLUS);RESULT.lineNum = parser.prevTokenLine;:}
+					| exp:e1 MINUS exp:e2				         {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.MINUS);RESULT.lineNum = parser.prevTokenLine; :}
+					| exp:e1 TIMES exp:e2			           	 {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.TIMES);RESULT.lineNum = parser.prevTokenLine;:}
+					| exp:e1 DIVIDE exp:e2			             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.DIVIDE);RESULT.lineNum = parser.prevTokenLine;:}
+					| exp:e1 LT exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.LT);RESULT.lineNum = parser.prevTokenLine;:}
+					| exp:e1 GT exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.GT);RESULT.lineNum = parser.prevTokenLine;:}
+					| exp:e1 EQ exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.EQ);RESULT.lineNum = parser.prevTokenLine;:}
+					| ID:s LPAREN expList:pl RPAREN              {: RESULT = new AST_EXP_FUNC(s, pl);RESULT.lineNum = parser.prevTokenLine;:}
+					| ID:s LPAREN RPAREN                         {: RESULT = new AST_EXP_FUNC(s, null);         RESULT.lineNum = parser.prevTokenLine;:}
+					| var:v DOT ID:s LPAREN expList:pl RPAREN    {: RESULT = new AST_EXP_METHOD(v, s, pl);RESULT.lineNum = parser.prevTokenLine;:}
+					| var:v DOT ID:s LPAREN RPAREN               {: RESULT = new AST_EXP_METHOD(v, s, null);RESULT.lineNum = parser.prevTokenLine;:}
+					| MINUS INT:i						         {: RESULT = new AST_EXP_INT(-i);          RESULT.lineNum = parser.prevTokenLine;:}
+					| NIL                                        {: RESULT = new AST_EXP_NIL();            RESULT.lineNum = parser.prevTokenLine;:}
+					| STRING:s                                   {: RESULT = new AST_EXP_STRING(s);        RESULT.lineNum = parser.prevTokenLine;:}
 					;
 
-newExp		::=		NEW type:t						             {: RESULT = new AST_NEW_EXP(t, Optional.empty()); :}
-                    | NEW type:t LBRACK exp:e RBRACK		     {: RESULT = new AST_NEW_EXP(t, Optional.of(e)); :}
+newExp		::=		NEW type:t						             {: RESULT = new AST_NEW_EXP(t, Optional.empty()); RESULT.lineNum = parser.prevTokenLine;:}
+                    | NEW type:t LBRACK exp:e RBRACK		     {: RESULT = new AST_NEW_EXP(t, Optional.of(e)); RESULT.lineNum = parser.prevTokenLine;:}
                     ;
 
-cField      ::=     varDec:v                                     {: RESULT = new AST_CFIELD_VAR_DEC(v);          :}
-                    | funcDec:v                                  {: RESULT = new AST_CFIELD_FUNC_DEC(v);          :}
+cField      ::=     varDec:v                                     {: RESULT = new AST_CFIELD_VAR_DEC(v);          RESULT.lineNum = parser.prevTokenLine;:}
+                    | funcDec:v                                  {: RESULT = new AST_CFIELD_FUNC_DEC(v);          RESULT.lineNum = parser.prevTokenLine;:}
                     ;
 
-param       ::=    type:t ID:s                                   {: RESULT = new AST_PARAM(t, s);          :}
+param       ::=    type:t ID:s                                   {: RESULT = new AST_PARAM(t, s);          RESULT.lineNum = parser.prevTokenLine;:}
                    ;
 
-parmList    ::=    param:p COMMA parmList:pl		             {: RESULT = new AST_PARM_LIST(p, pl);    :}
-                   | param:p				                     {: RESULT = new AST_PARM_LIST(p, null);  :}
+parmList    ::=    param:p COMMA parmList:pl		             {: RESULT = new AST_PARM_LIST(p, pl);    RESULT.lineNum = parser.prevTokenLine;:}
+                   | param:p				                     {: RESULT = new AST_PARM_LIST(p, null);  RESULT.lineNum = parser.prevTokenLine;:}
                    ;
 
-expList    ::=    exp:e COMMA expList:el		             {: RESULT = new AST_EXP_LIST(e, el);    :}
-                   | exp:e				                     {: RESULT = new AST_EXP_LIST(e, null);  :}
+expList    ::=    exp:e COMMA expList:el		             {: RESULT = new AST_EXP_LIST(e, el);    RESULT.lineNum = parser.prevTokenLine;:}
+                   | exp:e				                     {: RESULT = new AST_EXP_LIST(e, null);  RESULT.lineNum = parser.prevTokenLine;:}
                    ;
 
-cFieldList    ::=    cField:c  cFieldList:cl		         {: RESULT = new AST_CFIELD_LIST(c, cl);    :}
-                   | cField:c				                 {: RESULT = new AST_CFIELD_LIST(c, null);  :}
+cFieldList    ::=    cField:c  cFieldList:cl		         {: RESULT = new AST_CFIELD_LIST(c, cl);    RESULT.lineNum = parser.prevTokenLine;:}
+                   | cField:c				                 {: RESULT = new AST_CFIELD_LIST(c, null);  RESULT.lineNum = parser.prevTokenLine;:}
                    ;
 
-arrayTypedef  ::=   ARRAY ID:s EQ type:t LBRACK RBRACK SEMICOLON {: RESULT = new AST_ARRAY_TYPEDEF(s, t);    :}
+arrayTypedef  ::=   ARRAY ID:s EQ type:t LBRACK RBRACK SEMICOLON {: RESULT = new AST_ARRAY_TYPEDEF(s, t);    RESULT.lineNum = parser.prevTokenLine;:}
                     ;

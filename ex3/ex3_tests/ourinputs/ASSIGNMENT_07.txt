@@ -1,0 +1,6 @@
+class IntList
+{
+    IntList tail;
+    void init() { tail := new IntList; }
+    int head;
+}
