@@ -76,7 +76,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         SYMBOL_TABLE.getInstance().enter(id, t);
         TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
         System.out.format("-- AST_VAR_DECLERATION\n\t\tinserted variable %s of type %s to the symbol table\n", var.name,
-                var.t.name);
+                var.type.name);
         return var;
     }
 }
