@@ -2,7 +2,6 @@ package AST;
 
 import java.util.Optional;
 
-import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_CLASS_VAR_DEC;
@@ -53,7 +52,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 
 			if (dataMembersList.head.name.equals(fieldName)) {
 				if (dataMembersList.head instanceof TYPE_CLASS_VAR_DEC) {
-					return ((TYPE_CLASS_VAR_DEC) dataMembersList.head).t;
+					return ((TYPE_CLASS_VAR_DEC) dataMembersList.head).type;
 				}
 				return dataMembersList.head;
 			}
@@ -68,42 +67,27 @@ public class AST_VAR_FIELD extends AST_VAR {
 		TYPE varType = null;
 
 		// Recursively semant var
-		if (var != null)
+		if (var != null) {
 			varType = var.SemantMe(fatherClassId);
+		}
 		System.out.println("-- AST_VAR_FIELD\n\t\tvariable type = " + varType.name);
 
 		// Make sure varType is a class
-		if (varType.isClass() == false) {
+		if (!varType.isClass()) {
 			System.out.format(">> ERROR [line] access %s field of a non-class variable\n", fieldName);
 			throw new semanticErrorException("line");
 		}
 
-		// Look for fieldName inside varTypeClass dataMembers
-		TYPE fieldType = lookForFieldNameInClassDataMembers((TYPE_CLASS) varType);
-		if (fieldType != null) {
-			return fieldType;
-		}
-
-		System.out.format("-- AST_VAR_FIELD\n\t\tfield %s does not exist in class %s\n", fieldName, varType.name);
-		Optional<TYPE_CLASS> varTypeFather = ((TYPE_CLASS) varType).father;
-
-		// Look for fieldName inside varTypeClass's ancestors
-		while (varTypeFather.isPresent()) {
-			System.out.format("-- AST_VAR_FIELD\n\t\tclass %s extends class %s\n", varType.name,
-					varTypeFather.get().name);
-
-			fieldType = lookForFieldNameInClassDataMembers(varTypeFather.get());
-			if (fieldType != null) {
-				return fieldType;
+		Optional<TYPE> field = ((TYPE_CLASS) varType).lookupMemberInAncestors(this.fieldName);
+		if (field.isPresent()) {
+			if (field.get() instanceof TYPE_CLASS_VAR_DEC) {
+				return ((TYPE_CLASS_VAR_DEC) field.get()).type;
 			}
-			System.out.format("-- AST_VAR_FIELD\n\t\tfield %s does not exist in class %s\n", fieldName,
-					varTypeFather.get().name);
-
-			varTypeFather = varTypeFather.get().father;
+			System.out.format(">> ERROR [line] '%s' is a method, not a field variable\n", fieldName);
+			throw new semanticErrorException("line");
 		}
 
-		// fieldName does not exist in class var
-		System.out.format(">> ERROR [line] field %s does not exist in class\n", fieldName);
+		System.out.format(">> ERROR [line] there is no field named '%s' in class '%s'\n", fieldName, varType.name);
 		throw new semanticErrorException("line");
 	}
 }

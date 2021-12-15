@@ -1,6 +1,9 @@
 package TYPES;
 
-public class TYPE_LIST {
+import java.util.NoSuchElementException;
+import java.util.Iterator;
+
+public class TYPE_LIST implements Iterable<TYPE> {
 	private int length = 0;
 
 	public TYPE head;
@@ -19,5 +22,33 @@ public class TYPE_LIST {
 
 	public int length() {
 		return this.length;
+	}
+
+	class TypeListIterator implements Iterator<TYPE> {
+		private TYPE_LIST list;
+
+		private TypeListIterator(TYPE_LIST list) {
+			this.list = list;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return this.list != null;
+		}
+
+		@Override
+		public TYPE next() {
+			if (this.list == null) {
+				throw new NoSuchElementException();
+			}
+			TYPE type = this.list.head;
+			this.list = this.list.tail;
+			return type;
+		}
+	}
+
+	@Override
+	public Iterator<TYPE> iterator() {
+		return new TypeListIterator(this);
 	}
 }

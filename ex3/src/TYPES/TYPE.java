@@ -20,6 +20,13 @@ public abstract class TYPE {
 		return this instanceof TYPE_ARRAY;
 	}
 
+	/*************/
+	/* isFunction() */
+	/*************/
+	public boolean isFunction() {
+		return this instanceof TYPE_FUNCTION;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof TYPE)
