@@ -179,8 +179,8 @@ funcDec     ::=     type:t ID:s LPAREN RPAREN LBRACE stmtList:stl RBRACE        
                     | type:t ID:s LPAREN parmList:pl RPAREN LBRACE stmtList:stl RBRACE    {: RESULT = new AST_FUNC_DEC(t, s, stl, Optional.of(pl)); :}
                     ;
 
-classDec    ::=     CLASS ID:s LBRACE cFieldList:cl RBRACE                                {: RESULT = new AST_CLASS_DECLER(s, cl); :}
-                    | CLASS ID:s1 EXTENDS ID:s2 LBRACE cFieldList:cl RBRACE               {: RESULT = new AST_CLASS_EXTENDS_DECLER(s1, s2, cl); :}
+classDec    ::=     CLASS ID:s LBRACE cFieldList:cl RBRACE                                {: RESULT = new AST_CLASS_DEC(s, Optional.empty(), cl); :}
+                    | CLASS ID:s1 EXTENDS ID:s2 LBRACE cFieldList:cl RBRACE               {: RESULT = new AST_CLASS_DEC(s1, Optional.of(s2), cl); :}
                     ;
 
 type        ::=     TYPE_INT                                     {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_INT); :}
