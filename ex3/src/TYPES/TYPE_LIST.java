@@ -33,12 +33,12 @@ public class TYPE_LIST implements Iterable<TYPE> {
 
 		@Override
 		public boolean hasNext() {
-			return this.list != null;
+			return this.list != null && this.list.head != null;
 		}
 
 		@Override
 		public TYPE next() {
-			if (this.list == null) {
+			if (!this.hasNext()) {
 				throw new NoSuchElementException();
 			}
 			TYPE type = this.list.head;
