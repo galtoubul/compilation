@@ -13,7 +13,11 @@ public class AST_EXP_FUNC extends AST_EXP {
         SerialNumber = AST_Node_Serial_Number.getFresh();
 
         this.id = id;
-        this.argsList = argsList;
+        if (argsList == null) {
+            this.argsList = new AST_EXP_LIST(null, null);
+        } else {
+            this.argsList = argsList;
+        }
     }
 
     public void PrintMe() {
@@ -40,34 +44,20 @@ public class AST_EXP_FUNC extends AST_EXP {
 
     // throws an error if the function is used before definition
     private TYPE_FUNCTION getFunctionType() {
-        TYPE type = SYMBOL_TABLE.getInstance().find(this.id);
-
-        // Didn't find function in the lookup
-        if (type == null) {
-            System.out.format(">> ERROR [line] function use before define\n");
-            throw new semanticErrorException("line");
+        // Search the function in the symbol table or class scopes
+        Optional<TYPE> type = SYMBOL_TABLE.getInstance().findPotentialMember(this.id);
+        if (type.isPresent()) {
+            if (type.get().isFunction()) {
+                return (TYPE_FUNCTION) type.get();
+            } else {
+                System.out.format(">> ERROR [line] '%s' is a not a funciton\n", this.id);
+            }
+        } else {
+            System.out.format(">> ERROR [line] funciton '%s' does not exist at the current scope/outer scopes\n",
+                    this.id);
         }
 
-        if (!(type instanceof TYPE_FUNCTION)) {
-            System.out.format(">> ERROR [line] '%s' is not a function\n", this.id);
-            throw new semanticErrorException("line");
-        }
-
-        return (TYPE_FUNCTION) type;
-    }
-
-    // throws an error if args list is empty and params list isn't, or vice versa
-    private void checkForEmptyLists(TYPE_LIST funcParamsList) {
-        // empty arguments list, but non-empty parameters list
-        if (this.argsList == null && funcParamsList != null) {
-            System.out.format(">> ERROR [line] args# (=0) != params#\n");
-            throw new semanticErrorException("line");
-        }
-        // empty parameters list, but non-empty arguments list
-        if (this.argsList != null && funcParamsList == null) {
-            System.out.format(">> ERROR [line] args# != params# (=0)\n");
-            throw new semanticErrorException("line");
-        }
+        throw new semanticErrorException("line");
     }
 
     // throws an error if there isn't a match between the parameters list and
@@ -107,7 +97,11 @@ public class AST_EXP_FUNC extends AST_EXP {
         System.out.println("-- AST_EXP_FUNC\n\t\tfuncType.name = " + funcType.name);
 
         TYPE_LIST paramsTypes = funcType.params;
-        checkForEmptyLists(paramsTypes);
+        // checkForEmptyLists(paramsTypes);
+
+        if (paramsTypes == null) {
+            paramsTypes = new TYPE_LIST(null, null);
+        }
 
         TYPE_LIST argsTypes = this.argsList.SemantMe(fatherClassId);
         checkMatchingParamsArgs(argsTypes, paramsTypes);

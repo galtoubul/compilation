@@ -2,10 +2,10 @@ package SYMBOL_TABLE;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import java.util.Stack;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.stream.IntStream;
 
 import TYPES.*;
 
@@ -136,26 +136,57 @@ public class SYMBOL_TABLE {
 		this.scopes.pop();
 	}
 
-	private Optional<ScopeEntry> currentScope() {
-		return Optional.ofNullable(this.scopes.peek()).map(SimpleEntry::getKey);
+	private ScopeEntry currentScope() {
+		return this.scopes.peek().getKey();
 	}
 
-	// Retreive the type of the current scope in the symbol table
+	/**
+	 * Retreive the type of the current scope in the symbol table.
+	 */
 	public ScopeType currentScopeType() {
-		Optional<ScopeEntry> scope = this.currentScope();
-		if (scope.isPresent()) {
-			return scope.get().scopeType;
-		}
-
-		// There is only the global scope, so there are no scope entris to be found
-		return ScopeType.Global;
+		return this.currentScope().scopeType;
 	}
 
-	// Find the closest scope with the type `scopeType`
+	/**
+	 * Find the closest scope with the type `scopeType`.
+	 */
 	public Optional<ScopeEntry> findScopeType(ScopeType scopeType) {
-		return ((List<SimpleEntry<ScopeEntry, ArrayList<String>>>) this.scopes).stream()
+		return this.scopes.stream()
 				.map(SimpleEntry::getKey)
 				.filter(scope -> scope.scopeType == scopeType)
 				.findFirst();
+	}
+
+	private ScopeEntry getScope(int index) {
+		return this.scopes.get(this.currentScopeIndex() - index).getKey();
+	}
+
+	/**
+	 * Find the closest scope and its index with the type `scopeType`.
+	 */
+	private Optional<SimpleEntry<Integer, ScopeEntry>> findIndexedScopeType(ScopeType scopeType) {
+		return IntStream
+				.range(1, this.currentScopeIndex() + 1)
+				.mapToObj(i -> new SimpleEntry<Integer, ScopeEntry>(i, this.getScope(i)))
+				.filter(indexedScope -> indexedScope.getValue().scopeType == scopeType)
+				.findFirst();
+	}
+
+	public Optional<TYPE> findPotentialMember(String name) {
+		Optional<SYMBOL_TABLE_ENTRY> firstEntry = this.findEntry(name);
+
+		Optional<SimpleEntry<Integer, ScopeEntry>> classScope = this.findIndexedScopeType(ScopeType.Class);
+
+		if (!firstEntry.isPresent() || (classScope.isPresent() && firstEntry.get().index < classScope.get().getKey())) {
+			TYPE_CLASS classType = (TYPE_CLASS) this.find(classScope.get().getValue().scopeName.get());
+			return classType.lookupMemberInAncestors(name).map(type -> {
+				if (type instanceof TYPE_CLASS_VAR_DEC) {
+					return ((TYPE_CLASS_VAR_DEC) type).type;
+				}
+				return type;
+			});
+		}
+
+		return firstEntry.map(entry -> entry.type);
 	}
 }

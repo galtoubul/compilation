@@ -54,7 +54,7 @@ public class AST_CFIELD_LIST extends AST_Node {
 	}
 
 	public TYPE_LIST SemantMe(Optional<String> classId) {
-		System.out.format("-- AST_CFIELD_LIST SemantMe%s",
+		System.out.format("-- AST_CFIELD_LIST SemantMe%s\n",
 				classId.isPresent() ? "of class that extends class" + classId.get() : "");
 
 		if (tail == null) {

@@ -5,6 +5,7 @@ import java.util.Optional;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
+import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
 
 public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
@@ -53,15 +54,15 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         /****************************/
         /* [1] Check If Type exists */
         /****************************/
-        TYPE t = SYMBOL_TABLE.getInstance().find(type.name());
+        TYPE t = SYMBOL_TABLE.getInstance().find(this.type.name());
         if (t == null) {
-            System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, type.name());
+            System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, this.type.name());
             System.exit(0);
         }
 
         // Check that the type isn't void
         if (t == TYPE_VOID.getInstance()) {
-            System.out.format(">> ERROR [%d:%d] cannot declare a variable as void\n", 2, 2, type.name());
+            System.out.format(">> ERROR [%d:%d] cannot declare a variable as void\n", 2, 2, this.type.name());
             System.exit(0);
         }
 
@@ -96,9 +97,6 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         /***************************************************/
         SYMBOL_TABLE.getInstance().enter(id, t);
 
-        /************************************************************/
-        /* [5] Return value is irrelevant for variable declarations */
-        /************************************************************/
-        return null;
+        return new TYPE_CLASS_VAR_DEC(t, id);
     }
 }
