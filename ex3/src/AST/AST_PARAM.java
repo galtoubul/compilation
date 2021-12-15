@@ -20,18 +20,18 @@ public class AST_PARAM extends AST_Node {
 		if (type.isPresent()) {
 			if (type.get() == TYPE_VOID.getInstance()) {
 				System.out.println(">> ERROR [line] parameters cannot be of type 'void'");
-				throw new semanticErrorException("line");
+				throw new SemanticErrorException("" + lineNum);
 			}
 			if (SYMBOL_TABLE.getInstance().isInScope(this.id)) {
-				System.out.format(">> ERROR [line] parameter '%s' already exists\n",
+				System.out.format(">> ERROR [" + lineNum + "] parameter '%s' already exists\n",
 						this.id);
-				throw new semanticErrorException("line");
+				throw new SemanticErrorException("" + lineNum);
 			}
 			SYMBOL_TABLE.getInstance().enter(this.id, type.get());
 			return type.get();
 		}
-		System.out.format(">> ERROR [line] non existing type '%s' for parameter '%s'\n",
+		System.out.format(">> ERROR [" + lineNum + "] non existing type '%s' for parameter '%s'\n",
 				this.type.name(), this.id);
-		throw new semanticErrorException("line");
+		throw new SemanticErrorException("" + lineNum);
 	}
 }

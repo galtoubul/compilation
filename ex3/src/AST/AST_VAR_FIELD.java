@@ -74,8 +74,8 @@ public class AST_VAR_FIELD extends AST_VAR {
 
 		// Make sure varType is a class
 		if (varType.isClass() == false) {
-			System.out.format(">> ERROR [line] access %s field of a non-class variable\n", fieldName);
-			throw new semanticErrorException("line");
+			System.out.format(">> ERROR [" + lineNum + "] access %s field of a non-class variable\n", fieldName);
+			throw new SemanticErrorException("" + lineNum);
 		}
 
 		// Look for fieldName inside varTypeClass dataMembers
@@ -103,7 +103,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 		}
 
 		// fieldName does not exist in class var
-		System.out.format(">> ERROR [line] field %s does not exist in class\n", fieldName);
-		throw new semanticErrorException("line");
+		System.out.format(">> ERROR [" + lineNum + "] field %s does not exist in class\n", fieldName);
+		throw new SemanticErrorException("" + lineNum);
 	}
 }

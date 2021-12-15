@@ -44,13 +44,13 @@ public class AST_EXP_FUNC extends AST_EXP {
 
         // Didn't find function in the lookup
         if (type == null) {
-            System.out.format(">> ERROR [line] function use before define\n");
-            throw new semanticErrorException("line");
+            System.out.format(">> ERROR [" + lineNum + "] function use before define\n");
+            throw new SemanticErrorException("" + lineNum);
         }
 
         if (!(type instanceof TYPE_FUNCTION)) {
-            System.out.format(">> ERROR [line] '%s' is not a function\n", this.id);
-            throw new semanticErrorException("line");
+            System.out.format(">> ERROR [" + lineNum + "] '%s' is not a function\n", this.id);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         return (TYPE_FUNCTION) type;
@@ -60,13 +60,13 @@ public class AST_EXP_FUNC extends AST_EXP {
     private void checkForEmptyLists(TYPE_LIST funcParamsList) {
         // empty arguments list, but non-empty parameters list
         if (this.argsList == null && funcParamsList != null) {
-            System.out.format(">> ERROR [line] args# (=0) != params#\n");
-            throw new semanticErrorException("line");
+            System.out.format(">> ERROR [" + lineNum + "] args# (=0) != params#\n");
+            throw new SemanticErrorException("" + lineNum);
         }
         // empty parameters list, but non-empty arguments list
         if (this.argsList != null && funcParamsList == null) {
-            System.out.format(">> ERROR [line] args# != params# (=0)\n");
-            throw new semanticErrorException("line");
+            System.out.format(">> ERROR [" + lineNum + "] args# != params# (=0)\n");
+            throw new SemanticErrorException("" + lineNum);
         }
     }
 
@@ -77,19 +77,19 @@ public class AST_EXP_FUNC extends AST_EXP {
 
         // Compare the number of parameters and arguments
         if (argsTypes.length() != paramsTypes.length()) {
-            System.out.format(">> ERROR [line] %s arguments in call of '%s'\n",
+            System.out.format(">> ERROR [" + lineNum + "] %s arguments in call of '%s'\n",
                     argsTypes.length() < paramsTypes.length() ? "missing" : "too many",
                     this.id);
-            throw new semanticErrorException("line");
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // Match the types of each argument to that of a parameter
         while (argsTypes != null && argsTypes.head != null) {
 
             if (!TYPE.isSubtype(argsTypes.head, paramsTypes.head)) {
-                System.out.format(">> ERROR [line] type(arg) = %s != %s = type(param)\n", argsTypes.head.name,
+                System.out.format(">> ERROR [" + lineNum + "] type(arg) = %s != %s = type(param)\n", argsTypes.head.name,
                         paramsTypes.head.name);
-                throw new semanticErrorException("line");
+                throw new SemanticErrorException("" + lineNum);
             }
 
             paramsTypes = paramsTypes.tail;

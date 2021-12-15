@@ -32,8 +32,8 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		// TODO find fields
 		TYPE t = SYMBOL_TABLE.getInstance().find(name);
 		if (t == null) {
-			System.out.format(">> ERROR [line] variable %s does not exist at the current scope/outer scopes\n", name);
-			throw new semanticErrorException("line");
+			System.out.format(">> ERROR [" + lineNum + "] variable %s does not exist at the current scope/outer scopes\n", name);
+			throw new SemanticErrorException("" + lineNum);
 		}
 		return t;
 	}

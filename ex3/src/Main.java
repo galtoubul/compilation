@@ -59,7 +59,7 @@ public class Main
 			System.out.println("before AST.SemantMe();");
 			try {
 				AST.SemantMe();
-			} catch (semanticErrorException e) {
+			} catch (SemanticErrorException e) {
 				output = "ERROR("+e.getMessage()+")";
 			}
 			file_writer.write(output);

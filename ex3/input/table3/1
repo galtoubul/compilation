@@ -2,7 +2,7 @@ class Father { int i; }
 
 class Son extends Father { int j; }
 
-class SonSon extends Son { int x; }
+class SonSon extends Boy { int x; }
 
 void foo(int x) { PrintInt(x); }
 

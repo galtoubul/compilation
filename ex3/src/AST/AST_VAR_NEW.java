@@ -72,7 +72,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         if (SYMBOL_TABLE.getInstance().isInScope(id)) {
             System.out.format(">> ERROR [%d:%d] variable %s already exists in scope\n",
                     2, 2, id);
-            throw new semanticErrorException("line");
+            throw new SemanticErrorException("" + lineNum);
         }
 
         /******************************************************/
