@@ -1,11 +1,13 @@
 package SYMBOL_TABLE;
 
+import java.util.Optional;
+
 public class ScopeEntry {
     public final ScopeType scopeType;
-    public final String scopeName;
+    public final Optional<String> scopeName;
 
     public ScopeEntry(ScopeType scopeType, String scopeName) {
         this.scopeType = scopeType;
-        this.scopeName = scopeName;
+        this.scopeName = Optional.ofNullable(scopeName);
     }
 }

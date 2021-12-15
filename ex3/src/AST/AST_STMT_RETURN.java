@@ -52,7 +52,7 @@ public class AST_STMT_RETURN extends AST_STMT {
         // It is guaranteed syntacticly thet return statements are only present in
         // funciton declarations
         ScopeEntry scope = SYMBOL_TABLE.getInstance().findScopeType(ScopeType.Function).get();
-        TYPE returnType = ((TYPE_FUNCTION) SYMBOL_TABLE.getInstance().find(scope.scopeName)).returnType;
+        TYPE returnType = ((TYPE_FUNCTION) SYMBOL_TABLE.getInstance().find(scope.scopeName.get())).returnType;
 
         if (this.exp.isPresent()) {
             if (returnType == TYPE_VOID.getInstance()) {
