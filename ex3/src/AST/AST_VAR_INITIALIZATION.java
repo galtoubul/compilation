@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
+import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
@@ -51,14 +52,21 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
 
     @Override
     public TYPE SemantMe(Optional<String> classId) {
-        /****************************/
-        /* [1] Check If Type exists */
-        /****************************/
-        TYPE t = SYMBOL_TABLE.getInstance().find(this.type.name());
-        if (t == null) {
-            System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, this.type.name());
-            System.exit(0);
-        }
+        // Check If Type exists
+        // Optional<SymbolTableEntry> entry =
+        // SYMBOL_TABLE.getInstance().findEntry(type.name());
+        // if (!entry.isPresent()) {
+        // System.out.format(">> ERROR [%d] non existing type '%s'\n", lineNum,
+        // type.name());
+        // throw new SemanticErrorException(String.valueOf(lineNum));
+        // }
+        // if (!entry.get().isType) {
+        // System.out.format(">> ERROR [%d] '%s' is not a type\n", lineNum,
+        // type.name());
+        // throw new SemanticErrorException(String.valueOf(lineNum));
+        // }
+
+        TYPE t = this.type.getTYPE(lineNum);
 
         // Check that the type isn't void
         if (t == TYPE_VOID.getInstance()) {
@@ -95,7 +103,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         /***************************************************/
         /* [4] Enter the variable name to the Symbol Table */
         /***************************************************/
-        SYMBOL_TABLE.getInstance().enter(id, t);
+        SYMBOL_TABLE.getInstance().enter(id, t, false);
 
         return new TYPE_CLASS_VAR_DEC(t, id);
     }

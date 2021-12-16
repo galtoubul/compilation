@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 import TYPES.TYPE_VOID;
 
@@ -16,22 +17,19 @@ public class AST_PARAM extends AST_Node {
 	}
 
 	public TYPE SemantMe() {
-		Optional<TYPE> type = Optional.ofNullable(SYMBOL_TABLE.getInstance().find(this.type.name()));
-		if (type.isPresent()) {
-			if (type.get() == TYPE_VOID.getInstance()) {
-				System.out.println(">> ERROR [line] parameters cannot be of type 'void'");
-				throw new SemanticErrorException("" + lineNum);
-			}
-			if (SYMBOL_TABLE.getInstance().isInScope(this.id)) {
-				System.out.format(">> ERROR [" + lineNum + "] parameter '%s' already exists\n",
-						this.id);
-				throw new SemanticErrorException("" + lineNum);
-			}
-			SYMBOL_TABLE.getInstance().enter(this.id, type.get());
-			return type.get();
+		TYPE t = this.type.getTYPE(lineNum);
+
+		if (t == TYPE_VOID.getInstance()) {
+			System.out.format(">> ERROR [%d] parameters cannot be of type 'void'", lineNum);
+			throw new SemanticErrorException(String.valueOf(lineNum));
 		}
-		System.out.format(">> ERROR [" + lineNum + "] non existing type '%s' for parameter '%s'\n",
-				this.type.name(), this.id);
-		throw new SemanticErrorException("" + lineNum);
+
+		if (SYMBOL_TABLE.getInstance().isInScope(this.id)) {
+			System.out.format(">> ERROR [%d] parameter '%s' already exists\n",
+					lineNum, this.id);
+			throw new SemanticErrorException(String.valueOf(lineNum));
+		}
+		SYMBOL_TABLE.getInstance().enter(this.id, t, false);
+		return t;
 	}
 }

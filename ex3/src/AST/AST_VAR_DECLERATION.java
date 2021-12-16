@@ -3,7 +3,8 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
-
+import SYMBOL_TABLE.ScopeEntry;
+import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.*;
 
 public class AST_VAR_DECLERATION extends AST_VAR_DEC {
@@ -53,11 +54,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         }
 
         // Check If Type exists
-        TYPE t = SYMBOL_TABLE.getInstance().find(type.name());
-        if (t == null) {
-            System.out.format(">> ERROR [%d:%d] non existing type %s\n", 2, 2, type.name());
-            System.exit(0);
-        }
+        TYPE t = this.type.getTYPE(lineNum);
 
         // Check that the type isn't void
         if (t == TYPE_VOID.getInstance()) {
@@ -73,7 +70,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         }
 
         // Done with all checks -> insert the variable to the Symbol Table
-        SYMBOL_TABLE.getInstance().enter(id, t);
+        SYMBOL_TABLE.getInstance().enter(id, t, false);
         TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
         System.out.format("-- AST_VAR_DECLERATION\n\t\tinserted variable %s of type %s to the symbol table\n", var.name,
                 var.type.name);

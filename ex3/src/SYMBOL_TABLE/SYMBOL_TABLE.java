@@ -14,7 +14,7 @@ public class SYMBOL_TABLE {
 	// Singelton
 	private static SYMBOL_TABLE instance = null;
 
-	private HashMap<String, Stack<SYMBOL_TABLE_ENTRY>> table = new HashMap<>();
+	private HashMap<String, Stack<SymbolTableEntry>> table = new HashMap<>();
 	private Stack<SimpleEntry<ScopeEntry, ArrayList<String>>> scopes = new Stack<>();
 
 	public static SYMBOL_TABLE getInstance() {
@@ -30,9 +30,9 @@ public class SYMBOL_TABLE {
 			/*****************************************/
 			/* [1] Enter primitive types int, string */
 			/*****************************************/
-			instance.enter("int", TYPE_INT.getInstance());
-			instance.enter("string", TYPE_STRING.getInstance());
-			instance.enter("void", TYPE_VOID.getInstance());
+			instance.enter("int", TYPE_INT.getInstance(), true);
+			instance.enter("string", TYPE_STRING.getInstance(), true);
+			instance.enter("void", TYPE_VOID.getInstance(), true);
 
 			/*************************************/
 			/* [2] How should we handle void ??? */
@@ -48,11 +48,13 @@ public class SYMBOL_TABLE {
 							"PrintInt",
 							new TYPE_LIST(
 									TYPE_INT.getInstance(),
-									null)));
+									null)),
+					false);
 			instance.enter(
 					"PrintString",
 					new TYPE_FUNCTION(TYPE_VOID.getInstance(), "PrintString",
-							new TYPE_LIST(TYPE_STRING.getInstance(), null)));
+							new TYPE_LIST(TYPE_STRING.getInstance(), null)),
+					false);
 			instance.enter(
 					"PrintTrace",
 					new TYPE_FUNCTION(
@@ -60,7 +62,8 @@ public class SYMBOL_TABLE {
 							"PrintTrace",
 							new TYPE_LIST(
 									null,
-									null)));
+									null)),
+					false);
 
 		}
 		return instance;
@@ -70,8 +73,15 @@ public class SYMBOL_TABLE {
 		return this.scopes.size();
 	}
 
-	private Optional<SYMBOL_TABLE_ENTRY> findEntry(String name) {
-		Stack<SYMBOL_TABLE_ENTRY> idStack = this.table.get(name);
+	/**
+	 * Find `name` in the inner-most scope it appears in.
+	 * 
+	 * @param name
+	 * @return The symbol table entry of `name` in the inner-most scope it appears
+	 *         in, if any; otherwise null.
+	 */
+	public Optional<SymbolTableEntry> findEntry(String name) {
+		Stack<SymbolTableEntry> idStack = this.table.get(name);
 		if (idStack == null) {
 			return Optional.empty();
 		}
@@ -88,14 +98,14 @@ public class SYMBOL_TABLE {
 	/**
 	 * If `name` is not in the current scope, insert it with type `type`.
 	 */
-	public void enter(String name, TYPE type) {
-		Stack<SYMBOL_TABLE_ENTRY> idStack = this.table.get(name);
+	public void enter(String name, TYPE type, boolean isType) {
+		Stack<SymbolTableEntry> idStack = this.table.get(name);
 		if (idStack == null) {
 			idStack = new Stack<>();
 			this.table.put(name, idStack);
 		}
 		if (idStack.empty() || idStack.peek().index < this.currentScopeIndex()) {
-			idStack.push(new SYMBOL_TABLE_ENTRY(this.currentScopeIndex(), name, type));
+			idStack.push(new SymbolTableEntry(this.currentScopeIndex(), name, type, isType));
 			this.currentScopePair().getValue().add(name);
 		}
 	}
@@ -108,7 +118,7 @@ public class SYMBOL_TABLE {
 	 *         otherwise null.
 	 */
 	public TYPE find(String name) {
-		Optional<SYMBOL_TABLE_ENTRY> entry = this.findEntry(name);
+		Optional<SymbolTableEntry> entry = this.findEntry(name);
 		if (!entry.isPresent()) {
 			return null;
 		}
@@ -116,7 +126,7 @@ public class SYMBOL_TABLE {
 	}
 
 	public boolean isInScope(String name) {
-		Optional<SYMBOL_TABLE_ENTRY> entry = this.findEntry(name);
+		Optional<SymbolTableEntry> entry = this.findEntry(name);
 		return entry.isPresent() && entry.get().index == this.currentScopeIndex();
 	}
 
@@ -173,7 +183,7 @@ public class SYMBOL_TABLE {
 	}
 
 	public Optional<TYPE> findPotentialMember(String name) {
-		Optional<SYMBOL_TABLE_ENTRY> firstEntry = this.findEntry(name);
+		Optional<SymbolTableEntry> firstEntry = this.findEntry(name);
 
 		Optional<SimpleEntry<Integer, ScopeEntry>> classScope = this.findIndexedScopeType(ScopeType.Class);
 

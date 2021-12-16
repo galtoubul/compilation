@@ -90,11 +90,14 @@ public class AST_FUNC_DEC extends AST_Node {
         System.out.format("-- AST_FUNC_DEC SemantMe%s\n", fatherClassId.isPresent() ? " extends" : "");
 
         // Check that the return type is legal
-        TYPE returnType = SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
-        if (returnType == null) {
-            System.out.format(">> ERROR [" + lineNum + "] non existing return type\n");
-            throw new SemanticErrorException("" + lineNum);
-        }
+        // TYPE returnType =
+        // SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
+        // if (returnType == null) {
+        // System.out.format(">> ERROR [" + lineNum + "] non existing return type\n");
+        // throw new SemanticErrorException("" + lineNum);
+        // }
+
+        TYPE returnType = this.returnTypeName.getTYPE(lineNum);
 
         // Check that id does NOT exist at the same scope
         if (SYMBOL_TABLE.getInstance().isInScope(id)) {
@@ -120,7 +123,7 @@ public class AST_FUNC_DEC extends AST_Node {
 
         // Enter the function/method Type to the Symbol Table
         TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList);
-        SYMBOL_TABLE.getInstance().enter(id, funcType);
+        SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
         // Semant function/method body
         body.SemantMe(Optional.empty());
@@ -131,7 +134,7 @@ public class AST_FUNC_DEC extends AST_Node {
 
         // Enter the function/method Type to the Symbol Table again, as it was
         // popped-out with the rest of the scope
-        SYMBOL_TABLE.getInstance().enter(id, funcType);
+        SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
         return funcType;
     }
