@@ -189,12 +189,15 @@ public class SYMBOL_TABLE {
 
 		if (!firstEntry.isPresent() || (classScope.isPresent() && firstEntry.get().index < classScope.get().getKey())) {
 			TYPE_CLASS classType = (TYPE_CLASS) this.find(classScope.get().getValue().scopeName.get());
-			return classType.lookupMemberInAncestors(name).map(type -> {
+			Optional<TYPE> member = classType.lookupMemberInAncestors(name).map(type -> {
 				if (type instanceof TYPE_CLASS_VAR_DEC) {
 					return ((TYPE_CLASS_VAR_DEC) type).type;
 				}
 				return type;
 			});
+			if (member.isPresent()) {
+				return member;
+			}
 		}
 
 		return firstEntry.map(entry -> entry.type);
