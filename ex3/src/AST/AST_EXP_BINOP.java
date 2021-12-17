@@ -83,7 +83,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 				if (!TYPE.isSubtype(t2, t1) && !TYPE.isSubtype(t1, t2)) {
 					System.out.format(">> ERROR [%d:%d] comparing values with different types\n",
 							2, 2);
-					System.exit(0);
+					throw new SemanticErrorException("" + lineNum);
 				}
 				break;
 			case PLUS:
@@ -92,22 +92,22 @@ public class AST_EXP_BINOP extends AST_EXP {
 				}
 				if (!(t1 == TYPE_INT.getInstance()) || !(t2 == TYPE_INT.getInstance())) {
 					System.out.format(">> ERROR [%d:%d] invalid types for '%s' operation\n", 2, 2, OP.type);
-					System.exit(0);
+					throw new SemanticErrorException("" + lineNum);
 				}
 				break;
 			case DIVIDE:
 				if (!(t1 == TYPE_INT.getInstance()) || !(t2 == TYPE_INT.getInstance())) {
 					System.out.format(">> ERROR [%d:%d] invalid types for '%s' operation\n", 2, 2, OP.type);
-					System.exit(0);
+					throw new SemanticErrorException("" + lineNum);
 				}
 				if (right instanceof AST_EXP_INT && ((AST_EXP_INT) right).value == 0) {
 					System.out.format(">> ERROR [%d:%d] division by zero\n", 2, 2);
-					System.exit(0);
+					throw new SemanticErrorException("" + lineNum);
 				}
 			default:
 				if (!(t1 == TYPE_INT.getInstance()) || !(t2 == TYPE_INT.getInstance())) {
 					System.out.format(">> ERROR [%d:%d] invalid types for '%s' operation\n", 2, 2, OP.type);
-					System.exit(0);
+					throw new SemanticErrorException("" + lineNum);
 				}
 		}
 

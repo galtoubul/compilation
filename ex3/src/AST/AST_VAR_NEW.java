@@ -72,7 +72,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         // Check that the type isn't void
         if (t == TYPE_VOID.getInstance()) {
             System.out.format(">> ERROR [%d:%d] cannot declare a variable as void\n", 2, 2, this.type.name());
-            System.exit(0);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // Check that id does NOT exist at the same scope
@@ -88,7 +88,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         TYPE tInitial = initialValue.SemantMe(classId);
         if (!initialValue.subscript.isPresent() && !TYPE.isSubtype(tInitial, t)) {
             System.out.format(">> ERROR [%d:%d] type mismatch\n", 2, 2, id);
-            System.exit(0);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // Validate arrays
@@ -96,14 +96,14 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
                 && (!t.isArray() || (t.isArray() && !TYPE.isSubtype(tInitial, ((TYPE_ARRAY) t).type)))) {
             System.out.format(">> ERROR [%d:%d] type mismatch: type %s is not an array of %s\n",
                     2, 2, t.name, tInitial.name);
-            System.exit(0);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // If the initialization is of a class field, it must be initialized with a
         // constant; and a new-expression is not a constant
         if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class) {
-            System.out.format(">> ERROR [%d:%d] class fields can only be initialized with constant values\n", 2, 2, id);
-            System.exit(0);
+            System.out.format(">> ERROR [%d:%d] classs fields can only be initialized with constant values\n", 2, 2, id);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         /***************************************************/

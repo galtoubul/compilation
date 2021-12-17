@@ -63,11 +63,14 @@ public class Main
 				output = "ERROR("+e.getMessage()+")";
 			}
 			file_writer.write(output);
-			
+
+
 			/*************************/
 			/* [8] Close output file */
 			/*************************/
 			file_writer.close();
+			System.out.println("-------------------------- FILE OUTPUT IS:");
+			System.out.println(output);
 
 			/*************************************/
 			/* [9] Finalize AST GRAPHIZ DOT file */

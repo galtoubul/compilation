@@ -59,7 +59,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         // Check that the type isn't void
         if (t == TYPE_VOID.getInstance()) {
             System.out.format(">> ERROR [%d:%d] cannot declare a variable as void\n", 2, 2, type.name());
-            System.exit(0);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // Check that id does NOT exist at the same scope

@@ -57,17 +57,17 @@ public class AST_STMT_RETURN extends AST_STMT {
         if (this.exp.isPresent()) {
             if (returnType == TYPE_VOID.getInstance()) {
                 System.out.format(">> ERROR [%d:%d] cannot return a value, since the return type is void\n", 2, 2);
-                System.exit(0);
+                throw new SemanticErrorException("" + lineNum);
             }
             TYPE valueType = this.exp.get().SemantMe(classId);
             if (!TYPE.isSubtype(valueType, returnType)) {
                 System.out.format(">> ERROR [%d:%d] %s must return %s\n", 2, 2, scope.scopeName, returnType.name);
-                System.exit(0);
+                throw new SemanticErrorException("" + lineNum);
             }
         } else {
             if (returnType != TYPE_VOID.getInstance()) {
                 System.out.format(">> ERROR [%d:%d] %s must return %s\n", 2, 2, scope.scopeName, returnType.name);
-                System.exit(0);
+                throw new SemanticErrorException("" + lineNum);
             }
         }
         return null;

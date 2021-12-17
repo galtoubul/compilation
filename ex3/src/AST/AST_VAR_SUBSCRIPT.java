@@ -71,20 +71,20 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 		// Check that the variable is an array
 		if (!type.isArray()) {
 			System.out.format(">> ERROR [%d:%d] not an array\n", 2, 2);
-			System.exit(0);
+			throw new SemanticErrorException("" + lineNum);
 		}
 
 		// Validate the subscript to be integral
 		if (subscript.SemantMe(classId) != TYPE_INT.getInstance()) {
 			System.out.format(">> ERROR [%d:%d] non integral array length\n", 2, 2);
-			System.exit(0);
+			throw new SemanticErrorException("" + lineNum);
 		}
 
 		// Validate positive constant subscript
 		if (this.subscript instanceof AST_EXP_INT &&
 				((AST_EXP_INT) this.subscript).value < 0) {
 			System.out.format(">> ERROR [%d:%d] negative constant array length\n", 2, 2);
-			System.exit(0);
+			throw new SemanticErrorException("" + lineNum);
 		}
 
 		return ((TYPE_ARRAY) type).type;

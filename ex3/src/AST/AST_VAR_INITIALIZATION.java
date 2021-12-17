@@ -71,7 +71,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         // Check that the type isn't void
         if (t == TYPE_VOID.getInstance()) {
             System.out.format(">> ERROR [%d:%d] cannot declare a variable as void\n", 2, 2, this.type.name());
-            System.exit(0);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // Check that id does NOT exist at the same scope
@@ -87,7 +87,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         TYPE tInitial = initialValue.SemantMe(classId);
         if (!TYPE.isSubtype(tInitial, t)) {
             System.out.format(">> ERROR [%d:%d] type mismatch\n", 2, 2, id);
-            System.exit(0);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         // If the initialization is of a class field, it must be initialized with a
@@ -97,7 +97,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
                 !(initialValue instanceof AST_EXP_STRING) &&
                 !(initialValue instanceof AST_EXP_NIL)) {
             System.out.format(">> ERROR [%d:%d] class fields can only be initialized with constant values\n", 2, 2, id);
-            System.exit(0);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         /***************************************************/
