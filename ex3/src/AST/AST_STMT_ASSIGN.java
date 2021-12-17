@@ -71,7 +71,7 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		// Compate the two types
 		if (!TYPE.isSubtype(t2, t1)) {
 			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n", 6, 6);
-			System.exit(0);
+			throw new SemanticErrorException("" + lineNum);
 		}
 
 		return null;

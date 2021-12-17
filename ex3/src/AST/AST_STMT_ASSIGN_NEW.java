@@ -39,7 +39,7 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
                 (!t1.isArray() || (t1.isArray() && !TYPE.isSubtype(t2, ((TYPE_ARRAY) t1).type)))) {
             System.out.format(">> ERROR [%d:%d] type mismatch: type %s is not an array of %s\n",
                     2, 2, t1.name, t2.name);
-            System.exit(0);
+            throw new SemanticErrorException("" + lineNum);
         }
 
         return null;
