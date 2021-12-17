@@ -46,31 +46,35 @@ public class Main
 			/***********************************/
 			/* [5] 3 ... 2 ... 1 ... Parse !!! */
 			/***********************************/
-			AST = (AST_PROGRAM) p.parse().value;
-			
+
 			/*************************/
 			/* [6] Print the AST ... */
 			/*************************/
-			AST.PrintMe();
 
 			/**************************/
 			/* [7] Semant the AST ... */
 			/**************************/
 			System.out.println("before AST.SemantMe();");
 			try {
+				AST = (AST_PROGRAM) p.parse().value;
+				AST.PrintMe();
 				AST.SemantMe();
 			} catch (SemanticErrorException e) {
 				output = "ERROR("+e.getMessage()+")";
+			} catch (syntaxErrorException e) {
+				output = "ERROR("+e.getMessage()+")";
+			} catch (lexicalErrorException e) {
+				output = "ERROR";
 			}
 			file_writer.write(output);
+			System.out.println("-------------------------- FILE OUTPUT IS:");
+			System.out.println(output);
 
 
 			/*************************/
 			/* [8] Close output file */
 			/*************************/
 			file_writer.close();
-			System.out.println("-------------------------- FILE OUTPUT IS:");
-			System.out.println(output);
 
 			/*************************************/
 			/* [9] Finalize AST GRAPHIZ DOT file */
