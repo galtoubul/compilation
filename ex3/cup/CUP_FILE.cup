@@ -182,8 +182,8 @@ funcDec     ::=     type:t ID:s LPAREN RPAREN LBRACE stmtList:stl RBRACE        
                     | type:t ID:s LPAREN parmList:pl RPAREN LBRACE stmtList:stl RBRACE    {: RESULT = new AST_FUNC_DEC(t, s, stl, Optional.of(pl)); RESULT.lineNum = parser.prevTokenLine;:}
                     ;
 
-classDec    ::=     CLASS ID:s LBRACE cFieldList:cl RBRACE                                {: RESULT = new AST_CLASS_DEC(s, Optional.empty(), cl); RESULT.lineNum = parser.prevTokenLine;:}
-                    | CLASS ID:s1 EXTENDS ID:s2 LBRACE cFieldList:cl RBRACE               {: RESULT = new AST_CLASS_DEC(s1, Optional.of(s2), cl); RESULT.lineNum = parser.prevTokenLine;:}
+classDec    ::=     CLASS:c ID:s LBRACE cFieldList:cl RBRACE                                {: RESULT = new AST_CLASS_DEC(s, Optional.empty(), cl); RESULT.lineNum = cleft + 1;:}
+                    | CLASS:c ID:s1 EXTENDS ID:s2 LBRACE cFieldList:cl RBRACE               {: RESULT = new AST_CLASS_DEC(s1, Optional.of(s2), cl); RESULT.lineNum = cleft + 1;:}
                     ;
 
 type        ::=     TYPE_INT                                     {: RESULT = new AST_TYPE_WITHOUT_VALUE(Type.TYPE_INT); RESULT.lineNum = parser.prevTokenLine;:}
@@ -202,7 +202,7 @@ exp		    ::=		INT:i								         {: RESULT = new AST_EXP_INT(i);          RES
 					| exp:e1 LT exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.LT);RESULT.lineNum = parser.prevTokenLine;:}
 					| exp:e1 GT exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.GT);RESULT.lineNum = parser.prevTokenLine;:}
 					| exp:e1 EQ exp:e2				             {: RESULT = new AST_EXP_BINOP(e1, e2, Binop.EQ);RESULT.lineNum = parser.prevTokenLine;:}
-					| ID:s LPAREN expList:pl RPAREN              {: RESULT = new AST_EXP_FUNC(s, pl);RESULT.lineNum = parser.prevTokenLine;:}
+					| ID:s LPAREN expList:pl RPAREN              {: RESULT = new AST_EXP_FUNC(s, pl); RESULT.lineNum = parser.prevTokenLine;:}
 					| ID:s LPAREN RPAREN                         {: RESULT = new AST_EXP_FUNC(s, null);         RESULT.lineNum = parser.prevTokenLine;:}
 					| var:v DOT ID:s LPAREN expList:pl RPAREN    {: RESULT = new AST_EXP_METHOD(v, s, pl);RESULT.lineNum = parser.prevTokenLine;:}
 					| var:v DOT ID:s LPAREN RPAREN               {: RESULT = new AST_EXP_METHOD(v, s, null);RESULT.lineNum = parser.prevTokenLine;:}
