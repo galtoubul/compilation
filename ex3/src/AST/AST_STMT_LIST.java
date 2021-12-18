@@ -53,10 +53,15 @@ public class AST_STMT_LIST extends AST_Node {
 
 	public TYPE SemantMe(Optional<String> classId) {
 		System.out.println("-- AST_STMT_LIST SemantMe");
-		if (head != null)
+		System.out.println("-- AST_STMT_LIST SemantMe\n\n\tline number = " + lineNum);
+		if (head != null) {
+			System.out.println("-- AST_STMT_LIST SemantMe\n\n\thead != null");
 			head.SemantMe(classId);
-		if (tail != null)
+		}
+		if (tail != null) {
+			System.out.println("-- AST_STMT_LIST SemantMe\n\n\ttail != null");
 			tail.SemantMe(classId);
+		}
 
 		return null;
 	}

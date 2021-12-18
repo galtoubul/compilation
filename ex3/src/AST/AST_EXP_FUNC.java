@@ -11,7 +11,7 @@ public class AST_EXP_FUNC extends AST_EXP {
 
     public AST_EXP_FUNC(String id, AST_EXP_LIST argsList) {
         SerialNumber = AST_Node_Serial_Number.getFresh();
-
+        System.out.println("-- AST_EXP_FUNC ctor\n\n\t line num = " + lineNum);
         this.id = id;
         if (argsList == null) {
             this.argsList = new AST_EXP_LIST(null, null);
@@ -94,6 +94,7 @@ public class AST_EXP_FUNC extends AST_EXP {
     public TYPE SemantMe(Optional<String> fatherClassId) {
         System.out.println("-- AST_EXP_FUNC SemantMe");
 
+        System.out.println("-- AST_EXP_FUNC SemantMe\n\n\tline number = " + lineNum);
         TYPE_FUNCTION funcType = getFunctionType();
         System.out.println("-- AST_EXP_FUNC\n\t\tfuncType.name = " + funcType.name);
 

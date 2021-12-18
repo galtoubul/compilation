@@ -162,8 +162,8 @@ dec         ::=     varDec:v                             {: RESULT = new AST_DEC
 
 stmt		::=		varDec:v                                                    {: RESULT = new AST_STMT_VAR_DEC(v); RESULT.lineNum = parser.prevTokenLine;:}
                     | var:v ASSIGN exp:e SEMICOLON								{: RESULT = new AST_STMT_ASSIGN(v,e); RESULT.lineNum = parser.prevTokenLine;:}
-					| IF    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_IF(   cond,body); RESULT.lineNum = parser.prevTokenLine;:}
-					| WHILE LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_WHILE(cond,body); RESULT.lineNum = parser.prevTokenLine;:}
+					| IF:i    LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_IF(cond,body); RESULT.lineNum = ileft + 1;:}
+					| WHILE:w LPAREN exp:cond RPAREN LBRACE stmtList:body RBRACE	{: RESULT = new AST_STMT_WHILE(cond,body); RESULT.lineNum = wleft + 1;:}
 					| var:v ASSIGN newExp:e SEMICOLON							{: RESULT = new AST_STMT_ASSIGN_NEW(v,e); RESULT.lineNum = parser.prevTokenLine;:}
 					| RETURN SEMICOLON                                          {: RESULT = new AST_STMT_RETURN(Optional.empty()); RESULT.lineNum = parser.prevTokenLine;:}
 					| RETURN exp:e SEMICOLON                                    {: RESULT = new AST_STMT_RETURN(Optional.of(e)); RESULT.lineNum = parser.prevTokenLine;:}

@@ -50,6 +50,8 @@ public class AST_STMT_IF extends AST_STMT {
 	}
 
 	public TYPE SemantMe(Optional<String> classId) {
+		System.out.println("-- AST_STMT_IF\n\n\t line num = " + lineNum);
+
 		/****************************/
 		/* [0] Semant the Condition */
 		/****************************/

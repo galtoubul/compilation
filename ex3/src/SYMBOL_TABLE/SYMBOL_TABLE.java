@@ -199,7 +199,6 @@ public class SYMBOL_TABLE {
 				return member;
 			}
 		}
-
 		return firstEntry.map(entry -> entry.type);
 	}
 }

@@ -62,6 +62,7 @@ public class Main
 			} catch (SemanticErrorException e) {
 				output = "ERROR("+e.getMessage()+")";
 			} catch (syntaxErrorException e) {
+				System.out.println("syntaxErrorException");
 				output = "ERROR("+e.getMessage()+")";
 			} catch (lexicalErrorException e) {
 				output = "ERROR";
