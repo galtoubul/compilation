@@ -45,15 +45,17 @@ public class AST_PARM_LIST extends AST_Node {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, tail.SerialNumber);
 	}
 
-	public TYPE_LIST SemantMe() {
+	public TYPE_LIST SemantMe(int index) {
 		System.out.println("-- AST_PARM_LIST SemantMe");
 
 		if (this.head == null) {
 			return new TYPE_LIST(null, null);
 		} else if (tail == null) {
-			return new TYPE_LIST(head.SemantMe(), null);
+			System.out.println("\t\tparam index = " + index);
+			return new TYPE_LIST(head.SemantMe(index + 1), null);
 		} else {
-			return new TYPE_LIST(head.SemantMe(), tail.SemantMe());
+			System.out.println("\t\tparam index = " + index);
+			return new TYPE_LIST(head.SemantMe(index + 1), tail.SemantMe(index + 1));
 		}
 	}
 }

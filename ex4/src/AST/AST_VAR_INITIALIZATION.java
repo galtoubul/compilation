@@ -52,6 +52,8 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
 
     @Override
     public TYPE SemantMe(Optional<String> classId) {
+        System.out.println("-- AST_VAR_INITIALIZATION SemantMe");
+
         // Check If Type exists
         // Optional<SymbolTableEntry> entry =
         // SYMBOL_TABLE.getInstance().findEntry(type.name());

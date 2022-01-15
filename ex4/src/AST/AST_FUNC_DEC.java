@@ -119,14 +119,14 @@ public class AST_FUNC_DEC extends AST_Node {
         // Semant Input Params
         TYPE_LIST paramsTypesList = null;
         if (params.isPresent()) {
-            paramsTypesList = params.get().SemantMe();
+            paramsTypesList = params.get().SemantMe(0);
         }
 
         // Enter the function/method Type to the Symbol Table
         TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList);
         SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
-        System.out.println("-- AST_FUNC_DEC SemantMe\n\n\tline number = " + lineNum);
+        System.out.println("-- AST_FUNC_DEC SemantMe\n\t\tline number = " + lineNum);
 
         // Semant function/method body
         body.SemantMe(Optional.empty());

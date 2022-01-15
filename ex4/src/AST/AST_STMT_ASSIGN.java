@@ -64,11 +64,11 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 	}
 
 	public TYPE SemantMe(Optional<String> classId) {
-		System.out.format("ASSIGN");
+		System.out.println("-- AST_STMT_ASSIGN SemantMe");
 		TYPE t1 = var.SemantMe(classId);
 		TYPE t2 = exp.SemantMe(classId);
 
-		// Compate the two types
+		// Compare the two types
 		if (!TYPE.isSubtype(t2, t1)) {
 			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n", 6, 6);
 			throw new SemanticErrorException("" + lineNum);

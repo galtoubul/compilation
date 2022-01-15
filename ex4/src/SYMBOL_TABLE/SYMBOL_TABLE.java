@@ -6,8 +6,9 @@ import java.util.Optional;
 import java.util.Stack;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.stream.IntStream;
-
 import TYPES.*;
+import AstNotationType.AstNotationType;
+
 
 public class SYMBOL_TABLE {
 
@@ -106,6 +107,21 @@ public class SYMBOL_TABLE {
 		}
 		if (idStack.empty() || idStack.peek().index < this.currentScopeIndex()) {
 			idStack.push(new SymbolTableEntry(this.currentScopeIndex(), name, type, isType));
+			this.currentScopePair().getValue().add(name);
+		}
+	}
+
+	/**
+	 * If `name` is not in the current scope, insert it with type `type`.
+	 */
+	public void enter(String name, TYPE type, boolean isType, Optional<Integer> position, Optional<AstNotationType> astNotationType) {
+		Stack<SymbolTableEntry> idStack = this.table.get(name);
+		if (idStack == null) {
+			idStack = new Stack<>();
+			this.table.put(name, idStack);
+		}
+		if (idStack.empty() || idStack.peek().index < this.currentScopeIndex()) {
+			idStack.push(new SymbolTableEntry(this.currentScopeIndex(), name, type, isType, position, astNotationType));
 			this.currentScopePair().getValue().add(name);
 		}
 	}

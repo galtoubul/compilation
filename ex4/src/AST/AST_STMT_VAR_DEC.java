@@ -13,6 +13,7 @@ public class AST_STMT_VAR_DEC extends AST_STMT {
 
     @Override
     public TYPE SemantMe(Optional<String> classId) {
+        System.out.println("-- AST_STMT_VAR_DEC SemantMe");
         return this.varDec.SemantMe(classId);
     }
 }

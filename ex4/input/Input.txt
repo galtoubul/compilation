@@ -1,46 +1,30 @@
-int i;
-int j;
-int p;
-int start;
-int end;
-int isPrime;
-int copyp;
-int copyisPrime;
+int x := 3;
+
+
+int f(int p1, int p2, int p3)
+{
+    int lv1 := 5;
+    int lv2 := 6;
+    return 0;
+}
+
+int g(int p1, int p2, int p3)
+{
+    return 0;
+}
 
 void main()
 {
-    p     := 2;
-	start := 2;
-	end := 100;
-	
-    while (p < end+1)
-    {
-        i := 2;
-        j := 2;
+    int i := 3;
+    f(i, i, i);
+    g(i, i, i);
+}
 
-        isPrime := 1;    
+class A {
+    int f1;
+    int f2;
 
-        while ( i < p )
-        {
- 		    j := 2;
-            while ( j < p )
-            {
-            	copyp := p;
-                while ( i*j = copyp )
-                {
-                    isPrime := 0;
-                    copyp := 0;
-                }
-                j := j+1;
-            }
-            i := i+1;
-        }
-        copyisPrime := isPrime;
-        while (copyisPrime)
-        {
-            PrintInt(p);
-            copyisPrime := 0;
-        }
-        p := p + 1;
+    int a(int p1, int p2) {
+        return 0;
     }
 }

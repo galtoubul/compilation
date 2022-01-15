@@ -52,14 +52,19 @@ public class AST_STMT_LIST extends AST_Node {
 	}
 
 	public TYPE SemantMe(Optional<String> classId) {
-		System.out.println("-- AST_STMT_LIST SemantMe");
-		System.out.println("-- AST_STMT_LIST SemantMe\n\n\tline number = " + lineNum);
+		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+		StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
+		String methodName = e.getClassName();
+//		String callerClassName = new Exception().getStackTrace()[1].getClassName();
+		System.out.println("-- AST_STMT_LIST SemantMe\ncaller's class = " + methodName);
 		if (head != null) {
-			System.out.println("-- AST_STMT_LIST SemantMe\n\n\thead != null");
+			System.out.println("\t\thead != null");
+			if (head instanceof AST_STMT_ASSIGN)
+				System.out.println("instanceof AST_STMT_ASSIGN");
 			head.SemantMe(classId);
 		}
 		if (tail != null) {
-			System.out.println("-- AST_STMT_LIST SemantMe\n\n\ttail != null");
+			System.out.println("\t\ttail != null");
 			tail.SemantMe(classId);
 		}
 
