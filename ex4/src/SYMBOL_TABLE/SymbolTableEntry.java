@@ -28,7 +28,7 @@ public class SymbolTableEntry {
 		this.name = name;
 		this.type = type;
 		this.isType = isType;
-		this.position = position.orElse(null);
+		this.position = position.orElse(0);
 		this.astNotationType = astNotationType.orElse(null);
 		System.out.format("\t\t---- SymbolTableEntry index = %d | " +
 						"name = %s | type = %s | isType = %s | position = %d | type = %s\n",

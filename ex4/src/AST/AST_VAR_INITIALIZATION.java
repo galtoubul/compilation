@@ -8,6 +8,8 @@ import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
+import AstNotationType.AstNotationType;
+
 
 public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
     public AST_EXP initialValue;
@@ -51,7 +53,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
     }
 
     @Override
-    public TYPE SemantMe(Optional<String> classId) {
+    public TYPE SemantMe(Optional<String> classId, Optional<Integer> localVarIndexOpt) {
         System.out.println("-- AST_VAR_INITIALIZATION SemantMe");
 
         // Check If Type exists
@@ -105,7 +107,15 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         /***************************************************/
         /* [4] Enter the variable name to the Symbol Table */
         /***************************************************/
-        SYMBOL_TABLE.getInstance().enter(id, t, false);
+        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
+        StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
+        String callerClassName = e.getClassName();
+        System.out.println("\t\tcaller's class = " + callerClassName);
+
+        AstNotationType astNotationType = callerClassName == "AST.AST_STMT_VAR_DEC" ? AstNotationType.localVariable : AstNotationType.globalVariable;
+        Optional<AstNotationType> astNotationTypeOpt = Optional.of(astNotationType);
+        System.out.println("\t\tlocalVarIndexOpt = " + localVarIndexOpt + " | astNotationTypeOpt = " + astNotationTypeOpt);
+        SYMBOL_TABLE.getInstance().enter(id, t, false, localVarIndexOpt, astNotationTypeOpt);
 
         return new TYPE_CLASS_VAR_DEC(t, id);
     }

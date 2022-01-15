@@ -9,6 +9,8 @@ import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
+import AstNotationType.AstNotationType;
+
 
 public class AST_VAR_NEW extends AST_VAR_DEC {
     public AST_NEW_EXP initialValue;
@@ -52,7 +54,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
     }
 
     @Override
-    public TYPE SemantMe(Optional<String> classId) {
+    public TYPE SemantMe(Optional<String> classId, Optional<Integer> localVarIndexOpt) {
         // // Check If Type exists
         // Optional<SymbolTableEntry> entry =
         // SYMBOL_TABLE.getInstance().findEntry(type.name());
@@ -109,7 +111,9 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         /***************************************************/
         /* [4] Enter the variable name to the Symbol Table */
         /***************************************************/
-        SYMBOL_TABLE.getInstance().enter(id, t, false);
+        AstNotationType astNotationType = AstNotationType.localVariable;
+        Optional<AstNotationType> astNotationTypeOpt = Optional.of(astNotationType);
+        SYMBOL_TABLE.getInstance().enter(id, t, false, localVarIndexOpt, astNotationTypeOpt);
 
         /************************************************************/
         /* [5] Return value is irrelevant for variable declarations */

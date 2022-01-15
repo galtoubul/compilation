@@ -13,5 +13,5 @@ public abstract class AST_VAR_DEC extends AST_Node {
         this.id = id;
     }
 
-    public abstract TYPE SemantMe(Optional<String> classId);
+    public abstract TYPE SemantMe(Optional<String> classId, Optional<Integer> localVarIndexOpt);
 }

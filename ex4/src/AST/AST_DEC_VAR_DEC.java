@@ -13,7 +13,7 @@ public class AST_DEC_VAR_DEC extends AST_DEC {
 
     public TYPE SemantMe() {
         if (varDec != null) {
-            varDec.SemantMe(Optional.empty());
+            varDec.SemantMe(Optional.empty(), Optional.empty());
         }
         return null;
     }
