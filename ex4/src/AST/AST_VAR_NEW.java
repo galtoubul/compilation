@@ -10,6 +10,8 @@ import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
 import AstNotationType.AstNotationType;
+import TEMP.*;
+
 
 
 public class AST_VAR_NEW extends AST_VAR_DEC {
@@ -121,4 +123,9 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         return new TYPE_CLASS_VAR_DEC(t, id);
     }
 
+    // TODO
+    public TEMP IRme() {
+        System.out.println("-- AST_VAR_NEW IRme");
+        return null;
+    }
 }

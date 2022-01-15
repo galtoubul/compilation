@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.*;
+import TEMP.*;
+import IR.*;
 
 public class AST_EXP_FUNC extends AST_EXP {
     public String id;
@@ -109,5 +111,18 @@ public class AST_EXP_FUNC extends AST_EXP {
         checkMatchingParamsArgs(argsTypes, paramsTypes);
 
         return funcType.returnType;
+    }
+
+    public TEMP IRme()
+    {
+        TEMP t = null;
+
+        if (argsList != null) {
+            t = argsList.head.IRme();
+        }
+
+        IR.getInstance().Add_IRcommand(new IRcommand_PrintInt(t));
+
+        return null;
     }
 }

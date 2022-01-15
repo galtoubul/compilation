@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
+import TEMP.*;
 
 public class AST_EXP_METHOD extends AST_EXP {
     public AST_VAR var;
@@ -19,4 +20,7 @@ public class AST_EXP_METHOD extends AST_EXP {
     public TYPE SemantMe(Optional<String> classId) {
         return null;
     }
+
+    // TODO
+    public TEMP IRme() { return null; }
 }

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import TYPES.TYPE;
 import TYPES.TYPE_STRING;
+import TEMP.*;
 
 public class AST_EXP_STRING extends AST_EXP {
     public String s;
@@ -34,4 +35,8 @@ public class AST_EXP_STRING extends AST_EXP {
         return TYPE_STRING.getInstance();
     }
 
+    // TODO
+    public TEMP IRme() {
+        return null;
+    }
 }

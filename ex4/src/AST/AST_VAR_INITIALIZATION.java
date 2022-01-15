@@ -10,6 +10,7 @@ import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
 import AstNotationType.AstNotationType;
 import IR.*;
+import TEMP.*;
 
 
 public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {

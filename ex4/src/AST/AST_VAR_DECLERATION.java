@@ -7,6 +7,7 @@ import SYMBOL_TABLE.ScopeEntry;
 import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.*;
 import AstNotationType.AstNotationType;
+import TEMP.*;
 
 
 public class AST_VAR_DECLERATION extends AST_VAR_DEC {
@@ -79,5 +80,11 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         System.out.format("-- AST_VAR_DECLERATION\n\t\tinserted variable %s of type %s to the symbol table\n", var.name,
                 var.type.name);
         return var;
+    }
+
+    // TODO
+    public TEMP IRme() {
+        System.out.println("-- AST_VAR_DECLERATION IRme");
+        return null;
     }
 }

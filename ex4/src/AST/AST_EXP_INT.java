@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
+import TEMP.*;
+import IR.*;
 
 public class AST_EXP_INT extends AST_EXP {
 	public int value;
@@ -47,11 +49,13 @@ public class AST_EXP_INT extends AST_EXP {
 
 	@Override
 	public TYPE SemantMe(Optional<String> classId) {
+		System.out.println("-- AST_EXP_INT SemantMe");
 		return TYPE_INT.getInstance();
 	}
 
 	@Override
-	public TEMP IRme(Optional<String> classId) {
+	public TEMP IRme() {
+		System.out.println("-- AST_EXP_INT IRme");
 		TEMP t = TEMP_FACTORY.getInstance().getFreshTEMP();
 		IR.getInstance().Add_IRcommand(new IRcommandConstInt(t,value));
 		return t;

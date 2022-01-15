@@ -3,6 +3,9 @@ package AST;
 import java.util.Optional;
 
 import TYPES.*;
+import TEMP.*;
+import IR.IRCommand_Binop_Sub_Integers;
+import IR.*;
 
 public class AST_EXP_BINOP extends AST_EXP {
 	Binop OP;
@@ -128,7 +131,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(dst,t1,t2));
 				break;
 			case MINUS:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Subtract_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Sub_Integers(dst,t1,t2));
 				break;
 			case TIMES:
 				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Mul_Integers(dst,t1,t2));

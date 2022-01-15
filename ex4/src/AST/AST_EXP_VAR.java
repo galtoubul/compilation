@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import TYPES.TYPE;
 import TYPES.TYPE_NONE;
+import TEMP.*;
 
 public class AST_EXP_VAR extends AST_EXP {
 	public AST_VAR var;
@@ -56,4 +57,7 @@ public class AST_EXP_VAR extends AST_EXP {
 
 		return varType;
 	}
+
+	// TODO
+	public TEMP IRme() { return null; }
 }

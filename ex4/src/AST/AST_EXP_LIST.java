@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE_LIST;
+import TEMP.*;
 
 public class AST_EXP_LIST extends AST_Node {
 	public AST_EXP head;
@@ -59,4 +60,9 @@ public class AST_EXP_LIST extends AST_Node {
 		}
 	}
 
+	// TODO
+	public TEMP IRme() {
+		System.out.println("-- AST_EXP_LIST IRme");
+		return null;
+	}
 }

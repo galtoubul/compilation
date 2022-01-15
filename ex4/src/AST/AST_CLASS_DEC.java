@@ -7,6 +7,7 @@ import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_LIST;
+import TEMP.*;
 
 public class AST_CLASS_DEC extends AST_Node {
     public String id;
@@ -76,6 +77,12 @@ public class AST_CLASS_DEC extends AST_Node {
         SYMBOL_TABLE.getInstance().enter(id, type, true);
 
         // Return value is irrelevant for class declarations
+        return null;
+    }
+
+    // TODO
+    public TEMP IRme() {
+        System.out.println("--AST_CLASS_DEC IRme");
         return null;
     }
 }

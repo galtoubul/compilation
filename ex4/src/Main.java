@@ -59,6 +59,7 @@ public class Main
 				AST = (AST_PROGRAM) p.parse().value;
 				AST.PrintMe();
 				AST.SemantMe();
+				AST.IRme();
 			} catch (SemanticErrorException e) {
 				output = "ERROR("+e.getMessage()+")";
 			} catch (syntaxErrorException e) {
