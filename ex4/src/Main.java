@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import java_cup.runtime.Symbol;
 import AST.*;
+import IR.*;
+import MIPS.*;
 
 public class Main
 {
@@ -60,6 +62,8 @@ public class Main
 				AST.PrintMe();
 				AST.SemantMe();
 				AST.IRme();
+				IR.getInstance().MIPSme();
+				MIPSGenerator.getInstance().finalizeFile();
 			} catch (SemanticErrorException e) {
 				output = "ERROR("+e.getMessage()+")";
 			} catch (syntaxErrorException e) {

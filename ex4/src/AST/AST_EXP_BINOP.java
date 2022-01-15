@@ -4,7 +4,8 @@ import java.util.Optional;
 
 import TYPES.*;
 import TEMP.*;
-import IR.IRCommand_Binop_Sub_Integers;
+import IR.IRcommand_Binop_Add_Integers;
+import IR.IRcommand_Binop_Sub_Integers;
 import IR.*;
 
 public class AST_EXP_BINOP extends AST_EXP {
