@@ -75,7 +75,7 @@ public class AST_STMT_LIST extends AST_Node {
 			}
 		}
 		if (tail != null) {
-			tail.localVarIndex++;
+			tail.localVarIndex = localVarIndex + 1;
 			System.out.println("\t\ttail != null");
 			tail.SemantMe(classId);
 		}
