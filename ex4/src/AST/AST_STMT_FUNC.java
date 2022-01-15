@@ -2,6 +2,8 @@ package AST;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.*;
+import TEMP.*;
+import IR.*;
 
 import java.util.Optional;
 
@@ -87,4 +89,17 @@ public class AST_STMT_FUNC extends AST_STMT {
         return funcType.returnType;
     }
 
+    // TODO
+    public TEMP IRme() {
+        System.out.println("-- AST_STMT_FUNC IRme");
+
+        TEMP t = null;
+        if (argsList != null) {
+            t = argsList.IRme();
+        }
+
+//        IR.getInstance().Add_IRcommand(new IRcommand_PrintInt(t));
+
+        return null;
+    }
 }

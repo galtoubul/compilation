@@ -19,9 +19,11 @@ public class AST_DEC_FUNC_DEC extends AST_DEC {
         return null;
     }
 
-    // TODO
     public TEMP IRme() {
         System.out.println("-- AST_DEC_FUNC_DEC IRme");
+        if (v != null) {
+            v.IRme();
+        }
         return null;
     }
 }

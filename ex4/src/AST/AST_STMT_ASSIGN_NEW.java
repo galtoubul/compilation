@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
+import TEMP.*;
+import IR.*;
 
 public class AST_STMT_ASSIGN_NEW extends AST_STMT {
     public AST_VAR var;
@@ -16,7 +18,7 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
 
     @Override
     public TYPE SemantMe(Optional<String> classId) {
-        System.out.format("ASSIGN");
+        System.out.format("-- AST_STMT_ASSIGN_NEW SemantMe");
         TYPE t1 = null;
         TYPE t2 = null;
 
@@ -41,6 +43,15 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
                     2, 2, t1.name, t2.name);
             throw new SemanticErrorException("" + lineNum);
         }
+
+        return null;
+    }
+
+    // TODO
+    public TEMP IRme() {
+        System.out.println("-- AST_STMT_ASSIGN_NEW IRme");
+        TEMP src = exp.IRme();
+        IR.getInstance().Add_IRcommand(new IRcommand_Store(((AST_VAR_SIMPLE) var).name, src));
 
         return null;
     }

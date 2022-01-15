@@ -74,13 +74,4 @@ public class IR
 		return instance;
 	}
 
-	public String toString() {
-		IRcommand ptr1 = head;
-		IRcommandList ptr2 = tail;
-
-		while (head != null) {
-
-		}
-		return null;
-	}
 }

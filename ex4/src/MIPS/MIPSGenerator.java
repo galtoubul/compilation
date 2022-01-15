@@ -53,7 +53,7 @@ public class MIPSGenerator
 	public void allocate(String var_name)
 	{
 		fileWriter.format(".data\n");
-		fileWriter.format("\tglobal_%s: .word 721\n",var_name);
+		fileWriter.format("\tglobal_%s: .word 0\n",var_name);
 	}
 	public void load(TEMP dst,String var_name)
 	{
@@ -113,7 +113,17 @@ public class MIPSGenerator
 		{
 			fileWriter.format("%s:\n",inlabel);
 		}
-	}	
+	}
+	public void push(String reg) {
+		fileWriter.format("\tsubu $sp, $sp, 4\n");
+		fileWriter.format("\tsw $%s, 0($sp)\n", reg);
+	}
+	public void funcPrologue(int localVarsNum) {
+		push("ra");
+		push("fp");
+		fileWriter.format("\tmov $fp, $sp\n");
+		fileWriter.format("\tsub $sp, $sp, %d\n", localVarsNum * WORD_SIZE);
+	}
 	public void jump(String inlabel)
 	{
 		fileWriter.format("\tj %s\n",inlabel);

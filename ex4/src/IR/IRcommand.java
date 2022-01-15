@@ -1,15 +1,4 @@
-/***********/
-/* PACKAGE */
-/***********/
 package IR;
-
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 
 public abstract class IRcommand
 {

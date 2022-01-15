@@ -5,6 +5,7 @@ import java.util.Optional;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_INT;
+import TEMP.*;
 
 public class AST_VAR_SUBSCRIPT extends AST_VAR {
 	public AST_VAR var;
@@ -88,5 +89,11 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 		}
 
 		return ((TYPE_ARRAY) type).type;
+	}
+
+	// TODO
+	public TEMP IRme() {
+		System.out.println("-- AST_VAR_SUBSCRIPT IRme");
+		return null;
 	}
 }

@@ -118,13 +118,17 @@ public class AST_EXP_BINOP extends AST_EXP {
 		return TYPE_INT.getInstance();
 	}
 
-	public TEMP IRme()
-	{
+	public TEMP IRme() {
+		System.out.println("-- AST_EXP_BINOP");
+
 		TEMP t1 = null;
 		TEMP t2 = null;
 		TEMP dst = TEMP_FACTORY.getInstance().getFreshTEMP();
 
-		if (left  != null) t1 = left.IRme();
+		if (left  != null) {
+			System.out.println(left);
+			t1 = left.IRme();
+		}
 		if (right != null) t2 = right.IRme();
 
 		switch (OP) {

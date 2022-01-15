@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
+import TEMP.*;
 
 public class AST_STMT_LIST extends AST_Node {
 
@@ -79,6 +80,14 @@ public class AST_STMT_LIST extends AST_Node {
 			System.out.println("\t\ttail != null");
 			tail.SemantMe(classId);
 		}
+
+		return null;
+	}
+
+	public TEMP IRme() {
+		System.out.println("-- AST_STMT_LIST IRme");
+		if (head != null) head.IRme();
+		if (tail != null) tail.IRme();
 
 		return null;
 	}

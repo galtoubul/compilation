@@ -6,6 +6,7 @@ import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_LIST;
+import TEMP.*;
 
 public class AST_VAR_FIELD extends AST_VAR {
 	public AST_VAR var;
@@ -90,5 +91,11 @@ public class AST_VAR_FIELD extends AST_VAR {
 		// fieldName does not exist in class var
 		System.out.format(">> ERROR [" + lineNum + "] there is no field named '%s' in class '%s'\n", fieldName, varType.name);
 		throw new SemanticErrorException("" + lineNum);
+	}
+
+	// TODO
+	public TEMP IRme() {
+		System.out.println("-- AST_VAR_FIELD IRme");
+		return null;
 	}
 }

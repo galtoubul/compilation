@@ -58,6 +58,8 @@ public class AST_EXP_VAR extends AST_EXP {
 		return varType;
 	}
 
-	// TODO
-	public TEMP IRme() { return null; }
+	public TEMP IRme() {
+		TEMP varTemp = this.var.IRme();
+		return varTemp;
+	}
 }

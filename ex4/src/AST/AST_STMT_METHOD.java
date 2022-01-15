@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
+import TEMP.*;
 
 public class AST_STMT_METHOD extends AST_STMT {
     public String id;
@@ -18,6 +19,11 @@ public class AST_STMT_METHOD extends AST_STMT {
     @Override
     public TYPE SemantMe(Optional<String> classId) {
         // TODO Auto-generated method stub
+        return null;
+    }
+
+    public TEMP IRme() {
+        System.out.println("--AST_STMT_METHOD IRme");
         return null;
     }
 

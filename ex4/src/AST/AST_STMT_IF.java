@@ -6,6 +6,7 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
+import TEMP.*;
 
 public class AST_STMT_IF extends AST_STMT {
 	public AST_EXP cond;
@@ -78,6 +79,11 @@ public class AST_STMT_IF extends AST_STMT {
 		/*********************************************************/
 		/* [4] Return value is irrelevant for class declarations */
 		/*********************************************************/
+		return null;
+	}
+
+	public TEMP IRme() {
+		System.out.println("--AST_STMT_IF IRme");
 		return null;
 	}
 }

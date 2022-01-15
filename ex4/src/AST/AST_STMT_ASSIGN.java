@@ -3,6 +3,8 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
+import TEMP.*;
+import IR.*;
 
 public class AST_STMT_ASSIGN extends AST_STMT {
 	/***************/
@@ -73,6 +75,14 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 			System.out.format(">> ERROR [%d:%d] type mismatch for var := exp\n", 6, 6);
 			throw new SemanticErrorException("" + lineNum);
 		}
+
+		return null;
+	}
+
+	public TEMP IRme() {
+		System.out.println("-- AST_STMT_ASSIGN IRme");
+		TEMP src = exp.IRme();
+		IR.getInstance().Add_IRcommand(new IRcommand_Store(((AST_VAR_SIMPLE) var).name, src));
 
 		return null;
 	}

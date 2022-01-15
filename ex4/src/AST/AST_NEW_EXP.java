@@ -5,6 +5,7 @@ import java.util.Optional;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
+import TEMP.*;
 
 public class AST_NEW_EXP extends AST_Node {
     public AST_TYPE type;
@@ -50,5 +51,10 @@ public class AST_NEW_EXP extends AST_Node {
         }
 
         return t;
+    }
+
+    public TEMP IRme() {
+        System.out.println("-- AST_NEW_EXP IRme");
+        return null;
     }
 }

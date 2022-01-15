@@ -1,6 +1,7 @@
 package AST;
 
 import TYPES.TYPE_LIST;
+import TEMP.*;
 
 public class AST_PARM_LIST extends AST_Node {
 	public AST_PARAM head;
@@ -57,5 +58,11 @@ public class AST_PARM_LIST extends AST_Node {
 			System.out.println("\t\tparam index = " + index);
 			return new TYPE_LIST(head.SemantMe(index + 1), tail.SemantMe(index + 1));
 		}
+	}
+
+	// TODO
+	public TEMP IRme() {
+		System.out.println("-- AST_PARM_LIST IRme");
+		return null;
 	}
 }

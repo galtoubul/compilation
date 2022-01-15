@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
+import TEMP.*;
+import IR.*;
 
 public class AST_VAR_SIMPLE extends AST_VAR {
 
@@ -43,5 +45,11 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		}
 
 		throw new SemanticErrorException("" + lineNum);
+	}
+
+	public TEMP IRme() {
+		TEMP t = TEMP_FACTORY.getInstance().getFreshTEMP();
+		IR.getInstance().Add_IRcommand(new IRcommand_Load(t, name));
+		return t;
 	}
 }

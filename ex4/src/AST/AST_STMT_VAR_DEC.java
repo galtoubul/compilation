@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
+import TEMP.*;
 
 public class AST_STMT_VAR_DEC extends AST_STMT {
     public AST_VAR_DEC varDec;
@@ -20,5 +21,10 @@ public class AST_STMT_VAR_DEC extends AST_STMT {
     public TYPE SemantMe(Optional<String> classId, Optional<Integer> localVarIndexOpt) {
         System.out.println("-- AST_STMT_VAR_DEC SemantMe\n\t\tlocalVarIndexOpt = " + localVarIndexOpt);
         return this.varDec.SemantMe(classId, localVarIndexOpt);
+    }
+
+    public TEMP IRme() {
+        System.out.println("--AST_STMT_VAR_DEC IRme");
+        return null;
     }
 }

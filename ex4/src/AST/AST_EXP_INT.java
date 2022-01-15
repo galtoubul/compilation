@@ -55,7 +55,7 @@ public class AST_EXP_INT extends AST_EXP {
 
 	@Override
 	public TEMP IRme() {
-		System.out.println("-- AST_EXP_INT IRme");
+		System.out.println("-- AST_EXP_INT IRme\n\t\tvalue = " + value);
 		TEMP t = TEMP_FACTORY.getInstance().getFreshTEMP();
 		IR.getInstance().Add_IRcommand(new IRcommandConstInt(t,value));
 		return t;

@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.*;
 import TYPES.*;
+import TEMP.*;
+import IR.*;
 
 public class AST_FUNC_DEC extends AST_Node {
     public AST_TYPE returnTypeName;
@@ -87,6 +89,18 @@ public class AST_FUNC_DEC extends AST_Node {
         }
     }
 
+    private int getLocalVarsNum() {
+        int localVarsNum = 0;
+        AST_STMT_LIST ptr1 = this.body;
+        while (ptr1 != null && ptr1.head != null) {
+            if (ptr1.head instanceof AST.AST_STMT_VAR_DEC) {
+                localVarsNum++;
+            }
+            ptr1 = ptr1.tail;
+        }
+        return localVarsNum;
+    }
+
     public TYPE SemantMe(Optional<String> fatherClassId) {
         System.out.format("-- AST_FUNC_DEC SemantMe%s\n", fatherClassId.isPresent() ? " extends" : "");
 
@@ -114,7 +128,7 @@ public class AST_FUNC_DEC extends AST_Node {
 
         // Begin Function Scope
         SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function, id);
-        System.out.println("-- AST_FUNC_DEC\n\t\tStart of a new scope for function/method " + this.id);
+        System.out.println("\t\tStart of a new scope for function/method " + this.id);
 
         // Semant Input Params
         TYPE_LIST paramsTypesList = null;
@@ -123,22 +137,42 @@ public class AST_FUNC_DEC extends AST_Node {
         }
 
         // Enter the function/method Type to the Symbol Table
-        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList);
+        int localVarsNum = getLocalVarsNum();
+        System.out.println("\t\tlocalVarsNum = " + localVarsNum);
+        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList, localVarsNum);
         SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
-        System.out.println("-- AST_FUNC_DEC SemantMe\n\t\tline number = " + lineNum);
+        System.out.println("\t\tline number = " + lineNum);
 
         // Semant function/method body
         body.SemantMe(Optional.empty());
 
         // End Function Scope
         SYMBOL_TABLE.getInstance().endScope();
-        System.out.println("-- AST_FUNC_DEC\n\t\tEnding of a new scope for function/method " + this.id);
+        System.out.println("\t\tEnding of a new scope for function/method " + this.id);
 
         // Enter the function/method Type to the Symbol Table again, as it was
         // popped-out with the rest of the scope
         SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
         return funcType;
+    }
+
+    // TODO
+    public TEMP IRme() {
+        System.out.println("-- AST_FUNC_DEC IRme");
+
+        IR.getInstance().Add_IRcommand(new IRcommand_Label(id));
+        IR.getInstance().Add_IRcommand(new IRcommand_Func_Prologue(id));
+
+
+        if (this.params.isPresent()) {
+            this.params.get().IRme();
+        }
+
+        if (body != null) {
+            body.IRme();
+        }
+        return null;
     }
 }

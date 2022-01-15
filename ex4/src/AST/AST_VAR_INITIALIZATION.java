@@ -55,7 +55,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
     }
 
     public TEMP IRme() {
-        System.out.println("-- AST_VAR_INITIALIZATION IRme");
+        System.out.format("-- AST_VAR_INITIALIZATION IRme\n\t\tid = %s\n", id);
         IR.getInstance().Add_IRcommand(new IRcommand_Allocate(id));
         IR.getInstance().Add_IRcommand(new IRcommand_Store(id,initialValue.IRme()));
         return null;
