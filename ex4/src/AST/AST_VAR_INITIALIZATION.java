@@ -9,6 +9,7 @@ import TYPES.TYPE;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
 import AstNotationType.AstNotationType;
+import IR.*;
 
 
 public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
@@ -50,6 +51,13 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         if (initialValue != null)
             AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, initialValue.SerialNumber);
 
+    }
+
+    public TEMP IRme() {
+        System.out.println("-- AST_VAR_INITIALIZATION IRme");
+        IR.getInstance().Add_IRcommand(new IRcommand_Allocate(id));
+        IR.getInstance().Add_IRcommand(new IRcommand_Store(id,initialValue.IRme()));
+        return null;
     }
 
     @Override

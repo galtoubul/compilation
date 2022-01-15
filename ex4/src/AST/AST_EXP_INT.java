@@ -49,4 +49,11 @@ public class AST_EXP_INT extends AST_EXP {
 	public TYPE SemantMe(Optional<String> classId) {
 		return TYPE_INT.getInstance();
 	}
+
+	@Override
+	public TEMP IRme(Optional<String> classId) {
+		TEMP t = TEMP_FACTORY.getInstance().getFreshTEMP();
+		IR.getInstance().Add_IRcommand(new IRcommandConstInt(t,value));
+		return t;
+	}
 }
