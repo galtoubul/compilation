@@ -15,13 +15,16 @@ public class TYPE_CLASS extends TYPE {
 	/**************************************************/
 	public TYPE_LIST data_members;
 
+	public int fieldsNum = 0;
+
 	/****************/
 	/* CTROR(S) ... */
 	/****************/
-	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members) {
+	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum) {
 		this.name = name;
 		this.father = father;
 		this.data_members = data_members;
+		this.fieldsNum = fieldsNum;
 	}
 
 	/**

@@ -1,17 +1,10 @@
-/***********/
-/* PACKAGE */
-/***********/
 package MIPS;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
 import java.io.PrintWriter;
 
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import TEMP.*;
+import TYPES.*;
+import SYMBOL_TABLE.*;
 
 public class MIPSGenerator
 {
@@ -65,10 +58,35 @@ public class MIPSGenerator
 		int idxsrc=src.getSerialNumber();
 		fileWriter.format("\tsw Temp_%d,global_%s\n",idxsrc,var_name);		
 	}
-	public void li(TEMP t,int value)
+	public void liTemp(TEMP t,int value)
 	{
 		int idx=t.getSerialNumber();
 		fileWriter.format("\tli Temp_%d,%d\n",idx,value);
+	}
+	public void liRegString(String reg,int value)
+	{
+		fileWriter.format("\tli $%s,%d\n",reg,value);
+	}
+	public int getClassSize(TYPE objectType)
+	{
+		TYPE_CLASS t = ((TYPE_CLASS)SYMBOL_TABLE.getInstance().find(objectType.name));
+
+		int fieldsNumTotal = t.fieldsNum;
+		while(t.father.isPresent()) {
+			t = t.father.get();
+			fieldsNumTotal += t.fieldsNum;
+		}
+
+		return fieldsNumTotal * WORD_SIZE + 4; // 4 is for the vtable
+	}
+	public void createNewObject(TYPE objectType)
+	{
+		int classSize = getClassSize(objectType);
+		liRegString("a0", classSize);
+		liRegString("v0", 9);
+		fileWriter.format("\tsyscall\n");
+
+//		fileWriter.format("\tadd Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
 	}
 	public void add(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
@@ -114,13 +132,18 @@ public class MIPSGenerator
 			fileWriter.format("%s:\n",inlabel);
 		}
 	}
-	public void push(String reg) {
+	public void pushTempReg(TEMP reg) {
+		int regInd =reg.getSerialNumber();
+		fileWriter.format("\tsubu $sp, $sp, 4\n");
+		fileWriter.format("\tsw $Temp_%d, 0($sp)\n", regInd);
+	}
+	public void pushRegNameString(String reg) {
 		fileWriter.format("\tsubu $sp, $sp, 4\n");
 		fileWriter.format("\tsw $%s, 0($sp)\n", reg);
 	}
 	public void funcPrologue(int localVarsNum) {
-		push("ra");
-		push("fp");
+		pushRegNameString("ra");
+		pushRegNameString("fp");
 		fileWriter.format("\tmov $fp, $sp\n");
 		fileWriter.format("\tsub $sp, $sp, %d\n", localVarsNum * WORD_SIZE);
 	}

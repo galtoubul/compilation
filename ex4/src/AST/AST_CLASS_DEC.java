@@ -36,6 +36,18 @@ public class AST_CLASS_DEC extends AST_Node {
         AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, fields.SerialNumber);
     }
 
+    private int getFieldsNum() {
+        int fieldsNum = 0;
+        AST_CFIELD_LIST ptr1 = this.fields;
+        while (ptr1 != null && ptr1.head != null) {
+            if (ptr1.head instanceof AST.AST_CFIELD_VAR_DEC) {
+                fieldsNum++;
+            }
+            ptr1 = ptr1.tail;
+        }
+        return fieldsNum;
+    }
+
     public TYPE SemantMe() {
         System.out.println("-- AST_CLASS_DEC SemantMe");
 
@@ -63,12 +75,13 @@ public class AST_CLASS_DEC extends AST_Node {
         // Begin Class Scope
         SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class, id);
 
-        // Enter the Class Type to the Symbol Table (for semantic checking inside the
-        // class's scope)
-        SYMBOL_TABLE.getInstance().enter(id, new TYPE_CLASS(base, id, new TYPE_LIST(null, null)), true);
+        // Enter the Class Type to the Symbol Table (for semantic checking inside the class's scope)
+        int fieldsNum = getFieldsNum();
+        SYMBOL_TABLE.getInstance().enter(id, new TYPE_CLASS(base, id, new TYPE_LIST(null, null), fieldsNum), true);
         System.out.println("\t\tline number = " + lineNum);
+
         // Semant Data Members
-        TYPE_CLASS type = new TYPE_CLASS(base, id, fields.SemantMe(base.map(classType -> classType.name)));
+        TYPE_CLASS type = new TYPE_CLASS(base, id, fields.SemantMe(base.map(classType -> classType.name)), fieldsNum);
 
         // End Scope
         SYMBOL_TABLE.getInstance().endScope();
@@ -82,7 +95,7 @@ public class AST_CLASS_DEC extends AST_Node {
 
     // TODO
     public TEMP IRme() {
-        System.out.println("--AST_CLASS_DEC IRme");
+        System.out.println("-- AST_CLASS_DEC IRme");
         return null;
     }
 }

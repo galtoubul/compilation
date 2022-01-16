@@ -24,7 +24,7 @@ public class AST_STMT_VAR_DEC extends AST_STMT {
     }
 
     public TEMP IRme() {
-        System.out.println("--AST_STMT_VAR_DEC IRme");
-        return null;
+        System.out.println("-- AST_STMT_VAR_DEC IRme");
+        return this.varDec.IRme();
     }
 }

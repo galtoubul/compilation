@@ -1,9 +1,16 @@
-class Point {
-    int x := 11;
-    int y := 12;
-    int z := 13;
+class A {
+    int a;
+    string name;
+}
 
-    int f () {
-        return 0;
-    }
+class B extends A {
+    A object;
+}
+
+class C extends B {
+    string c;
+}
+
+void f() {
+    C c := new C;
 }

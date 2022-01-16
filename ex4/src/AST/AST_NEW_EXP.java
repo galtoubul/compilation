@@ -6,6 +6,7 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
 import TEMP.*;
+import IR.*;
 
 public class AST_NEW_EXP extends AST_Node {
     public AST_TYPE type;
@@ -55,6 +56,7 @@ public class AST_NEW_EXP extends AST_Node {
 
     public TEMP IRme() {
         System.out.println("-- AST_NEW_EXP IRme");
+        IR.getInstance().Add_IRcommand(new IRcommand_New_Object(this.type.getTYPE(lineNum)));
         return null;
     }
 }
