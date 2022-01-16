@@ -54,13 +54,6 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
 
     }
 
-    public TEMP IRme() {
-        System.out.format("-- AST_VAR_INITIALIZATION IRme\n\t\tid = %s\n", id);
-        IR.getInstance().Add_IRcommand(new IRcommand_Allocate(id));
-        IR.getInstance().Add_IRcommand(new IRcommand_Store(id,initialValue.IRme()));
-        return null;
-    }
-
     @Override
     public TYPE SemantMe(Optional<String> classId, Optional<Integer> localVarIndexOpt) {
         System.out.println("-- AST_VAR_INITIALIZATION SemantMe");
@@ -125,5 +118,12 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         SYMBOL_TABLE.getInstance().enter(id, t, false, localVarIndexOpt, astNotationTypeOpt);
 
         return new TYPE_CLASS_VAR_DEC(t, id);
+    }
+
+    public TEMP IRme() {
+        System.out.format("-- AST_VAR_INITIALIZATION IRme\n\t\tid = %s\n", id);
+        IR.getInstance().Add_IRcommand(new IRcommand_Allocate(id));
+        IR.getInstance().Add_IRcommand(new IRcommand_Store(id,initialValue.IRme()));
+        return null;
     }
 }

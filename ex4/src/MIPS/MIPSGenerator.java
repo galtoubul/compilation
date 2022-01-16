@@ -199,7 +199,44 @@ public class MIPSGenerator
 				
 		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,label);				
 	}
-	
+	public void pushArgs(TEMP_LIST argsTempList)
+	{
+		TEMP_LIST ptr = argsTempList;
+		while (ptr != null) {
+			if (ptr.head != null) {
+				pushTempReg(ptr.head);
+			}
+			ptr = ptr.tail;
+		}
+	}
+	public void callFuncStmt(TEMP dst, String funcName, TEMP_LIST argsTempList)
+	{
+		if (argsTempList != null) {
+			pushArgs(argsTempList);
+		}
+
+		// jal
+		fileWriter.format("\tjal %s\n", funcName);
+	}
+	public void callFuncExp(TEMP dst, String funcName, TEMP_LIST argsTempList)
+	{
+		if (argsTempList != null) {
+			pushArgs(argsTempList);
+		}
+
+		// jal
+		fileWriter.format("\tjal %s\n", funcName);
+
+		// store return value in dst
+		int dstidx=dst.getSerialNumber();
+		fileWriter.format("\tmov Temp_%d, $v0\n", dstidx);
+	}
+	public void doReturn(TEMP expRetReg)
+	{
+		int expRetRegIdx=dst.getSerialNumber();
+		fileWriter.format("\tmov $v0, Temp_%d\n", expRetRegIdx);
+	}
+
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/

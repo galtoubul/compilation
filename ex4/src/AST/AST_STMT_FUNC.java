@@ -89,16 +89,16 @@ public class AST_STMT_FUNC extends AST_STMT {
         return funcType.returnType;
     }
 
-    // TODO
     public TEMP IRme() {
         System.out.println("-- AST_STMT_FUNC IRme");
 
-        TEMP t = null;
+        TEMP_LIST argsTempList = null;
         if (argsList != null) {
-            t = argsList.IRme();
+            argsTempList = argsList.IRme();
         }
 
-//        IR.getInstance().Add_IRcommand(new IRcommand_PrintInt(t));
+        TEMP funcRetValTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+        IR.getInstance().Add_IRcommand(new IRcommand_Call_Func_Stmt(funcRetValTemp, id, argsTempList));
 
         return null;
     }

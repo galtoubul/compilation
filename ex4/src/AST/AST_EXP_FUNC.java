@@ -113,16 +113,17 @@ public class AST_EXP_FUNC extends AST_EXP {
         return funcType.returnType;
     }
 
-    public TEMP IRme()
-    {
-        TEMP t = null;
+    public TEMP IRme() {
+        System.out.println("-- AST_EXP_FUNC IRme");
 
+        TEMP_LIST argsTempList = null;
         if (argsList != null) {
-            t = argsList.head.IRme();
+            argsTempList = argsList.IRme();
         }
 
-        IR.getInstance().Add_IRcommand(new IRcommand_PrintInt(t));
+        TEMP funcRetValTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+        IR.getInstance().Add_IRcommand(new IRcommand_Call_Func_Exp(funcRetValTemp, id, argsTempList));
 
-        return null;
+        return funcRetValTemp;
     }
 }

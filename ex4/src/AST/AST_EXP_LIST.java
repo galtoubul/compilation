@@ -60,9 +60,14 @@ public class AST_EXP_LIST extends AST_Node {
 		}
 	}
 
-	// TODO
-	public TEMP IRme() {
+	public TEMP_LIST IRme() {
 		System.out.println("-- AST_EXP_LIST IRme");
-		return null;
+		if (this.head == null) {
+			return new TEMP_LIST(null, null);
+		} else if (tail == null) {
+			return new TEMP_LIST(head.IRme(), null);
+		} else {
+			return new TEMP_LIST(head.IRme(), tail.IRme());
+		}
 	}
 }

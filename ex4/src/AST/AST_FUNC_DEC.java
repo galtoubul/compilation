@@ -165,7 +165,6 @@ public class AST_FUNC_DEC extends AST_Node {
         IR.getInstance().Add_IRcommand(new IRcommand_Label(id));
         IR.getInstance().Add_IRcommand(new IRcommand_Func_Prologue(id));
 
-
         if (this.params.isPresent()) {
             this.params.get().IRme();
         }
@@ -173,6 +172,9 @@ public class AST_FUNC_DEC extends AST_Node {
         if (body != null) {
             body.IRme();
         }
+
+//        IR.getInstance().Add_IRcommand(new IRcommand_Func_Epilogue(id));
+
         return null;
     }
 }

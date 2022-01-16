@@ -9,6 +9,7 @@ import TYPES.TYPE;
 import TYPES.TYPE_FUNCTION;
 import TYPES.TYPE_VOID;
 import TEMP.*;
+import IR.*;
 
 public class AST_STMT_RETURN extends AST_STMT {
     public Optional<AST_EXP> exp;
@@ -74,10 +75,10 @@ public class AST_STMT_RETURN extends AST_STMT {
         return null;
     }
 
-    // TODO
     public TEMP IRme() {
         System.out.println("-- AST_STMT_RETURN IRme");
-
+        TEMP expRetReg = this.exp.IRme();
+        IR.getInstance.Add_IRcommand(new IRcommand_Return(expRetReg));
         return null;
     }
 }
