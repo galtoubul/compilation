@@ -55,9 +55,7 @@ public class AST_STMT_LIST extends AST_Node {
 
 	public TYPE SemantMe(Optional<String> classId) {
 
-		StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-		StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
-		String callerClassName = e.getClassName();
+		String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
 		System.out.println("-- AST_STMT_LIST SemantMe\n\t\tcaller's class = " + callerClassName);
 
 		Boolean isPartOfFunc = (callerClassName == "AST.AST_FUNC_DEC") ? true : false;

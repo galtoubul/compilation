@@ -56,7 +56,16 @@ public class AST_NEW_EXP extends AST_Node {
 
     public TEMP IRme() {
         System.out.println("-- AST_NEW_EXP IRme");
-        IR.getInstance().Add_IRcommand(new IRcommand_New_Object(this.type.getTYPE(lineNum)));
-        return null;
+
+        TEMP dst = TEMP_FACTORY.getInstance().getFreshTEMP();
+
+        if (this.subscript.isPresent()) {
+            TEMP subscriptTemp = this.subscript.get().IRme();
+            IR.getInstance().Add_IRcommand(new IRcommand_New_Array(dst, this.type.getTYPE(lineNum), subscriptTemp));
+        }
+        else{
+            IR.getInstance().Add_IRcommand(new IRcommand_New_Object(dst, this.type.getTYPE(lineNum)));
+        }
+        return dst;
     }
 }

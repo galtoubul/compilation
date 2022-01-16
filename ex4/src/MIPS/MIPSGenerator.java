@@ -79,14 +79,36 @@ public class MIPSGenerator
 
 		return fieldsNumTotal * WORD_SIZE + 4; // 4 is for the vtable
 	}
-	public void createNewObject(TYPE objectType)
+	public void createNewObject(TEMP dstTempReg, TYPE objectType)
 	{
+		// malloc
 		int classSize = getClassSize(objectType);
 		liRegString("a0", classSize);
 		liRegString("v0", 9);
 		fileWriter.format("\tsyscall\n");
 
-//		fileWriter.format("\tadd Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		// mov pointer to dstTempReg
+		int dstidx = dstTempReg.getSerialNumber();
+		fileWriter.format("\tmov Temp_%d, $v0\n",dstidx);
+	}
+	public void createNewArray(TEMP dstTempReg, TYPE ArrayType, TEMP subscriptTemp)
+	{
+		// malloc
+		TEMP wordTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		liTemp(wordTemp, 4); // wordTemp = 4
+
+		TEMP mulTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		mul(mulTemp, subscriptTemp, wordTemp); // mulTemp = subscriptTemp * 4
+
+		int mulTempidx = mulTemp.getSerialNumber();
+		fileWriter.format("\tmov $a0, Temp_%d\n",mulTempidx); // a0 = array size
+
+		liRegString("v0", 9); // malloc syscall code
+		fileWriter.format("\tsyscall\n");
+
+		// dstTempReg = array's pointer
+		int dstidx = dstTempReg.getSerialNumber();
+		fileWriter.format("\tmov Temp_%d, $v0\n",dstidx);
 	}
 	public void add(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
@@ -199,16 +221,32 @@ public class MIPSGenerator
 				
 		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,label);				
 	}
+	// Push args in reverse
 	public void pushArgs(TEMP_LIST argsTempList)
 	{
-		TEMP_LIST ptr = argsTempList;
-		while (ptr != null) {
-			if (ptr.head != null) {
-				pushTempReg(ptr.head);
-			}
-			ptr = ptr.tail;
+		// base case
+		if (argsTempList == null) {
+			return;
+		}
+
+		// recursion
+		pushArgs(argsTempList.tail);
+
+		// push with stack folding
+		if (argsTempList.head != null) {
+			pushTempReg(argsTempList.head);
 		}
 	}
+//	public void pushArgs(TEMP_LIST argsTempList)
+//	{
+//		TEMP_LIST ptr = argsTempList;
+//		while (ptr != null) {
+//			if (ptr.head != null) {
+//				pushTempReg(ptr.head);
+//			}
+//			ptr = ptr.tail;
+//		}
+//	}
 	public void callFuncStmt(TEMP dst, String funcName, TEMP_LIST argsTempList)
 	{
 		if (argsTempList != null) {
@@ -233,7 +271,7 @@ public class MIPSGenerator
 	}
 	public void doReturn(TEMP expRetReg)
 	{
-		int expRetRegIdx=dst.getSerialNumber();
+		int expRetRegIdx=expRetReg.getSerialNumber();
 		fileWriter.format("\tmov $v0, Temp_%d\n", expRetRegIdx);
 	}
 

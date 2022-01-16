@@ -77,8 +77,10 @@ public class AST_STMT_RETURN extends AST_STMT {
 
     public TEMP IRme() {
         System.out.println("-- AST_STMT_RETURN IRme");
-        TEMP expRetReg = this.exp.IRme();
-        IR.getInstance.Add_IRcommand(new IRcommand_Return(expRetReg));
+        if (this.exp.isPresent()) {
+            TEMP expRetReg = this.exp.get().IRme();
+            IR.getInstance().Add_IRcommand(new IRcommand_Return(expRetReg));
+        }
         return null;
     }
 }

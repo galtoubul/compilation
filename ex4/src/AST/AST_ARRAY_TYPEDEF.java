@@ -63,7 +63,6 @@ public class AST_ARRAY_TYPEDEF extends AST_Node {
         return null;
     }
 
-    // TODO
     public TEMP IRme() {
         System.out.println("-- AST_ARRAY_TYPEDEF IRme");
         return null;
