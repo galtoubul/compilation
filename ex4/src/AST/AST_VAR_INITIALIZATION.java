@@ -8,7 +8,7 @@ import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
-import AstNotationType.AstNotationType;
+import AstNotationType.*;
 import IR.*;
 import TEMP.*;
 
@@ -116,14 +116,12 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         /***************************************************/
         /* [4] Enter the variable name to the Symbol Table */
         /***************************************************/
-        StackTraceElement[] stacktrace = Thread.currentThread().getStackTrace();
-        StackTraceElement e = stacktrace[2];//maybe this number needs to be corrected
-        String callerClassName = e.getClassName();
+        String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
         System.out.println("\t\tcaller's class = " + callerClassName);
 
-        AstNotationType astNotationType = callerClassName == "AST.AST_STMT_VAR_DEC" ? AstNotationType.localVariable : AstNotationType.globalVariable;
+        AstNotationType astNotationType = AstNotationType.getAstNotationType(callerClassName);
         Optional<AstNotationType> astNotationTypeOpt = Optional.of(astNotationType);
-        System.out.println("\t\tlocalVarIndexOpt = " + localVarIndexOpt + " | astNotationTypeOpt = " + astNotationTypeOpt);
+
         SYMBOL_TABLE.getInstance().enter(id, t, false, localVarIndexOpt, astNotationTypeOpt);
 
         return new TYPE_CLASS_VAR_DEC(t, id);

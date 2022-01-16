@@ -28,8 +28,8 @@ public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
     }
 
     @Override
-    public TYPE SemantMe(Optional<String> classId) {
+    public TYPE SemantMe(Optional<String> classId, Optional<Integer> fieldIndOpt) {
         System.out.println("-- AST_CFIELD_VAR_DEC SemantMe");
-        return this.var.SemantMe(classId, Optional.empty());
+        return this.var.SemantMe(classId, fieldIndOpt);
     }
 }

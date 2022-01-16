@@ -1,6 +1,9 @@
-int f(int p1, int p2) {
-    int lv1;
-    int lv2;
-    int lv3;
-   return p1;
+class Point {
+    int x := 11;
+    int y := 12;
+    int z := 13;
+
+    int f () {
+        return 0;
+    }
 }

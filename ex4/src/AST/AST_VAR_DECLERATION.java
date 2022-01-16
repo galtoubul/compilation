@@ -6,7 +6,7 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeEntry;
 import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.*;
-import AstNotationType.AstNotationType;
+import AstNotationType.*;
 import TEMP.*;
 
 
@@ -24,7 +24,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
     }
 
     @Override
-    public TYPE SemantMe(Optional<String> fatherClassId, Optional<Integer> localVarIndexOpt) {
+    public TYPE SemantMe(Optional<String> fatherClassId, Optional<Integer> IndexOpt) {
         System.out.format("-- AST_VAR_DECLERATION SemantMe %s\n", fatherClassId.isPresent() ? "extends" : "");
 
         if (fatherClassId.isPresent()) {
@@ -73,9 +73,15 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         }
 
         // Done with all checks -> insert the variable to the Symbol Table
-        AstNotationType astNotationType = AstNotationType.localVariable;
+
+        String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
+        System.out.println("\t\tcaller's class = " + callerClassName);
+
+        AstNotationType astNotationType = AstNotationType.getAstNotationType(callerClassName);
         Optional<AstNotationType> astNotationTypeOpt = Optional.of(astNotationType);
-        SYMBOL_TABLE.getInstance().enter(id, t, false, localVarIndexOpt, astNotationTypeOpt);
+
+        SYMBOL_TABLE.getInstance().enter(id, t, false, IndexOpt, astNotationTypeOpt);
+
         TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
         System.out.format("-- AST_VAR_DECLERATION\n\t\tinserted variable %s of type %s to the symbol table\n", var.name,
                 var.type.name);
