@@ -262,49 +262,38 @@ public class MIPSGenerator
 				
 		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,label);				
 	}
-	// Push args in reverse
-	public void pushArgs(TEMP_LIST argsTempList)
+	// Push args in reverse and return the number of args
+	public int pushArgs(TEMP_LIST argsTempList)
 	{
 		// base case
 		if (argsTempList == null) {
-			return;
+			return 0;
 		}
 
 		// recursion
-		pushArgs(argsTempList.tail);
+		int argsNum = pushArgs(argsTempList.tail) + 1;
 
 		// push with stack folding
 		if (argsTempList.head != null) {
 			pushTempReg(argsTempList.head);
 		}
+
+		return argsNum;
 	}
-//	public void pushArgs(TEMP_LIST argsTempList)
-//	{
-//		TEMP_LIST ptr = argsTempList;
-//		while (ptr != null) {
-//			if (ptr.head != null) {
-//				pushTempReg(ptr.head);
-//			}
-//			ptr = ptr.tail;
-//		}
-//	}
 	public void callFuncStmt(TEMP dst, String funcName, TEMP_LIST argsTempList)
 	{
-		if (argsTempList != null) {
-			pushArgs(argsTempList);
-		}
+		// push args
+		int argsNum = pushArgs(argsTempList);
 
 		// jal
 		fileWriter.format("\tjal %s\n", funcName);
+
+		// restore sp
+		fileWriter.format("\taddu $sp, $sp, %d\n", argsNum);
 	}
 	public void callFuncExp(TEMP dst, String funcName, TEMP_LIST argsTempList)
 	{
-		if (argsTempList != null) {
-			pushArgs(argsTempList);
-		}
-
-		// jal
-		fileWriter.format("\tjal %s\n", funcName);
+		callFuncStmt(dst, funcName, argsTempList);
 
 		// store return value in dst
 		int dstidx=dst.getSerialNumber();
