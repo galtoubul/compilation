@@ -110,6 +110,19 @@ public class MIPSGenerator
 		int dstidx = dstTempReg.getSerialNumber();
 		fileWriter.format("\tmov Temp_%d, $v0\n",dstidx);
 	}
+	public void checkLimits(int dstidx)
+	{
+		// check top limit and fix the result if needed
+		fileWriter.format("\tble Temp_%d,32767,check_bottom_limit\n",dstidx); // 2^15 - 1 = 32767
+		fileWriter.format("\tli Temp_%d,32767\n",dstidx); // fix the result
+
+		// check bottom limit and fix the result if needed
+		label("check_bottom_limit");
+		fileWriter.format("\tbge Temp_%d,-32768,after_limits_checks\n",dstidx); // -2^15 = -32768
+		fileWriter.format("\tli Temp_%d,-32768\n",dstidx); // fix the result
+
+		label("after_limits_checks");
+	}
 	public void add(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
 		int i1 =oprnd1.getSerialNumber();
@@ -117,6 +130,7 @@ public class MIPSGenerator
 		int dstidx=dst.getSerialNumber();
 
 		fileWriter.format("\tadd Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		checkLimits(dstidx);
 	}
 	public void sub(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
@@ -125,6 +139,7 @@ public class MIPSGenerator
 		int dstidx=dst.getSerialNumber();
 
 		fileWriter.format("\tsub Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		checkLimits(dstidx);
 	}
 	public void mul(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
@@ -133,6 +148,7 @@ public class MIPSGenerator
 		int dstidx=dst.getSerialNumber();
 
 		fileWriter.format("\tmul Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		checkLimits(dstidx);
 	}
 	public void div(TEMP dst,TEMP oprnd1,TEMP oprnd2)
 	{
@@ -141,6 +157,7 @@ public class MIPSGenerator
 		int dstidx=dst.getSerialNumber();
 
 		fileWriter.format("\tdiv Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		checkLimits(dstidx);
 	}
 	public void label(String inlabel)
 	{
@@ -182,7 +199,7 @@ public class MIPSGenerator
 		pushRegNameString("fp");
 		fileWriter.format("\tmov $fp, $sp\n");
 		registersBackup();
-		fileWriter.format("\tsub $sp, $sp, %d\n", localVarsNum * WORD_SIZE);
+		fileWriter.format("\tsub $sp, $sp, %d\n", localVarsNum * WORD_SIZE + 40); // 40 is for storing the caller tmps
 	}
 	public void funcEpilogue()
 	{
