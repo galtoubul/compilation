@@ -25,6 +25,8 @@ public class AST_STMT_VAR_DEC extends AST_STMT {
 
     public TEMP IRme() {
         System.out.println("-- AST_STMT_VAR_DEC IRme");
+        String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
+        System.out.println("\t\tcaller = " + callerClassName);
         return this.varDec.IRme();
     }
 }

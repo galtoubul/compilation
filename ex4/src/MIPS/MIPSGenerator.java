@@ -163,11 +163,35 @@ public class MIPSGenerator
 		fileWriter.format("\tsubu $sp, $sp, 4\n");
 		fileWriter.format("\tsw $%s, 0($sp)\n", reg);
 	}
-	public void funcPrologue(int localVarsNum) {
+	public void registersBackup()
+	{
+		for (int i = 0; i < 10; i++) {
+			pushRegNameString(String.format("t%d",i));
+		}
+	}
+	public void registersRestore()
+	{
+		for (int i = 0; i < 10; i++) {
+			int offset = (i + 1) * -4;
+			fileWriter.format("\tlw $t%d, %d($sp)\n",i, offset);
+		}
+	}
+	public void funcPrologue(int localVarsNum)
+	{
 		pushRegNameString("ra");
 		pushRegNameString("fp");
 		fileWriter.format("\tmov $fp, $sp\n");
+		registersBackup();
 		fileWriter.format("\tsub $sp, $sp, %d\n", localVarsNum * WORD_SIZE);
+	}
+	public void funcEpilogue()
+	{
+		fileWriter.format("\tmov $sp, $fp\n");
+		registersRestore();
+		fileWriter.format("\tlw $fp, 0($sp)\n");
+		fileWriter.format("\tlw $ra, 4($sp)\n");
+		fileWriter.format("\taddu $sp, $sp, 8\n");
+		fileWriter.format("\tjr $ra\n");
 	}
 	public void jump(String inlabel)
 	{

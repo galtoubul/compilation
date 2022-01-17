@@ -122,6 +122,12 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
 
     public TEMP IRme() {
         System.out.format("-- AST_VAR_INITIALIZATION IRme\n\t\tid = %s\n", id);
+        String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
+        System.out.println("\t\tcaller = " + callerClassName);
+        System.out.println("\t\t-----------scoopppppe -------" + SYMBOL_TABLE.getInstance().currentScopeType());
+        System.out.println(id);
+//        System.out.println("\t\t-----------11 -------" + SYMBOL_TABLE.getInstance().find(id));
+
         IR.getInstance().Add_IRcommand(new IRcommand_Allocate(id));
         IR.getInstance().Add_IRcommand(new IRcommand_Store(id,initialValue.IRme()));
         return null;

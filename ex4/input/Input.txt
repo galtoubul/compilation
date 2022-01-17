@@ -2,6 +2,8 @@ int f(int x, int y, int z) {
     return 0;
 }
 
+int y := 3;
+
 void main() {
-    f(1,2,3);
+    int x := f(1,2,3);
 }

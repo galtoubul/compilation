@@ -81,6 +81,8 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 
 	public TEMP IRme() {
 		System.out.println("-- AST_STMT_ASSIGN IRme");
+		String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
+		System.out.println("\t\tcaller = " + callerClassName);
 		TEMP src = exp.IRme();
 		IR.getInstance().Add_IRcommand(new IRcommand_Store(((AST_VAR_SIMPLE) var).name, src));
 
