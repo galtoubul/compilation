@@ -170,7 +170,7 @@ public class AST_FUNC_DEC extends AST_Node {
         }
 
         if (body != null) {
-            body.IRme();
+            body.IRme(); // including return
         }
 
         IR.getInstance().Add_IRcommand(new IRcommand_Func_Epilogue());

@@ -19,6 +19,8 @@ public class MIPSGenerator
 	/***********************/
 	public void finalizeFile()
 	{
+		fileWriter.print("main:\n");
+		fileWriter.print("\tjal user_main\n");
 		fileWriter.print("\tli $v0,10\n");
 		fileWriter.print("\tsyscall\n");
 		fileWriter.close();
@@ -164,7 +166,7 @@ public class MIPSGenerator
 		if (inlabel.equals("main"))
 		{
 			fileWriter.format(".text\n");
-			fileWriter.format("%s:\n",inlabel);
+			fileWriter.format("user_main:\n");
 		}
 		else
 		{
