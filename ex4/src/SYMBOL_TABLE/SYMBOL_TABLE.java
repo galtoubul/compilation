@@ -71,7 +71,7 @@ public class SYMBOL_TABLE {
 	}
 
 	private int currentScopeIndex() {
-		return this.scopes.size();
+		return this.scopes.size() - 1;
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class SYMBOL_TABLE {
 		this.scopes.pop();
 	}
 
-	private ScopeEntry currentScope() {
+	public ScopeEntry currentScope() {
 		return this.scopes.peek().getKey();
 	}
 
@@ -183,8 +183,22 @@ public class SYMBOL_TABLE {
 				.findFirst();
 	}
 
+	/**
+	 * Find the scope type of the closest scope with the variable `varName`.
+	 */
+	public ScopeType getScopeTypeByEntryName(String name) {
+		SymbolTableEntry entry = findEntry(name).get();
+		ScopeType scopeType = getScopeTypeByIndex(entry.index);
+		System.out.format("\t\t%s's entry index = %d | scope type = %s\n", name, entry.index, scopeType);
+		return scopeType;
+	}
+
+	public ScopeType getScopeTypeByIndex(int ind) {
+		return scopes.get(ind).getKey().scopeType;
+	}
+
 	private ScopeEntry getScope(int index) {
-		return this.scopes.get(this.currentScopeIndex() - index).getKey();
+		return scopes.get(currentScopeIndex() - index).getKey();
 	}
 
 	/**
@@ -192,7 +206,7 @@ public class SYMBOL_TABLE {
 	 */
 	private Optional<SimpleEntry<Integer, ScopeEntry>> findIndexedScopeType(ScopeType scopeType) {
 		return IntStream
-				.range(1, this.currentScopeIndex() + 1)
+				.range(0, this.currentScopeIndex())
 				.mapToObj(i -> new SimpleEntry<Integer, ScopeEntry>(i, this.getScope(i)))
 				.filter(indexedScope -> indexedScope.getValue().scopeType == scopeType)
 				.findFirst();
