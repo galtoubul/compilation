@@ -2,6 +2,7 @@ package IR;
 
 import TEMP.*;
 import MIPS.*;
+import GlobalVariables.*;
 
 public class IRcommand_Create_Global_Var extends IRcommand
 {
@@ -44,7 +45,17 @@ public class IRcommand_Create_Global_Var extends IRcommand
 	public void MIPSme()
 	{
 		if (varType == "string" && stringConst != null) {
+			/* string z := "abc"; --> str_const<num>: .asciiz "abc"
+			 						  globsl_z: .word str_const<num>   */
 
+			// get string const label 											(str_const<num>)
+			String stringConstLabel = GlobalVariables.getStringConstLabel();
+
+			// initialize a string const label with the string const value 		(str_const<num>: .asciiz "abc")
+			MIPSGenerator.getInstance().initializeGlobalVar(stringConstLabel, stringConst);
+
+			// initialize the global variable label with the string const label (globsl_z: .word str_const<num>)
+			MIPSGenerator.getInstance().initializeGlobalVarWithStringConstLabel(varLabel, stringConstLabel);
 		}
 		else if (varType == "int" && intConst != Integer.MAX_VALUE) {
 			MIPSGenerator.getInstance().initializeGlobalVar(varLabel, intConst);

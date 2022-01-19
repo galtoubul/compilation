@@ -63,6 +63,14 @@ public class MIPSGenerator
 		int idxsrc=src.getSerialNumber();
 		textSegment += String.format("\tsw Temp_%d,global_%s\n",idxsrc,var_name);
 	}
+
+	/************************************************ General ************************************************/
+
+	public void loadAddress(TEMP dstReg, String label) {
+		int dstRegInd = dstReg.getSerialNumber();
+		textSegment += String.format("\tla Temp_%d, %s\n", dstRegInd, label);
+	}
+
 	/************************************************ Local Variables ************************************************/
 
 	public void localVarAssignment(int varIndex, TEMP tmpRvalue) {
@@ -71,50 +79,44 @@ public class MIPSGenerator
 		textSegment += String.format("\tsw Temp_%d, %d($fp)\n", rValueTmpInd, offset);
 	}
 
-//	public void initializeLocalVar(int varIndex, TEMP tmpRvalue) {
-//		int rValueTmpInd = tmpRvalue.getSerialNumber();
-//		int offset = (-1) * (varIndex * WORD_SIZE + TMPS_BACKUP_SPACE);
-//		textSegment += String.format("\tsw Temp_%d, %d($fp)\n", rValueTmpInd, offset);
-//	}
-
 	/************************************************ Global Variables ************************************************/
 
 	// decalaring a global variable without assigning it an initial value
 	public void declareGlobalVar(String label, String type) {
 		if (type == "string") {
-			dataSegment += String.format("%s: .asciiz \"\"\n",label);
+			dataSegment += String.format("%s: .asciiz \"\"\n", label);
 		}
 		else { // int
-			dataSegment += String.format("%s: .word 0\n",label);
+			dataSegment += String.format("%s: .word 0\n", label);
 		}
 	}
 
 	// initialzing a global variable with a string const
 	public void initializeGlobalVar(String label, String value) {
-		dataSegment += String.format("%s: .asciiz\n",label);
+		dataSegment += String.format("%s: .asciiz %s\n", label, value);
+	}
+
+	// initialzing a global variable with a string const label
+	public void initializeGlobalVarWithStringConstLabel(String globalVarLabel, String stringConstLabel) {
+		dataSegment += String.format("%s: .word %s\n", globalVarLabel, stringConstLabel);
 	}
 
 	// initialzing a global variable with an int const
 	public void initializeGlobalVar(String label, int value) {
-		dataSegment += String.format("%s: .word %d\n",label,value);
+		dataSegment += String.format("%s: .word %d\n", label, value);
 	}
-
-//	// assign a const int to a global variable
-//	public void globalVarAssignment(String globalVarLabel, int constInt) {
-//		textSegment += String.format("\tli %s, %d\n",globalVarLabel,constInt);
-//	}
 
 	// assign a tmp to a global variable
 	public void globalVarAssignment(String globalVarLabel, TEMP tmpRvalue) {
 		int tmpRvalueInd=tmpRvalue.getSerialNumber();
-		textSegment += String.format("\tsw Temp_%d,global_%s\n",tmpRvalueInd,globalVarLabel);
+		textSegment += String.format("\tsw Temp_%d, global_%s\n", tmpRvalueInd, globalVarLabel);
 	}
 
 	public void storeLocalVar(int ind, TEMP initialValueTmp)
 	{
 		int idx=initialValueTmp.getSerialNumber();
 		int offset = (-1) * (ind * WORD_SIZE + 40); // 40 is for storing tmps
-		textSegment += String.format("\tsw Temp_%d,%d($fp)\n",idx,offset);
+		textSegment += String.format("\tsw Temp_%d, %d($fp)\n",idx,offset);
 	}
 	public void liTemp(TEMP t,int value)
 	{

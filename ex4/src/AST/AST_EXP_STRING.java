@@ -5,6 +5,8 @@ import java.util.Optional;
 import TYPES.TYPE;
 import TYPES.TYPE_STRING;
 import TEMP.*;
+import GlobalVariables.*;
+import IR.*;
 
 public class AST_EXP_STRING extends AST_EXP {
     public String s;
@@ -35,9 +37,11 @@ public class AST_EXP_STRING extends AST_EXP {
         return TYPE_STRING.getInstance();
     }
 
-    // TODO
     public TEMP IRme() {
         System.out.println("-- AST_EXP_STRING IRme");
-        return null;
+        String stringConstLabel = GlobalVariables.getStringConstLabel();
+        TEMP dst = TEMP_FACTORY.getInstance().getFreshTEMP();
+        IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Temp_With_String_Const(dst, s));
+        return dst;
     }
 }

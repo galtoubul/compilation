@@ -1,1 +1,5 @@
-string z := "abc";
+string a := "x";
+
+void f() {
+	a := "xx";
+}

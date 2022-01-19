@@ -100,10 +100,8 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
 
     private void setNotation(Optional<Integer> localVarInd) {
         System.out.println("-- AST_VAR_INITIALIZATION setNotation");
-        ScopeType scopeType = SYMBOL_TABLE.getInstance().currentScopeType();
-        System.out.println("\t\tcurrent scope type = " + scopeType);
-        System.out.println("\t\tcurrent scope name = " + SYMBOL_TABLE.getInstance().currentScope().scopeName.orElse(null));
 
+        ScopeType scopeType = SYMBOL_TABLE.getInstance().currentScopeType();
         if (scopeType == scopeType.Global) {
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
             System.out.format("\t\t%s is a global variable\n", id);
@@ -139,6 +137,9 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         else { // local variable
             System.out.println("\t\tlocal variable");
 
+            if (initialValue instanceof AST.AST_EXP_STRING) {
+                System.out.println("\t\tis string");
+            }
             TEMP rValueTmp = initialValue.IRme();
             int localVarInd = astAnnotation.ind.orElse(-1);
             IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
