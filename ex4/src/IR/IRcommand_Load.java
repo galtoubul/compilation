@@ -1,25 +1,13 @@
-/***********/
-/* PACKAGE */
-/***********/
 package IR;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import TEMP.*;
 import MIPS.*;
 
-public class IRcommand_Load extends IRcommand
-{
+public class IRcommand_Load extends IRcommand {
 	TEMP dst;
 	String var_name;
 	
-	public IRcommand_Load(TEMP dst,String var_name)
-	{
+	public IRcommand_Load(TEMP dst, String var_name) {
 		this.dst      = dst;
 		this.var_name = var_name;
 	}
@@ -29,6 +17,6 @@ public class IRcommand_Load extends IRcommand
 	/***************/
 	public void MIPSme() {
 		System.out.println("-- IRcommand_Load MIPSme");
-		MIPSGenerator.getInstance().load(dst,var_name);
+		MIPSGenerator.getInstance().load(dst, var_name);
 	}
 }

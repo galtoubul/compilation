@@ -4,6 +4,7 @@ int f(int x) {
 	int z := g;
 	while(z > 2) {
 		g := 3;
+		z := z - 1;
 	}
 	return z;
 }

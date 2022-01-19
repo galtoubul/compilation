@@ -140,7 +140,13 @@ public class MIPSGenerator {
 	public void storeLocalVar(int ind, TEMP initialValueTmp) {
 		int idx = initialValueTmp.getSerialNumber();
 		int offset = (-1) * (ind * WORD_SIZE + 40); // 40 is for storing tmps
-		textSegment += String.format("\tsw Temp_%d, %d($fp)\n",idx,offset);
+		textSegment += String.format("\tsw Temp_%d, %d($fp)\n",idx, offset);
+	}
+
+	public void loadFromLocal(TEMP tmp, int localVarInd) {
+		int tmpInd = tmp.getSerialNumber();
+		int offset = (-1) * (localVarInd * WORD_SIZE + 40); // 40 is for storing tmps
+		textSegment += String.format("\tlw Temp_%d, %d($fp)\n", tmpInd, offset);
 	}
 
 	/************************************************ Global Variables ************************************************/
@@ -174,6 +180,11 @@ public class MIPSGenerator {
 	public void globalVarAssignment(String globalVarLabel, TEMP tmpRvalue) {
 		int tmpRvalueInd=tmpRvalue.getSerialNumber();
 		textSegment += String.format("\tsw Temp_%d, %s\n", tmpRvalueInd, globalVarLabel);
+	}
+
+	public void loadFromGlobal(TEMP tmp, String globalVarLabel) {
+		int tmpInd = tmp.getSerialNumber();
+		textSegment += String.format("\tlw Temp_%d, %s\n", tmpInd, globalVarLabel);
 	}
 
 	/************************************************ String ************************************************/
