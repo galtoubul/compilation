@@ -66,7 +66,7 @@ public class MIPSGenerator {
 	}
 
 	public void jump(String inlabel) {
-		fileWriter.format("\tj %s\n",inlabel);
+		textSegment += String.format("\tj %s\n", inlabel);
 	}
 
 	public void liTemp(TEMP t,int value) {
@@ -75,7 +75,7 @@ public class MIPSGenerator {
 	}
 
 	public void liRegString(String reg,int value) {
-		fileWriter.format("\tli $%s, %d\n",reg,value);
+		textSegment += String.format("\tli $%s, %d\n",reg,value);
 	}
 
 	/************************************************ Arithmetics ************************************************/
@@ -199,7 +199,7 @@ public class MIPSGenerator {
 		int classSize = getClassSize(objectType);
 		liRegString("a0", classSize);
 		liRegString("v0", 9);
-		fileWriter.format("\tsyscall\n");
+		textSegment += String.format("\tsyscall\n");
 
 		// mov pointer to dstTempReg
 		int dstidx = dstTempReg.getSerialNumber();

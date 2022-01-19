@@ -59,7 +59,8 @@ public class AST_EXP_VAR extends AST_EXP {
 	}
 
 	public TEMP IRme() {
-		TEMP varTemp = this.var.IRme();
+		System.out.println("-- AST_EXP_VAR IRme");
+		TEMP varTemp = var.IRme();
 		return varTemp;
 	}
 }

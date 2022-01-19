@@ -4,29 +4,19 @@ import java.util.HashMap;
 import javafx.util.Pair;
 import AstNotationType.*;
 import java.util.*;
+import Labels.*;
 
 public class GlobalVariables {
 
     public static HashMap<String, Pair<String, String>> globalVarNameToLabelTypePair = new HashMap<>();
     public static HashMap<String, Pair<String, String>> globalVarLabelToStringConstLabelTypePair = new HashMap<>();
-    public static Set<String> labels = new HashSet<>();
-
-    public static String getAvialableLabel(String label) {
-        int i = 0;
-        String generatedLabel = label;
-        while (labels.contains(generatedLabel)) {
-            generatedLabel = String.format("%s%d",label, i++);
-        }
-        labels.add(generatedLabel);
-        return generatedLabel;
-    }
 
     public static String getGlobalLabel(String globalVarName) {
-        return getAvialableLabel(String.format("global_%s", globalVarName));
+        return Labels.getAvialableLabel(String.format("global_%s", globalVarName));
     }
 
     public static String getStringConstLabel() {
-        return getAvialableLabel("str_const");
+        return Labels.getAvialableLabel("str_const");
     }
 
     public static String insertGlobal(String globalVarName, String type) {

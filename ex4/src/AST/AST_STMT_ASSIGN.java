@@ -109,6 +109,7 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 
 		if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR){
 			System.out.format("\t\t%s is a global variable\n", varName);
+
 			String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
 			String globalVarType = GlobalVariables.getGlobalVarType(((AST.AST_VAR_SIMPLE)var).name);
 
@@ -117,6 +118,7 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		}
 		else { // local variable
 			System.out.format("\t\t%s is a local variable\n", varName);
+
 			TEMP tmpRvalue = exp.IRme();
 			int localVarInd = astAnnotation.ind.orElse(-1);
 			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, tmpRvalue));

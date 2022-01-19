@@ -1,17 +1,6 @@
 package IR;
 
-public abstract class IRcommand
-{
-	/*****************/
-	/* Label Factory */
-	/*****************/
-	protected static int label_counter=0;
-	public    static String getFreshLabel(String msg) {
-		return String.format("Label_%d_%s", label_counter++, msg);
-	}
+public abstract class IRcommand {
 
-	/***************/
-	/* MIPS me !!! */
-	/***************/
 	public abstract void MIPSme();
 }

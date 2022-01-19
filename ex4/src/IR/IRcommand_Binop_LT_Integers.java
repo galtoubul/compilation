@@ -1,17 +1,8 @@
-/***********/
-/* PACKAGE */
-/***********/
 package IR;
 
-/*******************/
-/* GENERAL IMPORTS */
-/*******************/
-
-/*******************/
-/* PROJECT IMPORTS */
-/*******************/
 import TEMP.*;
 import MIPS.*;
+import Labels.*;
 
 public class IRcommand_Binop_LT_Integers extends IRcommand
 {
@@ -34,9 +25,9 @@ public class IRcommand_Binop_LT_Integers extends IRcommand
 		/*******************************/
 		/* [1] Allocate 2 fresh labels */
 		/*******************************/
-		String label_end        = getFreshLabel("end");
-		String label_AssignOne  = getFreshLabel("AssignOne");
-		String label_AssignZero = getFreshLabel("AssignZero");
+		String label_end        = Labels.getAvialableLabel("end");
+		String label_AssignOne  = Labels.getAvialableLabel("AssignOne");
+		String label_AssignZero = Labels.getAvialableLabel("AssignZero");
 		
 		/******************************************/
 		/* [2] if (t1< t2) goto label_AssignOne;  */

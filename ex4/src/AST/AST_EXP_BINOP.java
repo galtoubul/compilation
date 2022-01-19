@@ -72,6 +72,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 
 	@Override
 	public TYPE SemantMe(Optional<String> classId) {
+		System.out.println("-- AST_EXP_BINOP SemantMe");
 		TYPE t1 = null;
 		TYPE t2 = null;
 
@@ -119,7 +120,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 	}
 
 	public TEMP IRme() {
-		System.out.println("-- AST_EXP_BINOP");
+		System.out.println("-- AST_EXP_BINOP IRme");
 
 		TEMP t1 = null;
 		TEMP t2 = null;

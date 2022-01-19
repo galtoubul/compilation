@@ -9,6 +9,7 @@ import TYPES.TYPE_INT;
 import TEMP.*;
 import IR.*;
 import MIPS.*;
+import Labels.*;
 
 public class AST_STMT_WHILE extends AST_STMT {
 	public AST_EXP cond;
@@ -53,54 +54,19 @@ public class AST_STMT_WHILE extends AST_STMT {
 	}
 
 	public TEMP IRme() {
-		System.out.println("--AST_STMT_WHILE IRme");
-		/*******************************/
-		/* [1] Allocate 2 fresh labels */
-		/*******************************/
-		String label_end   = IRcommand.getFreshLabel("end");
-		String label_start = IRcommand.getFreshLabel("start");
+		System.out.println("-- AST_STMT_WHILE IRme");
 
-		/*********************************/
-		/* [2] entry label for the while */
-		/*********************************/
-		IR.
-				getInstance().
-				Add_IRcommand(new IRcommand_Label(label_start));
+		// Aalocate 2 fresh labels
+		String label_end   = Labels.getAvialableLabel("after_while");
+		String label_start = Labels.getAvialableLabel("while_start");
 
-		/********************/
-		/* [3] cond.IRme(); */
-		/********************/
+		IR.getInstance().Add_IRcommand(new IRcommand_Label(label_start));
 		TEMP cond_temp = cond.IRme();
-
-		/******************************************/
-		/* [4] Jump conditionally to the loop end */
-		/******************************************/
-		IR.
-				getInstance().
-				Add_IRcommand(new IRcommand_Jump_If_Eq_To_Zero(cond_temp,label_end));
-
-		/*******************/
-		/* [5] body.IRme() */
-		/*******************/
+		IR.getInstance().Add_IRcommand(new IRcommand_Jump_If_Eq_To_Zero(cond_temp, label_end));
 		body.IRme();
+		IR.getInstance().Add_IRcommand(new IRcommand_Jump_Label(label_start));
+		IR.getInstance().Add_IRcommand(new IRcommand_Label(label_end));
 
-		/******************************/
-		/* [6] Jump to the loop entry */
-		/******************************/
-		IR.
-				getInstance().
-				Add_IRcommand(new IRcommand_Jump_Label(label_start));
-
-		/**********************/
-		/* [7] Loop end label */
-		/**********************/
-		IR.
-				getInstance().
-				Add_IRcommand(new IRcommand_Label(label_end));
-
-		/*******************/
-		/* [8] return null */
-		/*******************/
 		return null;
 	}
 }

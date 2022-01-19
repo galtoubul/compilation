@@ -2,6 +2,7 @@ package IR;
 
 import TEMP.*;
 import MIPS.*;
+import Labels.*;
 
 public class IRcommand_Label extends IRcommand {
 
