@@ -61,6 +61,7 @@ public class Main
 				AST = (AST_PROGRAM) p.parse().value;
 				AST.PrintMe();
 				AST.SemantMe();
+				System.out.println("\n\n-------------------------------------------- IRme --------------------------------------------\n\n");
 				AST.IRme();
 				IR.getInstance().MIPSme();
 				MIPSGenerator.getInstance().finalizeFile();

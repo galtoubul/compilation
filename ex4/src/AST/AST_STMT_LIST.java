@@ -54,16 +54,11 @@ public class AST_STMT_LIST extends AST_Node {
 	}
 
 	public TYPE SemantMe(Optional<String> classId) {
-
-		String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
-		System.out.println("-- AST_STMT_LIST SemantMe\n\t\tcaller's class = " + callerClassName);
-
-		Boolean isPartOfFunc = (callerClassName == "AST.AST_FUNC_DEC") ? true : false;
-		if (isPartOfFunc)
-			System.out.println("\t\tstmts of function/method");
+		System.out.println("-- AST_STMT_LIST SemantMe");
 
 		if (head != null) {
 			System.out.println("\t\thead != null");
+
 			if (head instanceof AST.AST_STMT_VAR_DEC) {
 				Optional<Integer> localVarIndexOpt = Optional.of(localVarIndex + 1);
 				System.out.println("\t\thead is instance of AST.AST_STMT_VAR_DEC\n\t\tlocalVarIndexOpt = " + localVarIndexOpt);
@@ -73,9 +68,10 @@ public class AST_STMT_LIST extends AST_Node {
 				head.SemantMe(classId);
 			}
 		}
+
 		if (tail != null) {
-			tail.localVarIndex = localVarIndex + 1;
 			System.out.println("\t\ttail != null");
+			tail.localVarIndex = head instanceof AST.AST_STMT_VAR_DEC ? localVarIndex + 1 : localVarIndex;
 			tail.SemantMe(classId);
 		}
 

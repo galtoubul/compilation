@@ -3,56 +3,50 @@ package IR;
 import TEMP.*;
 import MIPS.*;
 
-public class IRcommand_Create_Global_Var extends IRcommand
+public class IRcommand_Assign_To_Global_Var extends IRcommand
 {
-	String varLabel;
-	String varType;
-	String stringConst;
-	int intConst;
-	Object objConst; // null
+	public String varLabel;
+	public TEMP tmpRvalue;
 
-	// declaring without initializing
-	public IRcommand_Create_Global_Var(String varLabel, String varType) {
+//	public int intConst;
+//	public TEMP tmpRvalue = null;
+
+	public IRcommand_Assign_To_Global_Var(String varLabel, TEMP tmpRvalue) {
 		this.varLabel = varLabel;
-		this.varType = varType;
+		this.tmpRvalue = tmpRvalue;
 	}
 
-	// initializing with a string const
-	public IRcommand_Create_Global_Var(String varLabel, String varType, String value) {
-		this.varLabel = varLabel;
-		this.varType = varType;
-		this.stringConst = value;
-	}
+//	// Assign a const int value
+//	public IRcommand_Assign_To_Global_Var(String varLabel, int intConst) {
+//		this.varLabel = varLabel;
+//		this.intConst = intConst;
+//	}
+//
+//	// Assign a func result/string/another variable
+//	public IRcommand_Assign_To_Global_Var(String varLabel, TEMP tmpRvalue) {
+//		this.varLabel = varLabel;
+//		this.tmpRvalue = tmpRvalue;
+//	}
 
-	// initializing with an int const
-	public IRcommand_Create_Global_Var(String varLabel, String varType, int value) {
-		this.varLabel = varLabel;
-		this.varType = varType;
-		this.intConst = value;
-	}
-
-	// initializing with a null
-	public IRcommand_Create_Global_Var(String varLabel, String varType, Object obj) {
-		this.varLabel = varLabel;
-		this.varType = varType;
-		this.objConst = obj;
-	}
-	
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme()
-	{
-		if (varType == "string") {
-
-		}
-		else if (varType == "int") {
-			MIPSGenerator.getInstance().initializeGlobalVar(varLabel, intConst);
-		}
-		else { // global var was only declared (without initialization) or it was initialized with null
-			MIPSGenerator.getInstance().declareGlobalVar(varLabel, varType);
-		}
+	public void MIPSme() {
+			MIPSGenerator.getInstance().globalVarAssignment(varLabel, tmpRvalue);
 	}
+
+//	/***************/
+//	/* MIPS me !!! */
+//	/***************/
+//	public void MIPSme()
+//	{
+//		if (tmpRvalue != null) {
+//			MIPSGenerator.getInstance().globalVarAssignment(varLabel, tmpRvalue);
+//		}
+//		else {
+//			MIPSGenerator.getInstance().globalVarAssignment(varLabel, intConst);
+//		}
+//	}
 }
 
 //package IR;

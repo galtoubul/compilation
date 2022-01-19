@@ -8,33 +8,33 @@ import SYMBOL_TABLE.*;
 
 public class MIPSGenerator
 {
-	private int WORD_SIZE=4;
-	/***********************/
-	/* The file writer ... */
-	/***********************/
+	private int WORD_SIZE = 4;
+	private int TMPS_BACKUP_SPACE = 40; // t0 - t9 backup
 	private PrintWriter fileWriter;
+	private String dataSegment = "";
+	private String textSegment = "";
 
-	/***********************/
-	/* The file writer ... */
-	/***********************/
 	public void finalizeFile()
 	{
-		fileWriter.print("main:\n");
-		fileWriter.print("\tjal user_main\n");
-		fileWriter.print("\tli $v0,10\n");
-		fileWriter.print("\tsyscall\n");
+		textSegment += String.format("main:\n");
+		textSegment += String.format("\tjal user_main\n");
+		textSegment += String.format("\tli $v0,10\n");
+		textSegment += String.format("\tsyscall\n");
+		fileWriter.format(dataSegment);
+		fileWriter.format(".text\n");
+		fileWriter.format(textSegment);
 		fileWriter.close();
 	}
 	public void print_int(TEMP t)
 	{
 		int idx=t.getSerialNumber();
 		// fileWriter.format("\taddi $a0,Temp_%d,0\n",idx);
-		fileWriter.format("\tmove $a0,Temp_%d\n",idx);
-		fileWriter.format("\tli $v0,1\n");
-		fileWriter.format("\tsyscall\n");
-		fileWriter.format("\tli $a0,32\n");
-		fileWriter.format("\tli $v0,11\n");
-		fileWriter.format("\tsyscall\n");
+		textSegment += String.format("\tmove $a0,Temp_%d\n",idx);
+		textSegment += String.format("\tli $v0,1\n");
+		textSegment += String.format("\tsyscall\n");
+		textSegment += String.format("\tli $a0,32\n");
+		textSegment += String.format("\tli $v0,11\n");
+		textSegment += String.format("\tsyscall\n");
 	}
 	//public TEMP addressLocalVar(int serialLocalVarNum)
 	//{
@@ -47,23 +47,79 @@ public class MIPSGenerator
 	//}
 	public void allocate(String var_name)
 	{
-		fileWriter.format(".data\n");
-		fileWriter.format("\tglobal_%s: .word 0\n",var_name);
+		dataSegment += String.format("\tglobal_%s: .word 0\n",var_name);
+	}
+	public void allocateString(String var_name, String value)
+	{
+		dataSegment += String.format("\tstr_const_%s: .asciiz \"%s\"\n",var_name, value);
 	}
 	public void load(TEMP dst,String var_name)
 	{
 		int idxdst=dst.getSerialNumber();
-		fileWriter.format("\tlw Temp_%d,global_%s\n",idxdst,var_name);
+		textSegment += String.format("\tlw Temp_%d,global_%s\n",idxdst,var_name);
 	}
 	public void store(String var_name,TEMP src)
 	{
 		int idxsrc=src.getSerialNumber();
-		fileWriter.format("\tsw Temp_%d,global_%s\n",idxsrc,var_name);		
+		textSegment += String.format("\tsw Temp_%d,global_%s\n",idxsrc,var_name);
+	}
+	/************************************************ Local Variables ************************************************/
+
+	public void localVarAssignment(int varIndex, TEMP tmpRvalue) {
+		int rValueTmpInd = tmpRvalue.getSerialNumber();
+		int offset = (-1) * (varIndex * WORD_SIZE + TMPS_BACKUP_SPACE);
+		textSegment += String.format("\tsw Temp_%d, %d($fp)\n", rValueTmpInd, offset);
+	}
+
+//	public void initializeLocalVar(int varIndex, TEMP tmpRvalue) {
+//		int rValueTmpInd = tmpRvalue.getSerialNumber();
+//		int offset = (-1) * (varIndex * WORD_SIZE + TMPS_BACKUP_SPACE);
+//		textSegment += String.format("\tsw Temp_%d, %d($fp)\n", rValueTmpInd, offset);
+//	}
+
+	/************************************************ Global Variables ************************************************/
+
+	// decalaring a global variable without assigning it an initial value
+	public void declareGlobalVar(String label, String type) {
+		if (type == "string") {
+			dataSegment += String.format("%s: .asciiz \"\"\n",label);
+		}
+		else { // int
+			dataSegment += String.format("%s: .word 0\n",label);
+		}
+	}
+
+	// initialzing a global variable with a string const
+	public void initializeGlobalVar(String label, String value) {
+		dataSegment += String.format("%s: .asciiz\n",label);
+	}
+
+	// initialzing a global variable with an int const
+	public void initializeGlobalVar(String label, int value) {
+		dataSegment += String.format("%s: .word %d\n",label,value);
+	}
+
+//	// assign a const int to a global variable
+//	public void globalVarAssignment(String globalVarLabel, int constInt) {
+//		textSegment += String.format("\tli %s, %d\n",globalVarLabel,constInt);
+//	}
+
+	// assign a tmp to a global variable
+	public void globalVarAssignment(String globalVarLabel, TEMP tmpRvalue) {
+		int tmpRvalueInd=tmpRvalue.getSerialNumber();
+		textSegment += String.format("\tsw Temp_%d,global_%s\n",tmpRvalueInd,globalVarLabel);
+	}
+
+	public void storeLocalVar(int ind, TEMP initialValueTmp)
+	{
+		int idx=initialValueTmp.getSerialNumber();
+		int offset = (-1) * (ind * WORD_SIZE + 40); // 40 is for storing tmps
+		textSegment += String.format("\tsw Temp_%d,%d($fp)\n",idx,offset);
 	}
 	public void liTemp(TEMP t,int value)
 	{
 		int idx=t.getSerialNumber();
-		fileWriter.format("\tli Temp_%d,%d\n",idx,value);
+		textSegment += String.format("\tli Temp_%d,%d\n",idx,value);
 	}
 	public void liRegString(String reg,int value)
 	{
@@ -91,7 +147,7 @@ public class MIPSGenerator
 
 		// mov pointer to dstTempReg
 		int dstidx = dstTempReg.getSerialNumber();
-		fileWriter.format("\tmov Temp_%d, $v0\n",dstidx);
+		textSegment += String.format("\tmov Temp_%d, $v0\n",dstidx);
 	}
 	public void createNewArray(TEMP dstTempReg, TYPE ArrayType, TEMP subscriptTemp)
 	{
@@ -103,25 +159,25 @@ public class MIPSGenerator
 		mul(mulTemp, subscriptTemp, wordTemp); // mulTemp = subscriptTemp * 4
 
 		int mulTempidx = mulTemp.getSerialNumber();
-		fileWriter.format("\tmov $a0, Temp_%d\n",mulTempidx); // a0 = array size
+		textSegment += String.format("\tmov $a0, Temp_%d\n",mulTempidx); // a0 = array size
 
 		liRegString("v0", 9); // malloc syscall code
-		fileWriter.format("\tsyscall\n");
+		textSegment += String.format("\tsyscall\n");
 
 		// dstTempReg = array's pointer
 		int dstidx = dstTempReg.getSerialNumber();
-		fileWriter.format("\tmov Temp_%d, $v0\n",dstidx);
+		textSegment += String.format("\tmov Temp_%d, $v0\n",dstidx);
 	}
 	public void checkLimits(int dstidx)
 	{
 		// check top limit and fix the result if needed
-		fileWriter.format("\tble Temp_%d,32767,check_bottom_limit\n",dstidx); // 2^15 - 1 = 32767
-		fileWriter.format("\tli Temp_%d,32767\n",dstidx); // fix the result
+		textSegment += String.format("\tble Temp_%d,32767,check_bottom_limit\n",dstidx); // 2^15 - 1 = 32767
+		textSegment += String.format("\tli Temp_%d,32767\n",dstidx); // fix the result
 
 		// check bottom limit and fix the result if needed
 		label("check_bottom_limit");
-		fileWriter.format("\tbge Temp_%d,-32768,after_limits_checks\n",dstidx); // -2^15 = -32768
-		fileWriter.format("\tli Temp_%d,-32768\n",dstidx); // fix the result
+		textSegment += String.format("\tbge Temp_%d,-32768,after_limits_checks\n",dstidx); // -2^15 = -32768
+		textSegment += String.format("\tli Temp_%d,-32768\n",dstidx); // fix the result
 
 		label("after_limits_checks");
 	}
@@ -131,7 +187,7 @@ public class MIPSGenerator
 		int i2 =oprnd2.getSerialNumber();
 		int dstidx=dst.getSerialNumber();
 
-		fileWriter.format("\tadd Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		textSegment += String.format("\tadd Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
 		checkLimits(dstidx);
 	}
 	public void sub(TEMP dst,TEMP oprnd1,TEMP oprnd2)
@@ -140,7 +196,7 @@ public class MIPSGenerator
 		int i2 =oprnd2.getSerialNumber();
 		int dstidx=dst.getSerialNumber();
 
-		fileWriter.format("\tsub Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		textSegment += String.format("\tsub Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
 		checkLimits(dstidx);
 	}
 	public void mul(TEMP dst,TEMP oprnd1,TEMP oprnd2)
@@ -149,7 +205,7 @@ public class MIPSGenerator
 		int i2 =oprnd2.getSerialNumber();
 		int dstidx=dst.getSerialNumber();
 
-		fileWriter.format("\tmul Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		textSegment += String.format("\tmul Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
 		checkLimits(dstidx);
 	}
 	public void div(TEMP dst,TEMP oprnd1,TEMP oprnd2)
@@ -158,29 +214,28 @@ public class MIPSGenerator
 		int i2 =oprnd2.getSerialNumber();
 		int dstidx=dst.getSerialNumber();
 
-		fileWriter.format("\tdiv Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
+		textSegment += String.format("\tdiv Temp_%d,Temp_%d,Temp_%d\n",dstidx,i1,i2);
 		checkLimits(dstidx);
 	}
 	public void label(String inlabel)
 	{
 		if (inlabel.equals("main"))
 		{
-			fileWriter.format(".text\n");
-			fileWriter.format("user_main:\n");
+			textSegment += String.format("user_main:\n"); // _ isn't allowed in an identifier name -> user_name is a unique label
 		}
 		else
 		{
-			fileWriter.format("%s:\n",inlabel);
+			textSegment += String.format("%s:\n",inlabel);
 		}
 	}
 	public void pushTempReg(TEMP reg) {
 		int regInd =reg.getSerialNumber();
-		fileWriter.format("\tsubu $sp, $sp, 4\n");
-		fileWriter.format("\tsw $Temp_%d, 0($sp)\n", regInd);
+		textSegment += String.format("\tsubu $sp, $sp, 4\n");
+		textSegment += String.format("\tsw $Temp_%d, 0($sp)\n", regInd);
 	}
 	public void pushRegNameString(String reg) {
-		fileWriter.format("\tsubu $sp, $sp, 4\n");
-		fileWriter.format("\tsw $%s, 0($sp)\n", reg);
+		textSegment += String.format("\tsubu $sp, $sp, 4\n");
+		textSegment += String.format("\tsw $%s, 0($sp)\n", reg);
 	}
 	public void registersBackup()
 	{
@@ -192,25 +247,27 @@ public class MIPSGenerator
 	{
 		for (int i = 0; i < 10; i++) {
 			int offset = (i + 1) * -4;
-			fileWriter.format("\tlw $t%d, %d($sp)\n",i, offset);
+			textSegment += String.format("\tlw $t%d, %d($sp)\n",i, offset);
 		}
 	}
-	public void funcPrologue(int localVarsNum)
+	public void funcPrologue(int localVarsNum, String funcName)
 	{
+		label(funcName + "_prologue");
 		pushRegNameString("ra");
 		pushRegNameString("fp");
-		fileWriter.format("\tmov $fp, $sp\n");
+		textSegment += String.format("\tmov $fp, $sp\n");
 		registersBackup();
-		fileWriter.format("\tsub $sp, $sp, %d\n", localVarsNum * WORD_SIZE + 40); // 40 is for storing the caller tmps
+		textSegment += String.format("\tsub $sp, $sp, %d\n", localVarsNum * WORD_SIZE);
 	}
-	public void funcEpilogue()
+	public void funcEpilogue(String funcName)
 	{
-		fileWriter.format("\tmov $sp, $fp\n");
+		label(funcName + "_epilogue");
+		textSegment += String.format("\tmov $sp, $fp\n");
 		registersRestore();
-		fileWriter.format("\tlw $fp, 0($sp)\n");
-		fileWriter.format("\tlw $ra, 4($sp)\n");
-		fileWriter.format("\taddu $sp, $sp, 8\n");
-		fileWriter.format("\tjr $ra\n");
+		textSegment += String.format("\tlw $fp, 0($sp)\n");
+		textSegment += String.format("\tlw $ra, 4($sp)\n");
+		textSegment += String.format("\taddu $sp, $sp, 8\n");
+		textSegment += String.format("\tjr $ra\n");
 	}
 	public void jump(String inlabel)
 	{
@@ -220,49 +277,49 @@ public class MIPSGenerator
 	{
 		int i1 =oprnd1.getSerialNumber();
 		int i2 =oprnd2.getSerialNumber();
-		
-		fileWriter.format("\tblt Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+
+		textSegment += String.format("\tblt Temp_%d,Temp_%d,%s\n",i1,i2,label);
 	}
 	public void bgt(TEMP oprnd1,TEMP oprnd2,String label)
 	{
 		int i1 =oprnd1.getSerialNumber();
 		int i2 =oprnd2.getSerialNumber();
 
-		fileWriter.format("\tbgt Temp_%d,Temp_%d,%s\n",i1,i2,label);
+		textSegment += String.format("\tbgt Temp_%d,Temp_%d,%s\n",i1,i2,label);
 	}
 	public void bge(TEMP oprnd1,TEMP oprnd2,String label)
 	{
 		int i1 =oprnd1.getSerialNumber();
 		int i2 =oprnd2.getSerialNumber();
-		
-		fileWriter.format("\tbge Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+
+		textSegment += String.format("\tbge Temp_%d,Temp_%d,%s\n",i1,i2,label);
 	}
 	public void ble(TEMP oprnd1,TEMP oprnd2,String label)
 	{
 		int i1 =oprnd1.getSerialNumber();
 		int i2 =oprnd2.getSerialNumber();
 
-		fileWriter.format("\tble Temp_%d,Temp_%d,%s\n",i1,i2,label);
+		textSegment += String.format("\tble Temp_%d,Temp_%d,%s\n",i1,i2,label);
 	}
 	public void bne(TEMP oprnd1,TEMP oprnd2,String label)
 	{
 		int i1 =oprnd1.getSerialNumber();
 		int i2 =oprnd2.getSerialNumber();
-		
-		fileWriter.format("\tbne Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+
+		textSegment += String.format("\tbne Temp_%d,Temp_%d,%s\n",i1,i2,label);
 	}
 	public void beq(TEMP oprnd1,TEMP oprnd2,String label)
 	{
 		int i1 =oprnd1.getSerialNumber();
 		int i2 =oprnd2.getSerialNumber();
-		
-		fileWriter.format("\tbeq Temp_%d,Temp_%d,%s\n",i1,i2,label);				
+
+		textSegment += String.format("\tbeq Temp_%d,Temp_%d,%s\n",i1,i2,label);
 	}
 	public void beqz(TEMP oprnd1,String label)
 	{
 		int i1 =oprnd1.getSerialNumber();
-				
-		fileWriter.format("\tbeq Temp_%d,$zero,%s\n",i1,label);				
+
+		textSegment += String.format("\tbeq Temp_%d,$zero,%s\n",i1,label);
 	}
 	// Push args in reverse and return the number of args
 	public int pushArgs(TEMP_LIST argsTempList)
@@ -288,10 +345,10 @@ public class MIPSGenerator
 		int argsNum = pushArgs(argsTempList);
 
 		// jal
-		fileWriter.format("\tjal %s\n", funcName);
+		textSegment += String.format("\tjal %s\n", funcName);
 
 		// restore sp
-		fileWriter.format("\taddu $sp, $sp, %d\n", argsNum);
+		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum);
 	}
 	public void callFuncExp(TEMP dst, String funcName, TEMP_LIST argsTempList)
 	{
@@ -299,12 +356,12 @@ public class MIPSGenerator
 
 		// store return value in dst
 		int dstidx=dst.getSerialNumber();
-		fileWriter.format("\tmov Temp_%d, $v0\n", dstidx);
+		textSegment += String.format("\tmov Temp_%d, $v0\n", dstidx);
 	}
 	public void doReturn(TEMP expRetReg)
 	{
 		int expRetRegIdx=expRetReg.getSerialNumber();
-		fileWriter.format("\tmov $v0, Temp_%d\n", expRetRegIdx);
+		textSegment += String.format("\tmov $v0, Temp_%d\n", expRetRegIdx);
 	}
 
 	/**************************************/

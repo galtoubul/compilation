@@ -2,14 +2,16 @@ package AstAnnotation;
 
 import java.util.Optional;
 
-public enum TYPE {
-    GLOBAL_VAR,
-    LOCAL_VAR,
-    PARAMETER,
-    FIELD;
-}
+
 
 public class AstAnnotation {
+    public enum TYPE {
+        GLOBAL_VAR,
+        LOCAL_VAR,
+        PARAMETER,
+        FIELD;
+    }
+
     public TYPE type;
     public Optional<Integer> ind;
 

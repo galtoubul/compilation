@@ -1,11 +1,19 @@
-int x := 32767 + 1;
+int a;
+int b;
+int c := 3;
 
-int f(int x, int y, int z) {
-    return 0;
+int f() {
+	int a := 1;
+	int b;
+	b := 2;
+	c := 33;
+	int d := 5;
+	int e;
+	return a;
 }
 
-int y := 3;
+int d := 11;
 
-void main() {
-    int x := f(1,2,3);
+void g() {
+	b := 22;
 }
