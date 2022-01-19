@@ -5,6 +5,9 @@ import java.util.Optional;
 import TYPES.TYPE;
 import TEMP.*;
 import IR.*;
+import AstAnnotation.*;
+import SYMBOL_TABLE.*;
+import GlobalVariables.*;
 
 public class AST_STMT_ASSIGN extends AST_STMT {
 	/***************/
@@ -12,6 +15,8 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 	/***************/
 	public AST_VAR var;
 	public AST_EXP exp;
+	public AstAnnotation astAnnotation;
+	public String varName;
 
 	/*******************/
 	/* CONSTRUCTOR(S) */
@@ -76,15 +81,46 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 			throw new SemanticErrorException("" + lineNum);
 		}
 
+		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(((AST.AST_VAR_SIMPLE)var).name);
+		varName = ((AST.AST_VAR_SIMPLE)var).name;
+		setNotation(Optional.of(entry.get().position));
+
 		return null;
+	}
+
+	private void setNotation(Optional<Integer> localVarInd) {
+		System.out.println("-- AST_STMT_ASSIGN setNotation");
+		ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(varName);
+		System.out.println("\t\tvariable scope type = " + scopeType);
+
+		if (scopeType == scopeType.Global) {
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
+			System.out.format("\t\t%s is a global variable\n", varName);
+		}
+		else { // local
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, localVarInd);
+			int ind = localVarInd.orElse(-1);
+			System.out.format("\t\t%s is a local variable | its index = %s\n", varName, ind);
+		}
 	}
 
 	public TEMP IRme() {
 		System.out.println("-- AST_STMT_ASSIGN IRme");
-		String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
-		System.out.println("\t\tcaller = " + callerClassName);
-		TEMP src = exp.IRme();
-		IR.getInstance().Add_IRcommand(new IRcommand_Store(((AST_VAR_SIMPLE) var).name, src));
+
+		if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR){
+			System.out.format("\t\t%s is a global variable\n", varName);
+			String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
+			String globalVarType = GlobalVariables.getGlobalVarType(((AST.AST_VAR_SIMPLE)var).name);
+
+			TEMP tmpRvalue = exp.IRme();
+			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, tmpRvalue));
+		}
+		else { // local variable
+			System.out.format("\t\t%s is a local variable\n", varName);
+			TEMP tmpRvalue = exp.IRme();
+			int localVarInd = astAnnotation.ind.orElse(-1);
+			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, tmpRvalue));
+		}
 
 		return null;
 	}

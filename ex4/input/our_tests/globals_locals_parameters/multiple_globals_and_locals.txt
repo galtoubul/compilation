@@ -1,0 +1,19 @@
+int a;
+int b;
+int c := 3;
+
+int f() {
+	int a := 1;
+	int b;
+	b := 2;
+	c := 33;
+	int d := 5;
+	int e;
+	return a;
+}
+
+a := 11;
+
+void g() {
+	b := 22;
+}

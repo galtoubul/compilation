@@ -104,14 +104,6 @@ public class AST_FUNC_DEC extends AST_Node {
     public TYPE SemantMe(Optional<String> fatherClassId) {
         System.out.format("-- AST_FUNC_DEC SemantMe%s\n", fatherClassId.isPresent() ? " extends" : "");
 
-        // Check that the return type is legal
-        // TYPE returnType =
-        // SYMBOL_TABLE.getInstance().find(this.returnTypeName.name());
-        // if (returnType == null) {
-        // System.out.format(">> ERROR [" + lineNum + "] non existing return type\n");
-        // throw new SemanticErrorException("" + lineNum);
-        // }
-
         TYPE returnType = this.returnTypeName.getTYPE(lineNum);
 
         // Check that id does NOT exist at the same scope
@@ -164,6 +156,7 @@ public class AST_FUNC_DEC extends AST_Node {
 
         IR.getInstance().Add_IRcommand(new IRcommand_Label(id));
         IR.getInstance().Add_IRcommand(new IRcommand_Func_Prologue(id));
+        IR.getInstance().Add_IRcommand(new IRcommand_Label(id + "_after_prologue"));
 
         if (this.params.isPresent()) {
             this.params.get().IRme();
@@ -173,7 +166,7 @@ public class AST_FUNC_DEC extends AST_Node {
             body.IRme(); // including return
         }
 
-        IR.getInstance().Add_IRcommand(new IRcommand_Func_Epilogue());
+        IR.getInstance().Add_IRcommand(new IRcommand_Func_Epilogue(id));
 
         return null;
     }
