@@ -38,11 +38,6 @@ class InterferenceGraph {
     private HashMap<TEMP, Boolean> inGraph;
 
     /**
-     * The number of temporaries currently in the graph.
-     */
-    private int size;
-
-    /**
      * Construct an interference graph from the result of a liveness analysis.
      * 
      * @param liveness The list of sets of temporaries returned for each command
@@ -65,7 +60,6 @@ class InterferenceGraph {
 
         // Construct the nodes
         this.temps = edges.keySet();
-        this.size = this.temps.size();
     }
 
     /**
@@ -100,16 +94,6 @@ class InterferenceGraph {
     }
 
     /**
-     * Return if a given temporary is currently in the graph.
-     * 
-     * Note that the temporary can be in the graph, but (temporarily) be considered
-     * "deleted". In that case, the function returns `false`.
-     */
-    private boolean currentlyInGraph(TEMP temp) {
-        return this.existsInGraph(temp) && this.inGraph.get(temp);
-    }
-
-    /**
      * Return if a given temporary was inserted to the graph during its creation.
      * 
      * This means that the temporary can be currently in the graph, or that it was
@@ -127,7 +111,6 @@ class InterferenceGraph {
      */
     public void removeTemp(TEMP temp) {
         this.setInGraph(temp, false);
-        this.size--;
     }
 
     /**
@@ -138,7 +121,6 @@ class InterferenceGraph {
      */
     public void reinsertTemp(TEMP temp) {
         this.setInGraph(temp, true);
-        this.size++;
     }
 
     /**
@@ -152,7 +134,20 @@ class InterferenceGraph {
         }
     }
 
-    public boolean isEmpty() {
-        return this.size == 0;
+    public Stream<TEMP> stream() {
+        return this.temps.stream().filter(temp -> this.inGraph.get(temp));
+    }
+
+    /**
+     * Return the (non-removed) neighbors of a temporary in the interference graph.
+     * If the temporary
+     * 
+     * Assumes the temporary is in the graph.
+     * 
+     * @param temp
+     * @return
+     */
+    public Stream<TEMP> neighbors(TEMP temp) {
+        return this.edges.get(temp).stream().filter(neighbor -> this.inGraph.get(neighbor));
     }
 }
