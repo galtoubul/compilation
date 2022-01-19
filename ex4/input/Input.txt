@@ -2,7 +2,7 @@ int g := 70;
 
 int f(int x) {
 	int z := g;
-	while(z > 2) {
+	while(z) {
 		g := 3;
 		z := z - 1;
 	}
