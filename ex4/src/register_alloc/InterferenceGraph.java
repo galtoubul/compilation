@@ -38,6 +38,11 @@ class InterferenceGraph {
     private HashMap<TEMP, Boolean> inGraph;
 
     /**
+     * The number of temporaries currently in the graph.
+     */
+    private int size;
+
+    /**
      * Construct an interference graph from the result of a liveness analysis.
      * 
      * @param liveness The list of sets of temporaries returned for each command
@@ -60,6 +65,7 @@ class InterferenceGraph {
 
         // Construct the nodes
         this.temps = edges.keySet();
+        this.size = this.temps.size();
     }
 
     /**
@@ -121,7 +127,7 @@ class InterferenceGraph {
      */
     public void removeTemp(TEMP temp) {
         this.setInGraph(temp, false);
-
+        this.size--;
     }
 
     /**
@@ -132,6 +138,7 @@ class InterferenceGraph {
      */
     public void reinsertTemp(TEMP temp) {
         this.setInGraph(temp, true);
+        this.size++;
     }
 
     /**
@@ -143,5 +150,9 @@ class InterferenceGraph {
         if (this.existsInGraph(temp)) {
             this.inGraph.put(temp, in);
         }
+    }
+
+    public boolean isEmpty() {
+        return this.size == 0;
     }
 }
