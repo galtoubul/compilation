@@ -1,5 +1,9 @@
-string a := "x";
+int g := 70;
 
-void f() {
-	string b := "a";
+int f(int x) {
+	int z := g;
+	if(z > 2) {
+		g := 3;
+	}
+	return z;
 }

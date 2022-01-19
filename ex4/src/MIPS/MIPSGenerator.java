@@ -42,7 +42,7 @@ public class MIPSGenerator {
 	// TODO delete/change
 	public void load(TEMP dst, String var_name) {
 		int idxdst = dst.getSerialNumber();
-		textSegment += String.format("\tlw Temp_%d ,global_%s\n", idxdst, var_name);
+		textSegment += String.format("\tlw Temp_%d, global_%s\n", idxdst, var_name);
 	}
 
 	// TODO delete/change
@@ -264,16 +264,16 @@ public class MIPSGenerator {
 	}
 
 	public void beq(TEMP oprnd1,TEMP oprnd2,String label) {
-		int i1 =oprnd1.getSerialNumber();
-		int i2 =oprnd2.getSerialNumber();
+		int i1 = oprnd1.getSerialNumber();
+		int i2 = oprnd2.getSerialNumber();
 
-		textSegment += String.format("\tbeq Temp_%d,Temp_%d,%s\n",i1,i2,label);
+		textSegment += String.format("\tbeq Temp_%d, Temp_%d, %s\n",i1,i2,label);
 	}
 
 	public void beqz(TEMP oprnd1,String label) {
-		int i1 =oprnd1.getSerialNumber();
+		int i1 = oprnd1.getSerialNumber();
 
-		textSegment += String.format("\tbeq Temp_%d,$zero,%s\n",i1,label);
+		textSegment += String.format("\tbeq Temp_%d, $zero, %s\n", i1, label);
 	}
 
 	/************************************************ Function call ************************************************/
