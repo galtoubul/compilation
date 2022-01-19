@@ -1,0 +1,3 @@
+string a := "x";
+string b := "y";
+string c := a + b;

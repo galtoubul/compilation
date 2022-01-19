@@ -12,7 +12,7 @@ int f() {
 	return a;
 }
 
-a := 11;
+int d := 11;
 
 void g() {
 	b := 22;
