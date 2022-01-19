@@ -18,6 +18,7 @@ public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand
 	/* MIPS me !!! */
 	/***************/
 	public void MIPSme() {
+		System.out.println("-- IRcommand_Initialize_Temp_With_String_Const MIPSme");
 		String stringConstLabel = GlobalVariables.getStringConstLabel();
 		MIPSGenerator.getInstance().initializeGlobalVar(stringConstLabel, stringConst);
 		MIPSGenerator.getInstance().loadAddress(dst, stringConstLabel);

@@ -18,8 +18,8 @@ public class IRcommand_Binop_Add_Integers extends IRcommand
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme()
-	{
+	public void MIPSme() {
+		System.out.println("-- IRcommand_Binop_Add_Integers MIPSme");
 		MIPSGenerator.getInstance().add(dst,t1,t2);
 	}
 }

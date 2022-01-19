@@ -7,6 +7,7 @@ import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
 import TEMP.*;
+import IR.*;
 
 public class AST_STMT_IF extends AST_STMT {
 	public AST_EXP cond;
@@ -83,7 +84,14 @@ public class AST_STMT_IF extends AST_STMT {
 	}
 
 	public TEMP IRme() {
-		System.out.println("--AST_STMT_IF IRme");
+		System.out.println("-- AST_STMT_IF IRme");
+
+		TEMP condTmp = cond.IRme();
+		String label = "after_if_block";
+		IR.getInstance().Add_IRcommand(new IRcommand_Jump_If_Eq_To_Zero(condTmp, label));
+		body.IRme();
+		IR.getInstance().Add_IRcommand(new IRcommand_Label(label));
+
 		return null;
 	}
 }

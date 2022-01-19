@@ -17,7 +17,8 @@ public class IRcommand_Assign_To_Local_Var extends IRcommand
 	/* MIPS me !!! */
 	/***************/
 	public void MIPSme() {
-			MIPSGenerator.getInstance().localVarAssignment(varIndex, tmpRvalue);
+		System.out.println("-- IRcommand_Assign_To_Local_Var MIPSme");
+		MIPSGenerator.getInstance().localVarAssignment(varIndex, tmpRvalue);
 	}
 
 }

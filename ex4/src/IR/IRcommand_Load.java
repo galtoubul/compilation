@@ -27,8 +27,8 @@ public class IRcommand_Load extends IRcommand
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme()
-	{
+	public void MIPSme() {
+		System.out.println("-- IRcommand_Load MIPSme");
 		MIPSGenerator.getInstance().load(dst,var_name);
 	}
 }

@@ -13,11 +13,12 @@ public class GlobalVariables {
 
     public static String getAvialableLabel(String label) {
         int i = 0;
-        while (labels.contains(label)) {
-            label = String.format("%s%d",label, i++);
+        String generatedLabel = label;
+        while (labels.contains(generatedLabel)) {
+            generatedLabel = String.format("%s%d",label, i++);
         }
-        labels.add(label);
-        return label;
+        labels.add(generatedLabel);
+        return generatedLabel;
     }
 
     public static String getGlobalLabel(String globalVarName) {

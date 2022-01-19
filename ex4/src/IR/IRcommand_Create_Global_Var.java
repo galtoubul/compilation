@@ -42,8 +42,9 @@ public class IRcommand_Create_Global_Var extends IRcommand
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme()
-	{
+	public void MIPSme() {
+		System.out.println("-- IRcommand_Create_Global_Var MIPSme");
+
 		if (varType == "string" && stringConst != null) {
 			/* string z := "abc"; --> str_const<num>: .asciiz "abc"
 			 						  globsl_z: .word str_const<num>   */
