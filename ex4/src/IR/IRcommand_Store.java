@@ -27,8 +27,8 @@ public class IRcommand_Store extends IRcommand
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme()
-	{
+	public void MIPSme() {
+		System.out.println("-- IRcommand_Store MIPSme");
 		MIPSGenerator.getInstance().store(var_name,src);
 	}
 }

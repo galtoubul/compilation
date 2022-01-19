@@ -11,13 +11,12 @@ package IR;
 /* PROJECT IMPORTS */
 /*******************/
 
-public class IRcommandList
-{
+public class IRcommandList {
+
 	public IRcommand head;
 	public IRcommandList tail;
 
-	IRcommandList(IRcommand head, IRcommandList tail)
-	{
+	IRcommandList(IRcommand head, IRcommandList tail) {
 		this.head = head;
 		this.tail = tail;
 	}
@@ -25,8 +24,8 @@ public class IRcommandList
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme()
-	{
+	public void MIPSme() {
+		System.out.println("-- IRcommandList MIPSme");
 		if (head != null) head.MIPSme();
 		if (tail != null) tail.MIPSme();
 	}

@@ -20,6 +20,7 @@ public class IRcommand_Func_Epilogue extends IRcommand {
 	/* MIPS me !!! */
 	/***************/
 	public void MIPSme() {
+		System.out.println("-- IRcommand_Func_Epilogue MIPSme");
 		MIPSGenerator.getInstance().funcEpilogue(funcName);
 	}
 }

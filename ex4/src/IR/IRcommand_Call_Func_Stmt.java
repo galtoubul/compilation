@@ -18,6 +18,7 @@ public class IRcommand_Call_Func_Stmt extends IRcommand {
 	/* MIPS me !!! */
 	/***************/
 	public void MIPSme() {
+		System.out.println("-- IRcommand_Call_Func_Stmt MIPSme");
 		MIPSGenerator.getInstance().callFuncStmt(dst, funcName, argsTempList);
 	}
 }

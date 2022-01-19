@@ -24,6 +24,7 @@ public class IRcommand_Func_Prologue extends IRcommand {
 	/* MIPS me !!! */
 	/***************/
 	public void MIPSme() {
+		System.out.println("-- IRcommand_Func_Prologue MIPSme");
 		MIPSGenerator.getInstance().funcPrologue(localVarsNum, funcName);
 	}
 }

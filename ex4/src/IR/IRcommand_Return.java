@@ -14,6 +14,7 @@ public class IRcommand_Return extends IRcommand {
 	/* MIPS me !!! */
 	/***************/
 	public void MIPSme() {
+		System.out.println("-- IRcommand_Return MIPSme");
 		MIPSGenerator.getInstance().doReturn(expRetReg);
 	}
 }

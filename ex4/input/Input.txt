@@ -1,5 +1,5 @@
 string a := "x";
 
 void f() {
-	a := "xx";
+	string b := "a";
 }
