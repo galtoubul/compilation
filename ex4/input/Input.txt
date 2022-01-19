@@ -1,10 +1,14 @@
-int g := 70;
+int a := 11;
+int b := 22;
+int c := 33;
 
-int f(int x) {
-	int z := g;
-	while(z) {
-		g := 3;
-		z := z - 1;
-	}
-	return z;
+int f(int a, int b, int c) {
+	int a := 111;
+	int b := 222;
+	int c := 333;
+	return a + b + c;
+}
+
+void main() {
+	f(1, 2, 3);
 }

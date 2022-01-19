@@ -9,6 +9,7 @@ import IR.*;
 import AstAnnotation.*;
 import SYMBOL_TABLE.*;
 import GlobalVariables.*;
+import AstNotationType.*;
 
 public class AST_VAR_SIMPLE extends AST_VAR {
 
@@ -57,16 +58,21 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		System.out.println("-- AST_VAR_SIMPLE setNotation");
 
 		ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(name);
-		int localVarInd  = SYMBOL_TABLE.getInstance().findEntry(name).get().position;
 		System.out.println("\t\tvariable scope type = " + scopeType);
+		int varInd  = SYMBOL_TABLE.getInstance().findEntry(name).get().position;
+		AstNotationType astNotationType = SYMBOL_TABLE.getInstance().findEntry(name).get().astNotationType;
 
 		if (scopeType == scopeType.Global) {
 			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, Optional.empty());
 			System.out.format("\t\t%s is a global variable\n", name);
 		}
+		else if (astNotationType == AstNotationType.parameter){
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.PARAMETER, Optional.of(varInd));
+			System.out.format("\t\t%s is a parameter | its index = %s\n", name, varInd);
+		}
 		else { // local
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, Optional.of(localVarInd));
-			System.out.format("\t\t%s is a local variable | its index = %s\n", name, localVarInd);
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, Optional.of(varInd));
+			System.out.format("\t\t%s is a local variable | its index = %s\n", name, varInd);
 		}
 	}
 
@@ -83,9 +89,13 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 
 			IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Global_Var(tmp, globalVarLabel));
 		}
-		else { // local variable
+		else if (astAnnotation.type == AstAnnotation.TYPE.LOCAL_VAR) {
 			System.out.format("\t\t%s is a local variable\n", name);
 			IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Local_Var(tmp, astAnnotation.ind.get()));
+		}
+		else { // parameter
+			System.out.format("\t\t%s is a parameter\n", name);
+			IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Parameter(tmp, astAnnotation.ind.get()));
 		}
 
 		return tmp;

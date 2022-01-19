@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import TEMP.*;
 import TYPES.*;
 import SYMBOL_TABLE.*;
+import Labels.*;
 
 public class MIPSGenerator {
 
@@ -82,15 +83,17 @@ public class MIPSGenerator {
 
 	public void checkLimits(int dstidx) {
 		// check top limit and fix the result if needed
-		textSegment += String.format("\tble Temp_%d, 32767, check_bottom_limit\n",dstidx); // 2^15 - 1 = 32767
-		textSegment += String.format("\tli Temp_%d, 32767\n",dstidx); // fix the result
+		String checkBottomLimitLabel = Labels.getAvialableLabel("check_bottom_limit");
+		textSegment += String.format("\tble Temp_%d, 32767, %s\n", dstidx, checkBottomLimitLabel); // 2^15 - 1 = 32767
+		textSegment += String.format("\tli Temp_%d, 32767\n", dstidx); // fix the result
 
 		// check bottom limit and fix the result if needed
-		label("check_bottom_limit");
-		textSegment += String.format("\tbge Temp_%d, -32768, after_limits_checks\n",dstidx); // -2^15 = -32768
-		textSegment += String.format("\tli Temp_%d, -32768\n",dstidx); // fix the result
+		label(checkBottomLimitLabel);
+		String afterLimitsChecksLabel = Labels.getAvialableLabel("after_limits_checks");
+		textSegment += String.format("\tbge Temp_%d, -32768, %s\n", dstidx, afterLimitsChecksLabel); // -2^15 = -32768
+		textSegment += String.format("\tli Temp_%d, -32768\n", dstidx); // fix the result
 
-		label("after_limits_checks");
+		label(afterLimitsChecksLabel);
 	}
 
 	public void add(TEMP dst,TEMP oprnd1,TEMP oprnd2) {
@@ -146,6 +149,14 @@ public class MIPSGenerator {
 	public void loadFromLocal(TEMP tmp, int localVarInd) {
 		int tmpInd = tmp.getSerialNumber();
 		int offset = (-1) * (localVarInd * WORD_SIZE + 40); // 40 is for storing tmps
+		textSegment += String.format("\tlw Temp_%d, %d($fp)\n", tmpInd, offset);
+	}
+
+	/************************************************ Parameters ************************************************/
+
+	public void loadFromParameters(TEMP tmp, int ParamInd) {
+		int tmpInd = tmp.getSerialNumber();
+		int offset = ParamInd * WORD_SIZE + 4; // first parameter is at 8($fp), since: prev fp = 0($fp), ra = 4($fp)
 		textSegment += String.format("\tlw Temp_%d, %d($fp)\n", tmpInd, offset);
 	}
 
@@ -315,7 +326,7 @@ public class MIPSGenerator {
 		textSegment += String.format("\tjal %s\n", funcName);
 
 		// restore sp
-		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum);
+		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
 	}
 
 	public void callFuncExp(TEMP dst, String funcName, TEMP_LIST argsTempList) {
@@ -353,7 +364,7 @@ public class MIPSGenerator {
 	}
 
 	public void funcPrologue(int localVarsNum, String funcName) {
-		label(funcName + "_prologue");
+		label(Labels.getAvialableLabel(funcName + "_prologue"));
 		pushRegNameString("ra");
 		pushRegNameString("fp");
 		textSegment += String.format("\tmov $fp, $sp\n");
@@ -362,7 +373,7 @@ public class MIPSGenerator {
 	}
 
 	public void funcEpilogue(String funcName) {
-		label(funcName + "_epilogue");
+		label(Labels.getAvialableLabel(funcName + "_epilogue"));
 		textSegment += String.format("\tmov $sp, $fp\n");
 		registersRestore();
 		textSegment += String.format("\tlw $fp, 0($sp)\n");
