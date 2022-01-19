@@ -12,11 +12,29 @@ import TEMP.TEMP;
 /**
  * Implementation of an interference graph of temporaries in IR.
  * 
- * Used to match registers to temporaries.
+ * Used to match registers to temporaries via coloring.
  */
 class InterferenceGraph {
+    /**
+     * The temporaries in the original code that we want to match to machine
+     * registers.
+     */
     private final Set<TEMP> temps;
+
+    /**
+     * The interferences of temporaries - namely, two neighboring temporaries cannot
+     * match to the same register.
+     */
     private final HashMap<TEMP, Set<TEMP>> edges;
+
+    /**
+     * Flags that indicate if a temporary is currently in the graph or if it was
+     * deleted from the graph.
+     * 
+     * This is required, because during the coloring
+     * algorithm nodes are removed from the graph, and later reinserted to it in a
+     * way that preserves the original topology.
+     */
     private HashMap<TEMP, Boolean> inGraph;
 
     /**
@@ -76,12 +94,54 @@ class InterferenceGraph {
     }
 
     /**
-     * Return if a given temporary is in the graph.
+     * Return if a given temporary is currently in the graph.
      * 
      * Note that the temporary can be in the graph, but (temporarily) be considered
      * "deleted". In that case, the function returns `false`.
      */
-    private boolean inGraph(TEMP temp) {
-        return this.temps.contains(temp) && this.inGraph.get(temp);
+    private boolean currentlyInGraph(TEMP temp) {
+        return this.existsInGraph(temp) && this.inGraph.get(temp);
+    }
+
+    /**
+     * Return if a given temporary was inserted to the graph during its creation.
+     * 
+     * This means that the temporary can be currently in the graph, or that it was
+     * deleted from the graph.
+     */
+    private boolean existsInGraph(TEMP temp) {
+        return this.temps.contains(temp);
+    }
+
+    /**
+     * Remove a temporary from a graph, such that it can be inserted later in a way
+     * that preserves the original topology.
+     * 
+     * If the temporary is not in the graph, this does nothing.
+     */
+    public void removeTemp(TEMP temp) {
+        this.setInGraph(temp, false);
+
+    }
+
+    /**
+     * Reinsert a temporary that was removed from the graph, in a way that preserves
+     * the original topology.
+     * 
+     * If the temporary was not originally in the graph, this does nothing.
+     */
+    public void reinsertTemp(TEMP temp) {
+        this.setInGraph(temp, true);
+    }
+
+    /**
+     * Set the `inGraph` flag of `temp`, if `temp` exists in the graph.
+     * 
+     * If the temporary does not exist in the graph, this does nothing.
+     */
+    private void setInGraph(TEMP temp, boolean in) {
+        if (this.existsInGraph(temp)) {
+            this.inGraph.put(temp, in);
+        }
     }
 }
