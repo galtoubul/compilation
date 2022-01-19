@@ -94,6 +94,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
         System.out.format("\t\tinserted variable %s of type %s to the symbol table\n", var.name,
                 var.type.name);
+//        setNotation(var.type.name);
         this.varType = var.type.name;
         setNotation(localVarInd);
         return var;
@@ -102,6 +103,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
     private void setNotation(Optional<Integer> localVarInd) {
         System.out.println("-- AST_VAR_DECLERATION setNotation");
 
+        ScopeType scopeType = SYMBOL_TABLE.getInstance().currentScopeType();
         if (scopeType == scopeType.Global) {
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
             System.out.format("\t\t%s is a global variable\n", id);
