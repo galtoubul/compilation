@@ -62,7 +62,7 @@ public class MIPSGenerator {
 			textSegment += String.format("user_main:\n"); // _ isn't allowed in an identifier name -> user_name is a unique label
 		}
 		else {
-			textSegment += String.format("%s:\n",inlabel);
+			textSegment += String.format("%s:\n", inlabel);
 		}
 	}
 
@@ -70,13 +70,30 @@ public class MIPSGenerator {
 		textSegment += String.format("\tj %s\n", inlabel);
 	}
 
-	public void liTemp(TEMP t,int value) {
+	public void liTemp(TEMP t, int value) {
 		int idx=t.getSerialNumber();
-		textSegment += String.format("\tli Temp_%d, %d\n",idx,value);
+		textSegment += String.format("\tli Temp_%d, %d\n",idx, value);
 	}
 
-	public void liRegString(String reg,int value) {
-		textSegment += String.format("\tli $%s, %d\n",reg,value);
+	public void liRegString(String reg, int value) {
+		textSegment += String.format("\tli $%s, %d\n", reg, value);
+	}
+
+	public void lbFromTmpToTmp(TEMP dstTmp, TEMP srcTmp, int offset) {
+		int dstTmpInd = dstTmp.getSerialNumber();
+		int srcTmpInd = srcTmp.getSerialNumber();
+		textSegment += String.format("\tlb Temp_%d, %d(Temp_%d)\n", dstTmpInd, offset, srcTmpInd);
+	}
+
+	public void addConstIntToTmp(TEMP dstTmp, int constInt) {
+		int dstTmpInd = dstTmp.getSerialNumber();
+
+		if (constInt >= 0) {
+			textSegment += String.format("\taddu Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
+		}
+		else {
+			textSegment += String.format("\tadd Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
+		}
 	}
 
 	/************************************************ Arithmetics ************************************************/
@@ -150,6 +167,12 @@ public class MIPSGenerator {
 		int tmpInd = tmp.getSerialNumber();
 		int offset = (-1) * (localVarInd * WORD_SIZE + 40); // 40 is for storing tmps
 		textSegment += String.format("\tlw Temp_%d, %d($fp)\n", tmpInd, offset);
+	}
+
+	public void movFromTmpToTmp(TEMP tmpDst, TEMP tmpSrc) {
+		int tmpDstInd = tmpDst.getSerialNumber();
+		int tmpSrcInd = tmpSrc.getSerialNumber();
+		textSegment += String.format("\tmov Temp_%d, Temp_%d\n", tmpDstInd, tmpSrcInd);
 	}
 
 	/************************************************ Parameters ************************************************/
@@ -255,44 +278,44 @@ public class MIPSGenerator {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
-		textSegment += String.format("\tblt Temp_%d, Temp_%d, %s\n",i1,i2,label);
+		textSegment += String.format("\tblt Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
 
 	public void bgt(TEMP oprnd1,TEMP oprnd2,String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
-		textSegment += String.format("\tbgt Temp_%d, Temp_%d, %s\n",i1,i2,label);
+		textSegment += String.format("\tbgt Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
 	public void bge(TEMP oprnd1,TEMP oprnd2,String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
-		textSegment += String.format("\tbge Temp_%d, Temp_%d, %s\n",i1,i2,label);
+		textSegment += String.format("\tbge Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
 
 	public void ble(TEMP oprnd1,TEMP oprnd2,String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
-		textSegment += String.format("\tble Temp_%d, Temp_%d, %s\n",i1,i2,label);
+		textSegment += String.format("\tble Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
 
-	public void bne(TEMP oprnd1,TEMP oprnd2,String label) {
+	public void bne(TEMP oprnd1, TEMP oprnd2, String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
-		textSegment += String.format("\tbne Temp_%d, Temp_%d, %s\n",i1,i2,label);
+		textSegment += String.format("\tbne Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
 
-	public void beq(TEMP oprnd1,TEMP oprnd2,String label) {
+	public void beq(TEMP oprnd1, TEMP oprnd2, String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
-		textSegment += String.format("\tbeq Temp_%d, Temp_%d, %s\n",i1,i2,label);
+		textSegment += String.format("\tbeq Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
 
-	public void beqz(TEMP oprnd1,String label) {
+	public void beqz(TEMP oprnd1, String label) {
 		int i1 = oprnd1.getSerialNumber();
 
 		textSegment += String.format("\tbeq Temp_%d, $zero, %s\n", i1, label);

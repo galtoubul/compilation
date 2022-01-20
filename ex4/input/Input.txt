@@ -1,14 +1,8 @@
-int a := 11;
-int b := 22;
-int c := 33;
+string a := "x";
+string b := "x";
 
-int f(int a, int b, int c) {
-	int a := 111;
-	int b := 222;
-	int c := 333;
-	return a + b + c;
-}
-
-void main() {
-	f(1, 2, 3);
+void f() {
+	if(a = b) {
+		b := "y";
+	}
 }
