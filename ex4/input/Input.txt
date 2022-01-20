@@ -1,8 +1,5 @@
-string a := "x";
-string b := "x";
-
-void f() {
-	if(a = b) {
-		b := "y";
-	}
+string f() {
+	string a := "x";
+	string b := "y";
+	string c := a + b;
 }

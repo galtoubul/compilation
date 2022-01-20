@@ -85,6 +85,12 @@ public class MIPSGenerator {
 		textSegment += String.format("\tlb Temp_%d, %d(Temp_%d)\n", dstTmpInd, offset, srcTmpInd);
 	}
 
+	public void sbFromTmpToTmp(TEMP dstTmp, TEMP srcTmp, int offset) {
+		int dstTmpInd = dstTmp.getSerialNumber();
+		int srcTmpInd = srcTmp.getSerialNumber();
+		textSegment += String.format("\tsb Temp_%d, %d(Temp_%d)\n", dstTmpInd, offset, srcTmpInd);
+	}
+
 	public void addConstIntToTmp(TEMP dstTmp, int constInt) {
 		int dstTmpInd = dstTmp.getSerialNumber();
 
@@ -92,8 +98,32 @@ public class MIPSGenerator {
 			textSegment += String.format("\taddu Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
 		}
 		else {
-			textSegment += String.format("\tadd Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
+			textSegment += String.format("\taddi Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
 		}
+	}
+
+	public void initTmpWithZero(TEMP dstTmp) {
+		int dstTmpInd = dstTmp.getSerialNumber();
+		textSegment += String.format("\tmov Temp_%d, $zero\n", dstTmpInd);
+	}
+
+	public void malloc(TEMP resultPtrTmp) {
+		liRegString("v0", 9);
+		textSegment += String.format("\tsyscall\n");
+
+		int resultPtrTmpInd = resultPtrTmp.getSerialNumber();
+		textSegment += String.format("\tmov Temp_%d, $v0\n", resultPtrTmpInd);
+	}
+
+	public void malloc(TEMP resultPtrTmp, int size) {
+		liRegString("a0", size);
+		malloc(resultPtrTmp);
+	}
+
+	public void malloc(TEMP resultPtrTmp, TEMP sizeTmp) {
+		int sizeTmpInd = sizeTmp.getSerialNumber();
+		textSegment += String.format("\tmov $a0, Temp_%d\n", sizeTmpInd);
+		malloc(resultPtrTmp);
 	}
 
 	/************************************************ Arithmetics ************************************************/
@@ -113,7 +143,7 @@ public class MIPSGenerator {
 		label(afterLimitsChecksLabel);
 	}
 
-	public void add(TEMP dst,TEMP oprnd1,TEMP oprnd2) {
+	public void add(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
@@ -122,7 +152,7 @@ public class MIPSGenerator {
 		checkLimits(dstidx);
 	}
 
-	public void sub(TEMP dst,TEMP oprnd1,TEMP oprnd2) {
+	public void sub(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
@@ -131,7 +161,7 @@ public class MIPSGenerator {
 		checkLimits(dstidx);
 	}
 
-	public void mul(TEMP dst,TEMP oprnd1,TEMP oprnd2) {
+	public void mul(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
@@ -140,7 +170,7 @@ public class MIPSGenerator {
 		checkLimits(dstidx);
 	}
 
-	public void div(TEMP dst,TEMP oprnd1,TEMP oprnd2) {
+	public void div(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
@@ -223,7 +253,35 @@ public class MIPSGenerator {
 
 	/************************************************ String ************************************************/
 
+	public void calcStringLengthIntoTmp(TEMP stringLenTmp, TEMP stringTmp) {
+		TEMP stringByteTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		String loopLabel = Labels.getAvialableLabel("str_len_loop");
+		String endLabel = Labels.getAvialableLabel("str_len_end");
 
+		// initialize stringLenTmp
+		initTmpWithZero(stringLenTmp);
+
+		// str_len_loop:
+		label(loopLabel);
+
+		// load byte
+		lbFromTmpToTmp(stringByteTemp, stringTmp, 0);
+
+		// stop counting if reached the string's end
+		beqz(stringByteTemp, endLabel);
+
+		// increase counter by one
+		addConstIntToTmp(stringLenTmp, 1);
+
+		// increase byte pointer by one
+		addConstIntToTmp(stringByteTemp, 1);
+
+		// j str_len_loop
+		jump(loopLabel);
+
+		// str_len_end:
+		label(endLabel);
+	}
 
 	/************************************************ Class ************************************************/
 
@@ -240,36 +298,20 @@ public class MIPSGenerator {
 	}
 
 	public void createNewObject(TEMP dstTempReg, TYPE objectType) {
-		// malloc
 		int classSize = getClassSize(objectType);
-		liRegString("a0", classSize);
-		liRegString("v0", 9);
-		textSegment += String.format("\tsyscall\n");
-
-		// mov pointer to dstTempReg
-		int dstidx = dstTempReg.getSerialNumber();
-		textSegment += String.format("\tmov Temp_%d, $v0\n",dstidx);
+		malloc(dstTempReg, classSize);
 	}
 
 	/************************************************ Array ************************************************/
 
 	public void createNewArray(TEMP dstTempReg, TYPE ArrayType, TEMP subscriptTemp) {
-		// malloc
+		// calc array size
 		TEMP wordTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
-		liTemp(wordTemp, 4); // wordTemp = 4
-
+		liTemp(wordTemp, WORD_SIZE); // wordTemp = 4
 		TEMP mulTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		mul(mulTemp, subscriptTemp, wordTemp); // mulTemp = subscriptTemp * 4
 
-		int mulTempidx = mulTemp.getSerialNumber();
-		textSegment += String.format("\tmov $a0, Temp_%d\n",mulTempidx); // a0 = array size
-
-		liRegString("v0", 9); // malloc syscall code
-		textSegment += String.format("\tsyscall\n");
-
-		// dstTempReg = array's pointer
-		int dstidx = dstTempReg.getSerialNumber();
-		textSegment += String.format("\tmov Temp_%d, $v0\n",dstidx);
+		malloc(dstTempReg, mulTemp);
 	}
 
 	/************************************************ Branches ************************************************/

@@ -128,7 +128,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 			leftType = ((AST.AST_EXP_VAR)left).varTypeString;
 			rightType = ((AST.AST_EXP_VAR)right).varTypeString;
 		}
-		System.out.format("\t\tleftType = %s | rightType = %s", leftType, rightType);
+		System.out.format("\t\tleftType = %s | rightType = %s\n", leftType, rightType);
 
 		TEMP t1 = null;
 		TEMP t2 = null;
@@ -143,7 +143,14 @@ public class AST_EXP_BINOP extends AST_EXP {
 
 		switch (OP) {
 			case PLUS:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(dst, t1, t2));
+				if (leftType == "string" && rightType == "string" ) {
+					System.out.format("\t\t-- strings concatenation");
+					IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst, t1, t2));
+				}
+				else {
+					System.out.println("\t\t-- summing integers");
+					IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(dst, t1, t2));
+				}
 				break;
 			case MINUS:
 				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Sub_Integers(dst, t1, t2));
@@ -156,11 +163,11 @@ public class AST_EXP_BINOP extends AST_EXP {
 				break;
 			case EQ:
 				if (leftType == "string" && rightType == "string" ) {
-					System.out.println("-- equality between strings");
+					System.out.println("\t\t-- equality between strings");
 					IR.getInstance().Add_IRcommand(new IRcommand_Binop_EQ_Strings(dst, t1, t2));
 				}
 				else {
-					System.out.println("-- equality between integers");
+					System.out.println("\t\t-- equality between integers");
 					IR.getInstance().Add_IRcommand(new IRcommand_Binop_EQ_Integers(dst, t1, t2));
 				}
 				break;

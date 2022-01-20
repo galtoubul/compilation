@@ -10,8 +10,7 @@ public class IRcommand_Binop_EQ_Strings extends IRcommand {
     public TEMP t2;
     public TEMP resultTmp;
 
-    public IRcommand_Binop_EQ_Strings(TEMP resultTmp, TEMP t1, TEMP t2)
-    {
+    public IRcommand_Binop_EQ_Strings(TEMP resultTmp, TEMP t1, TEMP t2) {
         this.resultTmp = resultTmp;
         this.t1 = t1;
         this.t2 = t2;
