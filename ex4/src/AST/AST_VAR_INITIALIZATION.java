@@ -125,11 +125,14 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
             if (initialValue instanceof AST.AST_EXP_INT) {
                 irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType, ((AST.AST_EXP_INT)initialValue).value);
             }
-            else if (initialValue instanceof AST.AST_EXP_NIL){
-                irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType, null);
+            else if (initialValue instanceof AST.AST_EXP_NIL) {
+                irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType);
             }
-            else { // instanceof AST.AST_EXP_STRING
+            else if (initialValue instanceof AST.AST_EXP_STRING) { // instanceof AST.AST_EXP_STRING
                 irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType, ((AST.AST_EXP_STRING)initialValue).s);
+            } else {
+                TEMP initExpTmp = this.initialValue.IRme();
+                irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType, initExpTmp);
             }
             IR.getInstance().Add_IRcommand(irCmd);
         }

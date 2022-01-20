@@ -13,6 +13,5 @@ public class AST_EXP_NIL extends AST_EXP {
         return TYPE_NIL.getInstance();
     }
 
-    // TODO
     public TEMP IRme() { return null; }
 }

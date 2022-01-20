@@ -100,6 +100,8 @@ public class MIPSGenerator {
 		else {
 			textSegment += String.format("\taddi Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
 		}
+
+		checkLimits(dstTmp);
 	}
 
 	public void initTmpWithZero(TEMP dstTmp) {
@@ -128,7 +130,9 @@ public class MIPSGenerator {
 
 	/************************************************ Arithmetics ************************************************/
 
-	public void checkLimits(int dstidx) {
+	public void checkLimits(TEMP dst) {
+		int dstidx = dst.getSerialNumber();
+
 		// check top limit and fix the result if needed
 		String checkBottomLimitLabel = Labels.getAvialableLabel("check_bottom_limit");
 		textSegment += String.format("\tble Temp_%d, 32767, %s\n", dstidx, checkBottomLimitLabel); // 2^15 - 1 = 32767
@@ -149,7 +153,7 @@ public class MIPSGenerator {
 		int dstidx = dst.getSerialNumber();
 
 		textSegment += String.format("\tadd Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
-		checkLimits(dstidx);
+		checkLimits(dst);
 	}
 
 	public void sub(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
@@ -158,7 +162,7 @@ public class MIPSGenerator {
 		int dstidx = dst.getSerialNumber();
 
 		textSegment += String.format("\tsub Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
-		checkLimits(dstidx);
+		checkLimits(dst);
 	}
 
 	public void mul(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
@@ -167,7 +171,7 @@ public class MIPSGenerator {
 		int dstidx = dst.getSerialNumber();
 
 		textSegment += String.format("\tmul Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
-		checkLimits(dstidx);
+		checkLimits(dst);
 	}
 
 	public void div(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
@@ -176,7 +180,7 @@ public class MIPSGenerator {
 		int dstidx = dst.getSerialNumber();
 
 		textSegment += String.format("\tdiv Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
-		checkLimits(dstidx);
+		checkLimits(dst);
 	}
 
 	/************************************************ Local Variables ************************************************/
