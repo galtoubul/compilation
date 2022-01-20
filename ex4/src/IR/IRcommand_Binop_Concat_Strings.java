@@ -65,7 +65,7 @@ public class IRcommand_Binop_Concat_Strings extends IRcommand {
 
         // sum lengths
         TEMP conctenationLenTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-        MIPSGenerator.getInstance().add(conctenationLenTmp, firstStringLenTmp, secondStringLenTmp); // TODO: overflow?
+        MIPSGenerator.getInstance().add(conctenationLenTmp, firstStringLenTmp, secondStringLenTmp, false);
 
         // add 1 for null terminator
         MIPSGenerator.getInstance().addConstIntToTmp(conctenationLenTmp, 1);

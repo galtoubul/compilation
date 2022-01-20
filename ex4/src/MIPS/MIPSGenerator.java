@@ -100,8 +100,6 @@ public class MIPSGenerator {
 		else {
 			textSegment += String.format("\taddi Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
 		}
-
-		checkLimits(dstTmp);
 	}
 
 	public void initTmpWithZero(TEMP dstTmp) {
@@ -148,12 +146,20 @@ public class MIPSGenerator {
 	}
 
 	public void add(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
+		add(dst, oprnd1, oprnd2, true);
+	}
+
+	public void add(TEMP dst, TEMP oprnd1, TEMP oprnd2, boolean checkOverflow) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
 
 		textSegment += String.format("\tadd Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
-		checkLimits(dst);
+
+		// we don't want to check overflow when summing len(s1) + len(s2) of strings for mallocing mem for s1s2
+		if (checkOverflow) {
+			checkLimits(dst);
+		}
 	}
 
 	public void sub(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
