@@ -102,6 +102,11 @@ public class MIPSGenerator {
 		}
 	}
 
+	public void multTmpByConstInt(TEMP tmp, int constInt) {
+		int tmpInd = tmp.getSerialNumber();
+		textSegment += String.format("\tmul Temp_%d, Temp_%d, %d\n", tmpInd, tmpInd, constInt);
+	}
+
 	public void initTmpWithZero(TEMP dstTmp) {
 		int dstTmpInd = dstTmp.getSerialNumber();
 		textSegment += String.format("\tmov Temp_%d, $zero\n", dstTmpInd);
@@ -172,12 +177,19 @@ public class MIPSGenerator {
 	}
 
 	public void mul(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
+		mul(dst, oprnd1, oprnd2, true);
+	}
+
+	public void mul(TEMP dst, TEMP oprnd1, TEMP oprnd2, boolean checkOverflow) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
 
 		textSegment += String.format("\tmul Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
-		checkLimits(dst);
+
+		if (checkOverflow) {
+			checkLimits(dst);
+		}
 	}
 
 	public void div(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
@@ -314,14 +326,21 @@ public class MIPSGenerator {
 
 	/************************************************ Array ************************************************/
 
-	public void createNewArray(TEMP dstTempReg, TYPE ArrayType, TEMP subscriptTemp) {
-		// calc array size
-		TEMP wordTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
-		liTemp(wordTemp, WORD_SIZE); // wordTemp = 4
-		TEMP mulTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
-		mul(mulTemp, subscriptTemp, wordTemp); // mulTemp = subscriptTemp * 4
+	public void createNewArray(TEMP dstTemp, TEMP subscriptTemp) {
 
-		malloc(dstTempReg, mulTemp);
+		// calculate the array size
+		TEMP sizeTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		movFromTmpToTmp(sizeTemp, subscriptTemp);
+		addConstIntToTmp(sizeTemp, 1); // 1 is for the size of the array (which is its first element)
+		multTmpByConstInt(sizeTemp, WORD_SIZE);
+
+		// alocate memory for the array
+		malloc(dstTemp, sizeTemp);
+
+		// first cell of the array should contain its size
+		int subscriptTempInd = subscriptTemp.getSerialNumber();
+		int dstTempInd = dstTemp.getSerialNumber();
+		textSegment += String.format("\tsw Temp_%d, 0(Temp_%d)\n", subscriptTempInd, dstTempInd);
 	}
 
 	/************************************************ Branches ************************************************/

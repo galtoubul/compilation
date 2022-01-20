@@ -1,4 +1,6 @@
-string a := "x";
-string b := "y";
-string c := a + b;
-string d := c;
+array arrayType = int [];
+
+void f() {
+	int x := 30;
+	arrayType arr := new int[x + 2];
+}

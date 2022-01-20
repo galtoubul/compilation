@@ -40,7 +40,11 @@ public class IRcommand_Create_Global_Var extends IRcommand {
 		if (varType == "string") {
 			stringConst = "\"\"";
 		}
-		else {
+		else if (varType == "int") {
+			intConst = 0;
+		}
+		else { // varType == "new" (maybe there are more types?)
+			System.out.format("-- IRcommand_Create_Global_Var\n\t\tvarType = %s\n", varType);
 			intConst = 0;
 		}
 	}
@@ -48,7 +52,7 @@ public class IRcommand_Create_Global_Var extends IRcommand {
 	public void MIPSme() {
 		System.out.println("-- IRcommand_Create_Global_Var MIPSme");
 
-		// global var was only declared (without initialization) or it was initialized with nill
+		// global var was only declared (without initialization) or it was initialized with nill/new *
 		if (initExpTmp == null && stringConst == null && intConst == Integer.MAX_VALUE) {
 			MIPSGenerator.getInstance().declareGlobalVar(varLabel, varType);
 			return;
@@ -67,11 +71,14 @@ public class IRcommand_Create_Global_Var extends IRcommand {
 			// initialize the global variable label with the string const label (globsl_z: .word str_const<num>)
 			MIPSGenerator.getInstance().initializeGlobalVarWithStringConstLabel(varLabel, stringConstLabel);
 		}
-		else { // varType == "int"
+		else if (varType == "int") {
+			MIPSGenerator.getInstance().initializeGlobalVar(varLabel, intConst);
+		}
+		else { // varType == "new" (maybe there are more types?)
 			MIPSGenerator.getInstance().initializeGlobalVar(varLabel, intConst);
 		}
 
-		// the global variable was initialized with EXP_BINOP/EXP_PAREN/EXP_VAR
+		// the global variable was initialized with EXP_BINOP/EXP_PAREN/EXP_VAR/AST_VAR_NEW
 		if (initExpTmp != null) {
 			MIPSGenerator.getInstance().globalVarAssignment(varLabel, initExpTmp);
 		}
