@@ -14,7 +14,6 @@ public class IRcommand_Initialize_Tmp_With_Local_Var extends IRcommand {
 
     /***************/
     /* MIPS me !!! */
-
     /***************/
     public void MIPSme() {
         System.out.println("-- IRcommand_Initialize_Tmp_With_Local_Var MIPSme");

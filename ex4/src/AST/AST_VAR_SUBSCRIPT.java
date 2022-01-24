@@ -6,59 +6,40 @@ import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_INT;
 import TEMP.*;
+import IR.*;
+import AstAnnotation.*;
+import SYMBOL_TABLE.*;
+import GlobalVariables.*;
 
 public class AST_VAR_SUBSCRIPT extends AST_VAR {
 	public AST_VAR var;
+	public String varName;
 	public AST_EXP subscript;
+	public AstAnnotation astAnnotation;
 
-	/******************/
-	/* CONSTRUCTOR(S) */
-	/******************/
 	public AST_VAR_SUBSCRIPT(AST_VAR var, AST_EXP subscript) {
-		/******************************/
-		/* SET A UNIQUE SERIAL NUMBER */
-		/******************************/
+
 		SerialNumber = AST_Node_Serial_Number.getFresh();
 
-		/***************************************/
-		/* PRINT CORRESPONDING DERIVATION RULE */
-		/***************************************/
 		System.out.print("====================== var -> var [ exp ]\n");
 
-		/*******************************/
-		/* COPY INPUT DATA NENBERS ... */
-		/*******************************/
 		this.var = var;
 		this.subscript = subscript;
 	}
 
-	/*****************************************************/
-	/* The printing message for a subscript var AST node */
-	/*****************************************************/
 	public void PrintMe() {
-		/*************************************/
-		/* AST NODE TYPE = AST SUBSCRIPT VAR */
-		/*************************************/
+
 		System.out.print("AST NODE SUBSCRIPT VAR\n");
 
-		/****************************************/
-		/* RECURSIVELY PRINT VAR + SUBSRIPT ... */
-		/****************************************/
 		if (var != null)
 			var.PrintMe();
 		if (subscript != null)
 			subscript.PrintMe();
 
-		/***************************************/
-		/* PRINT Node to AST GRAPHVIZ DOT file */
-		/***************************************/
 		AST_GRAPHVIZ.getInstance().logNode(
 				SerialNumber,
 				"SUBSCRIPT\nVAR\n...[...]");
 
-		/****************************************/
-		/* PRINT Edges to AST GRAPHVIZ DOT file */
-		/****************************************/
 		if (var != null)
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, var.SerialNumber);
 		if (subscript != null)
@@ -67,6 +48,7 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 
 	@Override
 	public TYPE SemantMe(Optional<String> classId) {
+		System.out.println("-- AST_VAR_SUBSCRIPT SemantMe");
 		TYPE type = this.var.SemantMe(classId);
 
 		// Check that the variable is an array
@@ -88,12 +70,37 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 			throw new SemanticErrorException("" + lineNum);
 		}
 
+		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(((AST.AST_VAR_SIMPLE)var).name);
+//		varName = ((AST.AST_VAR_SIMPLE)var).name;
+//		setNotation(Optional.of(entry.get().position));
+
 		return ((TYPE_ARRAY) type).type;
 	}
 
-	// TODO
+	private void setNotation(Optional<Integer> localVarInd) {
+		System.out.println("-- AST_VAR_SUBSCRIPT setNotation");
+		ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(varName);
+		System.out.println("\t\tvariable scope type = " + scopeType);
+
+		if (scopeType == scopeType.Global) {
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
+			System.out.format("\t\t%s is a global variable\n", varName);
+		}
+		else { // local
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, localVarInd);
+			int ind = localVarInd.orElse(-1);
+			System.out.format("\t\t%s is a local variable | its index = %s\n", varName, ind);
+		}
+	}
+
 	public TEMP IRme() {
 		System.out.println("-- AST_VAR_SUBSCRIPT IRme");
-		return null;
+
+		TEMP arrayElementTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		TEMP arrayTmp = var.IRme();
+		TEMP subscriptTmp = subscript.IRme();
+		IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Temp_With_Array_Element(arrayElementTmp, arrayTmp, subscriptTmp));
+
+		return arrayElementTmp;
 	}
 }

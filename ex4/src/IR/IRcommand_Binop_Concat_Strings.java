@@ -70,7 +70,7 @@ public class IRcommand_Binop_Concat_Strings extends IRcommand {
         // add 1 for null terminator
         MIPSGenerator.getInstance().addConstIntToTmp(conctenationLenTmp, 1);
 
-        // ------------ allocate space on heap for the result ------------ //
+        // ------------ allocate space on the heap for the result ------------ //
 
         MIPSGenerator.getInstance().malloc(resultStringTmp, conctenationLenTmp);
     }

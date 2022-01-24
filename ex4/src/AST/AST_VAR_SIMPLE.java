@@ -59,7 +59,7 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 
 		ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(name);
 		System.out.println("\t\tvariable scope type = " + scopeType);
-		int varInd  = SYMBOL_TABLE.getInstance().findEntry(name).get().position;
+		int varInd = SYMBOL_TABLE.getInstance().findEntry(name).get().position;
 		AstNotationType astNotationType = SYMBOL_TABLE.getInstance().findEntry(name).get().astNotationType;
 
 		if (scopeType == scopeType.Global) {

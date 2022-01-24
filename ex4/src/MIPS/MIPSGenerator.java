@@ -343,6 +343,22 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsw Temp_%d, 0(Temp_%d)\n", subscriptTempInd, dstTempInd);
 	}
 
+	public void assignTmpWithArrayElement(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
+
+		// calculate array index
+		TEMP arrayIndTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		movFromTmpToTmp(arrayIndTmp, subscriptTemp);
+		addConstIntToTmp(arrayIndTmp, 1); // 1 is for the size of the array (which is its first element)
+		multTmpByConstInt(arrayIndTmp, WORD_SIZE);
+
+		// load from the calculated offset
+		add(arrayIndTmp, arrayIndTmp, arrayTmp, false);
+		int arrayIndTmpInd = arrayIndTmp.getSerialNumber();
+		int dstTempInd = dstTemp.getSerialNumber();
+		textSegment += String.format("\tlw Temp_%d, 0(Temp_%d)\n", dstTempInd, arrayIndTmpInd);
+	}
+
+
 	/************************************************ Branches ************************************************/
 
 	public void blt(TEMP oprnd1,TEMP oprnd2,String label) {
