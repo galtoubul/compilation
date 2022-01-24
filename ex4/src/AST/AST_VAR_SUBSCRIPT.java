@@ -7,9 +7,9 @@ import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_INT;
 import TEMP.*;
 import IR.*;
-import AstAnnotation.*;
+import ast_annotation.*;
 import SYMBOL_TABLE.*;
-import GlobalVariables.*;
+import global_variables.*;
 
 public class AST_VAR_SUBSCRIPT extends AST_VAR {
 	public AST_VAR var;

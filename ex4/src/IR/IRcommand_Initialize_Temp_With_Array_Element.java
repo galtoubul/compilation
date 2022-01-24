@@ -2,7 +2,9 @@ package IR;
 
 import TEMP.*;
 import MIPS.*;
-import GlobalVariables.*;
+import global_variables.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class IRcommand_Initialize_Temp_With_Array_Element extends IRcommand {
 
@@ -23,5 +25,11 @@ public class IRcommand_Initialize_Temp_With_Array_Element extends IRcommand {
     public void MIPSme() {
         System.out.println("-- IRcommand_Initialize_Temp_With_Array_Element MIPSme");
         MIPSGenerator.getInstance().assignTmpWithArrayElement(dstTmp, arrayTmp, subscriptTmp);
+    }
+
+    @Override
+    public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
+        // TODO
+        return null;
     }
 }
