@@ -72,6 +72,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 
 	@Override
 	public TYPE SemantMe(Optional<String> classId) {
+		System.out.println("-- AST_EXP_BINOP SemantMe");
 		TYPE t1 = null;
 		TYPE t2 = null;
 
@@ -119,7 +120,15 @@ public class AST_EXP_BINOP extends AST_EXP {
 	}
 
 	public TEMP IRme() {
-		System.out.println("-- AST_EXP_BINOP");
+		System.out.println("-- AST_EXP_BINOP IRme");
+
+		String leftType = null;
+		String rightType = null;
+		if (left instanceof AST.AST_EXP_VAR && right instanceof AST.AST_EXP_VAR) {
+			leftType = ((AST.AST_EXP_VAR)left).varTypeString;
+			rightType = ((AST.AST_EXP_VAR)right).varTypeString;
+		}
+		System.out.format("\t\tleftType = %s | rightType = %s\n", leftType, rightType);
 
 		TEMP t1 = null;
 		TEMP t2 = null;
@@ -134,25 +143,39 @@ public class AST_EXP_BINOP extends AST_EXP {
 
 		switch (OP) {
 			case PLUS:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(dst,t1,t2));
+				if (leftType == "string" && rightType == "string" ) {
+					System.out.format("\t\t-- strings concatenation");
+					IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst, t1, t2));
+				}
+				else {
+					System.out.println("\t\t-- summing integers");
+					IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(dst, t1, t2));
+				}
 				break;
 			case MINUS:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Sub_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Sub_Integers(dst, t1, t2));
 				break;
 			case TIMES:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Mul_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Mul_Integers(dst, t1, t2));
 				break;
 			case DIVIDE:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Div_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Div_Integers(dst, t1, t2));
 				break;
 			case EQ:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_EQ_Integers(dst,t1,t2));
+				if (leftType == "string" && rightType == "string" ) {
+					System.out.println("\t\t-- equality between strings");
+					IR.getInstance().Add_IRcommand(new IRcommand_Binop_EQ_Strings(dst, t1, t2));
+				}
+				else {
+					System.out.println("\t\t-- equality between integers");
+					IR.getInstance().Add_IRcommand(new IRcommand_Binop_EQ_Integers(dst, t1, t2));
+				}
 				break;
 			case LT:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_LT_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_LT_Integers(dst, t1, t2));
 				break;
 			case GT:
-				IR.getInstance().Add_IRcommand(new IRcommand_Binop_GT_Integers(dst,t1,t2));
+				IR.getInstance().Add_IRcommand(new IRcommand_Binop_GT_Integers(dst, t1, t2));
 				break;
 		}
 

@@ -1,0 +1,9 @@
+int g := 70;
+
+int f(int x) {
+	int z := g;
+	if(z) {
+		g := 3;
+	}
+	return z;
+}

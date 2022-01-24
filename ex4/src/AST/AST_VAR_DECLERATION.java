@@ -91,7 +91,6 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
         System.out.format("\t\tinserted variable %s of type %s to the symbol table\n", var.name,
                 var.type.name);
-        // setNotation(var.type.name);
         this.varType = var.type.name;
         setNotation(localVarInd);
         return var;

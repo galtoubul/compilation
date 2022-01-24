@@ -1,9 +1,6 @@
-int g := 70;
+array arrayType = int [];
 
-int f(int x) {
-	int z := g;
-	if(z > 2) {
-		g := 3;
-	}
-	return z;
+void f() {
+	int x := 30;
+	arrayType arr := new int[x + 2];
 }

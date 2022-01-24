@@ -7,6 +7,7 @@ import TEMP.*;
 
 public class AST_EXP_VAR extends AST_EXP {
 	public AST_VAR var;
+	public String varTypeString;
 
 	public AST_EXP_VAR(AST_VAR var) {
 
@@ -55,11 +56,13 @@ public class AST_EXP_VAR extends AST_EXP {
 
 		System.out.println("-- AST_EXP_VAR\n\t\tvar type = " + varType.name);
 
+		this.varTypeString = varType.name;
 		return varType;
 	}
 
 	public TEMP IRme() {
-		TEMP varTemp = this.var.IRme();
+		System.out.println("-- AST_EXP_VAR IRme");
+		TEMP varTemp = var.IRme();
 		return varTemp;
 	}
 }

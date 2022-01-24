@@ -6,18 +6,7 @@ import java.util.Set;
 import TEMP.TEMP;
 
 public abstract class IRcommand {
-	/*****************/
-	/* Label Factory */
-	/*****************/
-	protected static int label_counter = 0;
 
-	public static String getFreshLabel(String msg) {
-		return String.format("Label_%d_%s", label_counter++, msg);
-	}
-
-	/***************/
-	/* MIPS me !!! */
-	/***************/
 	public abstract void MIPSme();
 
 	/**

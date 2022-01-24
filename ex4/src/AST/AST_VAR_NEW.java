@@ -2,17 +2,25 @@ package AST;
 
 import java.util.Optional;
 
+import IR.IR;
+import IR.IRcommand_Assign_To_Local_Var;
+import IR.IRcommand_Create_Global_Var;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
+import ast_annotation.AstAnnotation;
 import ast_notation_type.AstNotationType;
+import global_variables.GlobalVariables;
 import TEMP.*;
 
 public class AST_VAR_NEW extends AST_VAR_DEC {
+
     public AST_NEW_EXP initialValue;
+    public AstAnnotation astAnnotation;
+    public String varType;
 
     public AST_VAR_NEW(AST_TYPE type, String id, AST_NEW_EXP initialValue) {
         super(type, id);
@@ -54,19 +62,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
 
     @Override
     public TYPE SemantMe(Optional<String> classId, Optional<Integer> localVarIndexOpt) {
-        // // Check If Type exists
-        // Optional<SymbolTableEntry> entry =
-        // SYMBOL_TABLE.getInstance().findEntry(type.name());
-        // if (!entry.isPresent()) {
-        // System.out.format(">> ERROR [%d] non existing type '%s'\n", lineNum,
-        // type.name());
-        // throw new SemanticErrorException(String.valueOf(lineNum));
-        // }
-        // if (!entry.get().isType) {
-        // System.out.format(">> ERROR [%d] '%s' is not a type\n", lineNum,
-        // type.name());
-        // throw new SemanticErrorException(String.valueOf(lineNum));
-        // }
+        System.out.println("-- AST_VAR_NEW SemantMe");
 
         TYPE t = this.type.getTYPE(lineNum);
 
@@ -108,21 +104,51 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
             throw new SemanticErrorException("" + lineNum);
         }
 
-        /***************************************************/
-        /* [4] Enter the variable name to the Symbol Table */
-        /***************************************************/
         AstNotationType astNotationType = AstNotationType.localVariable;
         Optional<AstNotationType> astNotationTypeOpt = Optional.of(astNotationType);
         SYMBOL_TABLE.getInstance().enter(id, t, false, localVarIndexOpt, astNotationTypeOpt);
 
-        /************************************************************/
-        /* [5] Return value is irrelevant for variable declarations */
-        /************************************************************/
-        return new TYPE_CLASS_VAR_DEC(t, id);
+        TYPE_CLASS_VAR_DEC typeClassVarDec = new TYPE_CLASS_VAR_DEC(t, id);
+        this.varType = typeClassVarDec.type.name;
+
+        setNotation(localVarIndexOpt);
+
+        return typeClassVarDec;
+    }
+
+    private void setNotation(Optional<Integer> localVarInd) {
+        System.out.println("-- AST_VAR_NEW setNotation");
+
+        ScopeType scopeType = SYMBOL_TABLE.getInstance().currentScopeType();
+        if (scopeType == ScopeType.Global) {
+            astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
+            System.out.format("\t\t%s is a global variable\n", id);
+        } else { // local
+            astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, localVarInd);
+            int ind = localVarInd.orElse(-1);
+            System.out.format("\t\t%s is a local variable | its index = %s\n", id, ind);
+        }
     }
 
     public TEMP IRme() {
         System.out.println("-- AST_VAR_NEW IRme");
-        return this.initialValue.IRme();
+
+        TEMP rValueTmp = initialValue.IRme();
+
+        if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
+            System.out.println("\t\tglobal variable");
+
+            String globalVarLabel = GlobalVariables.insertGlobal(id, varType);
+            IR.getInstance().Add_IRcommand(new IRcommand_Create_Global_Var(globalVarLabel, "new", rValueTmp));
+        }
+
+        else { // local variable
+            System.out.println("\t\tlocal variable");
+
+            int localVarInd = astAnnotation.ind.orElse(-1);
+            IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
+        }
+
+        return null;
     }
 }

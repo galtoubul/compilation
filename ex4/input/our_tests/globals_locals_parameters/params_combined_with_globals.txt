@@ -1,0 +1,11 @@
+int a := 11;
+int b := 22;
+int c := 33;
+
+int f(int a, int b, int c) {
+	return a + b + c;
+}
+
+void main() {
+	f(1, 2, 3);
+}
