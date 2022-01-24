@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import TYPES.TYPE;
 import TYPES.TYPE_STRING;
+import global_variables.GlobalVariables;
 import TEMP.*;
-import GlobalVariables.*;
 import IR.*;
 
 public class AST_EXP_STRING extends AST_EXP {

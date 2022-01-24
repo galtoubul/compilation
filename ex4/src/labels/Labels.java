@@ -1,9 +1,7 @@
-package Labels;
+package labels;
 
-import java.util.HashMap;
-import javafx.util.Pair;
-import AstNotationType.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Labels {
 
@@ -13,7 +11,7 @@ public class Labels {
         int i = 0;
         String generatedLabel = label;
         while (labels.contains(generatedLabel)) {
-            generatedLabel = String.format("%s%d",label, i++);
+            generatedLabel = String.format("%s%d", label, i++);
         }
         labels.add(generatedLabel);
         return generatedLabel;

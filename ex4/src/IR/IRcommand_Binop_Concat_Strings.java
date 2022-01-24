@@ -1,22 +1,17 @@
 package IR;
 
 import TEMP.*;
+import labels.Labels;
 import MIPS.*;
-import Labels.*;
 
-public class IRcommand_Binop_Concat_Strings extends IRcommand {
-
-    public TEMP firstStringTmp;
-    public TEMP secondStringTmp;
-    public TEMP resultStringTmp;
+public class IRcommand_Binop_Concat_Strings extends IRcommand_Binop {
 
     public IRcommand_Binop_Concat_Strings(TEMP resultStringTmp, TEMP firstStringTmp, TEMP secondStringTmp) {
-        this.firstStringTmp = firstStringTmp;
-        this.secondStringTmp = secondStringTmp;
-        this.resultStringTmp = resultStringTmp;
+        super(resultStringTmp, firstStringTmp, secondStringTmp);
     }
 
-    public void copyString(String loopLabel, String loopEndLabel, TEMP copiedString, TEMP dstTmp, boolean isSecondString) {
+    public void copyString(String loopLabel, String loopEndLabel, TEMP copiedString, TEMP dstTmp,
+            boolean isSecondString) {
 
         if (!isSecondString) { // the label for the second string is the end label of the first string
             // loopLabel:
@@ -56,12 +51,12 @@ public class IRcommand_Binop_Concat_Strings extends IRcommand {
 
         // first string length
         TEMP firstStringLenTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-        MIPSGenerator.getInstance().calcStringLengthIntoTmp(firstStringLenTmp, firstStringTmp);
+        MIPSGenerator.getInstance().calcStringLengthIntoTmp(firstStringLenTmp, this.t1);
 
         // second string length
         TEMP secondStringLenTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-        System.out.format("\t\tsecond string length\n\t\tsecondStringTmp = %s\n", secondStringTmp);
-        MIPSGenerator.getInstance().calcStringLengthIntoTmp(secondStringLenTmp, secondStringTmp);
+        System.out.format("\t\tsecond string length\n\t\tsecondStringTmp = %s\n", this.t2);
+        MIPSGenerator.getInstance().calcStringLengthIntoTmp(secondStringLenTmp, this.t2);
 
         // sum lengths
         TEMP conctenationLenTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
@@ -72,7 +67,7 @@ public class IRcommand_Binop_Concat_Strings extends IRcommand {
 
         // ------------ allocate space on the heap for the result ------------ //
 
-        MIPSGenerator.getInstance().malloc(resultStringTmp, conctenationLenTmp);
+        MIPSGenerator.getInstance().malloc(this.dst, conctenationLenTmp);
     }
 
     /***************/
@@ -89,7 +84,7 @@ public class IRcommand_Binop_Concat_Strings extends IRcommand {
         String labelAfterCopySecondString = Labels.getAvialableLabel("after_copy_second_string");
 
         // resultStringTmp = firstStringTmp + secondStringTmp
-        copyString(labelCopyFirstString, labelCopySecondString, firstStringTmp, resultStringTmp, false);
-        copyString(labelCopySecondString, labelAfterCopySecondString, secondStringTmp, resultStringTmp, true);
+        copyString(labelCopyFirstString, labelCopySecondString, this.t1, this.dst, false);
+        copyString(labelCopySecondString, labelAfterCopySecondString, this.t2, this.dst, true);
     }
 }

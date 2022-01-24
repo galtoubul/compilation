@@ -1,19 +1,13 @@
 package IR;
 
 import TEMP.*;
+import labels.Labels;
 import MIPS.*;
-import Labels.*;
 
-public class IRcommand_Binop_EQ_Strings extends IRcommand {
+public class IRcommand_Binop_EQ_Strings extends IRcommand_Binop {
 
-    public TEMP t1;
-    public TEMP t2;
-    public TEMP resultTmp;
-
-    public IRcommand_Binop_EQ_Strings(TEMP resultTmp, TEMP t1, TEMP t2) {
-        this.resultTmp = resultTmp;
-        this.t1 = t1;
-        this.t2 = t2;
+    public IRcommand_Binop_EQ_Strings(TEMP dst, TEMP t1, TEMP t2) {
+        super(dst, t1, t2);
     }
 
     /***************/
@@ -30,7 +24,7 @@ public class IRcommand_Binop_EQ_Strings extends IRcommand {
         // ------------ init ------------ //
 
         // resultTmp = 1
-        MIPSGenerator.getInstance().liTemp(resultTmp, 1);
+        MIPSGenerator.getInstance().liTemp(dst, 1);
 
         // stringOneTmp = t1
         TEMP stringOneTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
@@ -80,7 +74,7 @@ public class IRcommand_Binop_EQ_Strings extends IRcommand {
         MIPSGenerator.getInstance().label(labelNeq);
 
         // resultTmp = 0
-        MIPSGenerator.getInstance().liTemp(resultTmp, 0);
+        MIPSGenerator.getInstance().liTemp(dst, 0);
 
         // ------------ str_eq_end ------------ //
 

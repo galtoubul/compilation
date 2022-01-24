@@ -1,17 +1,15 @@
 package IR;
 
-import TEMP.*;
 import MIPS.*;
-import Labels.*;
 
-public class IRcommand_Label extends IRcommand {
+public class IRcommand_Label extends IRcommand_IDTransform {
 
 	String label;
-	
+
 	public IRcommand_Label(String label) {
 		this.label = label;
 	}
-	
+
 	/***************/
 	/* MIPS me !!! */
 	/***************/

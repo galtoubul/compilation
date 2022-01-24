@@ -3,12 +3,11 @@ package IR;
 import TEMP.*;
 import MIPS.*;
 
-public class IRcommand_Initialize_Tmp_With_Local_Var extends IRcommand {
-    public TEMP tmp;
+public class IRcommand_Initialize_Tmp_With_Local_Var extends IRcommand_Initialize_Tmp {
     public int localVarInd;
 
-    public IRcommand_Initialize_Tmp_With_Local_Var(TEMP tmp, int localVarInd) {
-        this.tmp = tmp;
+    public IRcommand_Initialize_Tmp_With_Local_Var(TEMP dst, int localVarInd) {
+        super(dst);
         this.localVarInd = localVarInd;
     }
 
@@ -17,7 +16,6 @@ public class IRcommand_Initialize_Tmp_With_Local_Var extends IRcommand {
     /***************/
     public void MIPSme() {
         System.out.println("-- IRcommand_Initialize_Tmp_With_Local_Var MIPSme");
-        MIPSGenerator.getInstance().loadFromLocal(tmp, localVarInd);
+        MIPSGenerator.getInstance().loadFromLocal(this.dst, localVarInd);
     }
 }
-

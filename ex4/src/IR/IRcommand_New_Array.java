@@ -1,11 +1,14 @@
 package IR;
 
 import TEMP.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import MIPS.*;
 import TYPES.*;
 
-public class IRcommand_New_Array extends IRcommand
-{
+public class IRcommand_New_Array extends IRcommand {
 	public TEMP dstTempReg;
 	public TYPE arrayType;
 	public TEMP subscriptTemp;
@@ -21,6 +24,14 @@ public class IRcommand_New_Array extends IRcommand
 	/***************/
 	public void MIPSme() {
 		MIPSGenerator.getInstance().createNewArray(dstTempReg, subscriptTemp);
-//		MIPSGenerator.getInstance().localVarAssignment(varIndex, dstTempReg);
+		// MIPSGenerator.getInstance().localVarAssignment(varIndex, dstTempReg);
+	}
+
+	@Override
+	public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
+		HashSet<TEMP> in = new HashSet<>(liveTemps);
+		in.remove(this.dstTempReg);
+		in.add(this.subscriptTemp);
+		return in;
 	}
 }

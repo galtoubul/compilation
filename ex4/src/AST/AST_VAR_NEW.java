@@ -2,19 +2,19 @@ package AST;
 
 import java.util.Optional;
 
+import IR.IR;
+import IR.IRcommand_Assign_To_Local_Var;
+import IR.IRcommand_Create_Global_Var;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
-import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
-import AstNotationType.AstNotationType;
+import ast_annotation.AstAnnotation;
+import ast_notation_type.AstNotationType;
+import global_variables.GlobalVariables;
 import TEMP.*;
-import AstAnnotation.*;
-import GlobalVariables.*;
-import IR.*;
-
 
 public class AST_VAR_NEW extends AST_VAR_DEC {
 
@@ -99,7 +99,8 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         // If the initialization is of a class field, it must be initialized with a
         // constant; and a new-expression is not a constant
         if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class) {
-            System.out.format(">> ERROR [%d:%d] classs fields can only be initialized with constant values\n", 2, 2, id);
+            System.out.format(">> ERROR [%d:%d] classs fields can only be initialized with constant values\n", 2, 2,
+                    id);
             throw new SemanticErrorException("" + lineNum);
         }
 
@@ -119,11 +120,10 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         System.out.println("-- AST_VAR_NEW setNotation");
 
         ScopeType scopeType = SYMBOL_TABLE.getInstance().currentScopeType();
-        if (scopeType == scopeType.Global) {
+        if (scopeType == ScopeType.Global) {
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
             System.out.format("\t\t%s is a global variable\n", id);
-        }
-        else { // local
+        } else { // local
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, localVarInd);
             int ind = localVarInd.orElse(-1);
             System.out.format("\t\t%s is a local variable | its index = %s\n", id, ind);
@@ -135,7 +135,7 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
 
         TEMP rValueTmp = initialValue.IRme();
 
-        if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR){
+        if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
             System.out.println("\t\tglobal variable");
 
             String globalVarLabel = GlobalVariables.insertGlobal(id, varType);

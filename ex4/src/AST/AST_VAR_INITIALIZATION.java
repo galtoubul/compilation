@@ -4,16 +4,14 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
-import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
-import AstNotationType.*;
+import ast_annotation.AstAnnotation;
+import ast_notation_type.AstNotationType;
+import global_variables.GlobalVariables;
 import IR.*;
 import TEMP.*;
-import GlobalVariables.*;
-import AstAnnotation.*;
-
 
 public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
     public AST_EXP initialValue;
@@ -102,11 +100,10 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         System.out.println("-- AST_VAR_INITIALIZATION setNotation");
 
         ScopeType scopeType = SYMBOL_TABLE.getInstance().currentScopeType();
-        if (scopeType == scopeType.Global) {
+        if (scopeType == ScopeType.Global) {
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
             System.out.format("\t\t%s is a global variable\n", id);
-        }
-        else { // local
+        } else { // local
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, localVarInd);
             int ind = localVarInd.orElse(-1);
             System.out.format("\t\t%s is a local variable | its index = %s\n", id, ind);
@@ -116,20 +113,19 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
     public TEMP IRme() {
         System.out.format("-- AST_VAR_INITIALIZATION IRme\n\t\tid = %s\n", id);
 
-        if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR){
+        if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
             System.out.println("\t\tglobal variable");
 
             String globalVarLabel = GlobalVariables.insertGlobal(this.id, this.varType);
 
             IRcommand_Create_Global_Var irCmd;
             if (initialValue instanceof AST.AST_EXP_INT) {
-                irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType, ((AST.AST_EXP_INT)initialValue).value);
-            }
-            else if (initialValue instanceof AST.AST_EXP_NIL) {
+                irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType,
+                        ((AST.AST_EXP_INT) initialValue).value);
+            } else if (initialValue instanceof AST.AST_EXP_NIL) {
                 irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType);
-            }
-            else if (initialValue instanceof AST.AST_EXP_STRING) { // instanceof AST.AST_EXP_STRING
-                irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType, ((AST.AST_EXP_STRING)initialValue).s);
+            } else if (initialValue instanceof AST.AST_EXP_STRING) { // instanceof AST.AST_EXP_STRING
+                irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType, ((AST.AST_EXP_STRING) initialValue).s);
             } else {
                 TEMP initExpTmp = this.initialValue.IRme();
                 irCmd = new IRcommand_Create_Global_Var(globalVarLabel, varType, initExpTmp);

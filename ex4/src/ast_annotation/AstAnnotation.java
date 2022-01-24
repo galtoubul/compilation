@@ -1,8 +1,6 @@
-package AstAnnotation;
+package ast_annotation;
 
 import java.util.Optional;
-
-
 
 public class AstAnnotation {
     public enum TYPE {
@@ -15,7 +13,7 @@ public class AstAnnotation {
     public TYPE type;
     public Optional<Integer> ind;
 
-    public AstAnnotation (TYPE type, Optional<Integer> ind) {
+    public AstAnnotation(TYPE type, Optional<Integer> ind) {
         this.type = type;
         this.ind = ind;
     }

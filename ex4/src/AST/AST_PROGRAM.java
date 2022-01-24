@@ -12,7 +12,7 @@ public class AST_PROGRAM extends AST_Node {
     }
 
     public void PrintMe() {
-        String className = this.getClass().getName();
+        // String className = this.getClass().getName();
         // System.out.format("AST NODE %s( %s, %s)\n", className, type, id);
         System.out.format("AST NODE PROGRAM\n");
 

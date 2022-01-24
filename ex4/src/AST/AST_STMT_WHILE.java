@@ -6,10 +6,9 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_INT;
+import labels.Labels;
 import TEMP.*;
 import IR.*;
-import MIPS.*;
-import Labels.*;
 
 public class AST_STMT_WHILE extends AST_STMT {
 	public AST_EXP cond;
@@ -57,7 +56,7 @@ public class AST_STMT_WHILE extends AST_STMT {
 		System.out.println("-- AST_STMT_WHILE IRme");
 
 		// Aalocate 2 fresh labels
-		String label_end   = Labels.getAvialableLabel("after_while");
+		String label_end = Labels.getAvialableLabel("after_while");
 		String label_start = Labels.getAvialableLabel("while_start");
 
 		IR.getInstance().Add_IRcommand(new IRcommand_Label(label_start));

@@ -4,8 +4,8 @@ import java.io.PrintWriter;
 
 import TEMP.*;
 import TYPES.*;
+import labels.Labels;
 import SYMBOL_TABLE.*;
-import Labels.*;
 
 public class MIPSGenerator {
 
@@ -26,11 +26,13 @@ public class MIPSGenerator {
 		fileWriter.close();
 	}
 
-	/*********************************************** Supported syscalls ***********************************************/
+	/***********************************************
+	 * Supported syscalls
+	 ***********************************************/
 
 	public void print_int(TEMP t) {
 		int idx = t.getSerialNumber();
-		textSegment += String.format("\tmove $a0, Temp_%d\n",idx);
+		textSegment += String.format("\tmove $a0, Temp_%d\n", idx);
 		textSegment += String.format("\tli $v0, 1\n");
 		textSegment += String.format("\tsyscall\n");
 		textSegment += String.format("\tli $a0, 32\n");
@@ -38,7 +40,9 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsyscall\n");
 	}
 
-	/************************************************ General ************************************************/
+	/************************************************
+	 * General
+	 ************************************************/
 
 	// TODO delete/change
 	public void load(TEMP dst, String var_name) {
@@ -49,7 +53,7 @@ public class MIPSGenerator {
 	// TODO delete/change
 	public void store(String var_name, TEMP src) {
 		int idxsrc = src.getSerialNumber();
-		textSegment += String.format("\tsw Temp_%d, global_%s\n",idxsrc,var_name);
+		textSegment += String.format("\tsw Temp_%d, global_%s\n", idxsrc, var_name);
 	}
 
 	public void loadAddress(TEMP dstReg, String label) {
@@ -59,9 +63,9 @@ public class MIPSGenerator {
 
 	public void label(String inlabel) {
 		if (inlabel.equals("main")) {
-			textSegment += String.format("user_main:\n"); // _ isn't allowed in an identifier name -> user_name is a unique label
-		}
-		else {
+			textSegment += String.format("user_main:\n"); // _ isn't allowed in an identifier name -> user_name is a
+															// unique label
+		} else {
 			textSegment += String.format("%s:\n", inlabel);
 		}
 	}
@@ -71,8 +75,8 @@ public class MIPSGenerator {
 	}
 
 	public void liTemp(TEMP t, int value) {
-		int idx=t.getSerialNumber();
-		textSegment += String.format("\tli Temp_%d, %d\n",idx, value);
+		int idx = t.getSerialNumber();
+		textSegment += String.format("\tli Temp_%d, %d\n", idx, value);
 	}
 
 	public void liRegString(String reg, int value) {
@@ -96,8 +100,7 @@ public class MIPSGenerator {
 
 		if (constInt >= 0) {
 			textSegment += String.format("\taddu Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
-		}
-		else {
+		} else {
 			textSegment += String.format("\taddi Temp_%d, Temp_%d, %d\n", dstTmpInd, dstTmpInd, constInt);
 		}
 	}
@@ -131,7 +134,9 @@ public class MIPSGenerator {
 		malloc(resultPtrTmp);
 	}
 
-	/************************************************ Arithmetics ************************************************/
+	/************************************************
+	 * Arithmetics
+	 ************************************************/
 
 	public void checkLimits(TEMP dst) {
 		int dstidx = dst.getSerialNumber();
@@ -159,9 +164,10 @@ public class MIPSGenerator {
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
 
-		textSegment += String.format("\tadd Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
+		textSegment += String.format("\tadd Temp_%d, Temp_%d, Temp_%d\n", dstidx, i1, i2);
 
-		// we don't want to check overflow when summing len(s1) + len(s2) of strings for mallocing mem for s1s2
+		// we don't want to check overflow when summing len(s1) + len(s2) of strings for
+		// mallocing mem for s1s2
 		if (checkOverflow) {
 			checkLimits(dst);
 		}
@@ -172,7 +178,7 @@ public class MIPSGenerator {
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
 
-		textSegment += String.format("\tsub Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
+		textSegment += String.format("\tsub Temp_%d, Temp_%d, Temp_%d\n", dstidx, i1, i2);
 		checkLimits(dst);
 	}
 
@@ -185,7 +191,7 @@ public class MIPSGenerator {
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
 
-		textSegment += String.format("\tmul Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
+		textSegment += String.format("\tmul Temp_%d, Temp_%d, Temp_%d\n", dstidx, i1, i2);
 
 		if (checkOverflow) {
 			checkLimits(dst);
@@ -197,11 +203,13 @@ public class MIPSGenerator {
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
 
-		textSegment += String.format("\tdiv Temp_%d, Temp_%d, Temp_%d\n",dstidx,i1,i2);
+		textSegment += String.format("\tdiv Temp_%d, Temp_%d, Temp_%d\n", dstidx, i1, i2);
 		checkLimits(dst);
 	}
 
-	/************************************************ Local Variables ************************************************/
+	/************************************************
+	 * Local Variables
+	 ************************************************/
 
 	public void localVarAssignment(int varIndex, TEMP tmpRvalue) {
 		int rValueTmpInd = tmpRvalue.getSerialNumber();
@@ -212,7 +220,7 @@ public class MIPSGenerator {
 	public void storeLocalVar(int ind, TEMP initialValueTmp) {
 		int idx = initialValueTmp.getSerialNumber();
 		int offset = (-1) * (ind * WORD_SIZE + 40); // 40 is for storing tmps
-		textSegment += String.format("\tsw Temp_%d, %d($fp)\n",idx, offset);
+		textSegment += String.format("\tsw Temp_%d, %d($fp)\n", idx, offset);
 	}
 
 	public void loadFromLocal(TEMP tmp, int localVarInd) {
@@ -227,7 +235,9 @@ public class MIPSGenerator {
 		textSegment += String.format("\tmov Temp_%d, Temp_%d\n", tmpDstInd, tmpSrcInd);
 	}
 
-	/************************************************ Parameters ************************************************/
+	/************************************************
+	 * Parameters
+	 ************************************************/
 
 	public void loadFromParameters(TEMP tmp, int ParamInd) {
 		int tmpInd = tmp.getSerialNumber();
@@ -235,14 +245,15 @@ public class MIPSGenerator {
 		textSegment += String.format("\tlw Temp_%d, %d($fp)\n", tmpInd, offset);
 	}
 
-	/************************************************ Global Variables ************************************************/
+	/************************************************
+	 * Global Variables
+	 ************************************************/
 
 	// decalaring a global variable without assigning it an initial value
 	public void declareGlobalVar(String label, String type) {
 		if (type == "string") {
 			dataSegment += String.format("%s: .asciiz \"\"\n", label);
-		}
-		else { // int
+		} else { // int
 			dataSegment += String.format("%s: .word 0\n", label);
 		}
 	}
@@ -264,7 +275,7 @@ public class MIPSGenerator {
 
 	// assign a tmp to a global variable
 	public void globalVarAssignment(String globalVarLabel, TEMP tmpRvalue) {
-		int tmpRvalueInd=tmpRvalue.getSerialNumber();
+		int tmpRvalueInd = tmpRvalue.getSerialNumber();
 		textSegment += String.format("\tsw Temp_%d, %s\n", tmpRvalueInd, globalVarLabel);
 	}
 
@@ -273,7 +284,9 @@ public class MIPSGenerator {
 		textSegment += String.format("\tlw Temp_%d, %s\n", tmpInd, globalVarLabel);
 	}
 
-	/************************************************ String ************************************************/
+	/************************************************
+	 * String
+	 ************************************************/
 
 	public void calcStringLengthIntoTmp(TEMP stringLenTmp, TEMP stringTmp) {
 		TEMP stringByteTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
@@ -305,13 +318,15 @@ public class MIPSGenerator {
 		label(endLabel);
 	}
 
-	/************************************************ Class ************************************************/
+	/************************************************
+	 * Class
+	 ************************************************/
 
 	public int getClassSize(TYPE objectType) {
-		TYPE_CLASS t = ((TYPE_CLASS)SYMBOL_TABLE.getInstance().find(objectType.name));
+		TYPE_CLASS t = ((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(objectType.name));
 
 		int fieldsNumTotal = t.fieldsNum;
-		while(t.father.isPresent()) {
+		while (t.father.isPresent()) {
 			t = t.father.get();
 			fieldsNumTotal += t.fieldsNum;
 		}
@@ -324,7 +339,9 @@ public class MIPSGenerator {
 		malloc(dstTempReg, classSize);
 	}
 
-	/************************************************ Array ************************************************/
+	/************************************************
+	 * Array
+	 ************************************************/
 
 	public void createNewArray(TEMP dstTemp, TEMP subscriptTemp) {
 
@@ -358,30 +375,32 @@ public class MIPSGenerator {
 		textSegment += String.format("\tlw Temp_%d, 0(Temp_%d)\n", dstTempInd, arrayIndTmpInd);
 	}
 
+	/************************************************
+	 * Branches
+	 ************************************************/
 
-	/************************************************ Branches ************************************************/
-
-	public void blt(TEMP oprnd1,TEMP oprnd2,String label) {
+	public void blt(TEMP oprnd1, TEMP oprnd2, String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
 		textSegment += String.format("\tblt Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
 
-	public void bgt(TEMP oprnd1,TEMP oprnd2,String label) {
+	public void bgt(TEMP oprnd1, TEMP oprnd2, String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
 		textSegment += String.format("\tbgt Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
-	public void bge(TEMP oprnd1,TEMP oprnd2,String label) {
+
+	public void bge(TEMP oprnd1, TEMP oprnd2, String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
 		textSegment += String.format("\tbge Temp_%d, Temp_%d, %s\n", i1, i2, label);
 	}
 
-	public void ble(TEMP oprnd1,TEMP oprnd2,String label) {
+	public void ble(TEMP oprnd1, TEMP oprnd2, String label) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 
@@ -408,7 +427,9 @@ public class MIPSGenerator {
 		textSegment += String.format("\tbeq Temp_%d, $zero, %s\n", i1, label);
 	}
 
-	/************************************************ Function call ************************************************/
+	/************************************************
+	 * Function call
+	 ************************************************/
 
 	// Push args in reverse and return the number of args
 	public int pushArgs(TEMP_LIST argsTempList) {
@@ -443,14 +464,16 @@ public class MIPSGenerator {
 		callFuncStmt(dst, funcName, argsTempList);
 
 		// store return value in dst
-		int dstidx=dst.getSerialNumber();
+		int dstidx = dst.getSerialNumber();
 		textSegment += String.format("\tmov Temp_%d, $v0\n", dstidx);
 	}
 
-	/********************************************* Function delaration ***********************************************/
+	/*********************************************
+	 * Function delaration
+	 ***********************************************/
 
 	public void pushTempReg(TEMP reg) {
-		int regInd =reg.getSerialNumber();
+		int regInd = reg.getSerialNumber();
 		textSegment += String.format("\tsubu $sp, $sp, 4\n");
 		textSegment += String.format("\tsw $Temp_%d, 0($sp)\n", regInd);
 	}
@@ -462,14 +485,14 @@ public class MIPSGenerator {
 
 	public void registersBackup() {
 		for (int i = 0; i < 10; i++) {
-			pushRegNameString(String.format("t%d",i));
+			pushRegNameString(String.format("t%d", i));
 		}
 	}
 
 	public void registersRestore() {
 		for (int i = 0; i < 10; i++) {
 			int offset = (i + 1) * -4;
-			textSegment += String.format("\tlw $t%d, %d($sp)\n",i, offset);
+			textSegment += String.format("\tlw $t%d, %d($sp)\n", i, offset);
 		}
 	}
 
@@ -493,7 +516,7 @@ public class MIPSGenerator {
 	}
 
 	public void doReturn(TEMP expRetReg) {
-		int expRetRegIdx=expRetReg.getSerialNumber();
+		int expRetRegIdx = expRetReg.getSerialNumber();
 		textSegment += String.format("\tmov $v0, Temp_%d\n", expRetRegIdx);
 	}
 
@@ -505,35 +528,33 @@ public class MIPSGenerator {
 	/*****************************/
 	/* PREVENT INSTANTIATION ... */
 	/*****************************/
-	protected MIPSGenerator() {}
+	protected MIPSGenerator() {
+	}
 
 	/******************************/
 	/* GET SINGLETON INSTANCE ... */
 	/******************************/
-	public static MIPSGenerator getInstance()
-	{
-		if (instance == null)
-		{
+	public static MIPSGenerator getInstance() {
+		if (instance == null) {
 			/*******************************/
 			/* [0] The instance itself ... */
 			/*******************************/
 			instance = new MIPSGenerator();
 
-			try
-			{
+			try {
 				/*********************************************************************************/
-				/* [1] Open the MIPS text file and write data section with error message strings */
+				/*
+				 * [1] Open the MIPS text file and write data section with error message strings
+				 */
 				/*********************************************************************************/
-				String dirname="./output/";
-				String filename=String.format("MIPS.txt");
+				String dirname = "./output/";
+				String filename = String.format("MIPS.txt");
 
 				/***************************************/
 				/* [2] Open MIPS text file for writing */
 				/***************************************/
-				instance.fileWriter = new PrintWriter(dirname+filename);
-			}
-			catch (Exception e)
-			{
+				instance.fileWriter = new PrintWriter(dirname + filename);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
