@@ -234,6 +234,21 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsw Temp_%d, %d($fp)\n", rValueTmpInd, offset);
 	}
 
+	// assign <tmpRvalue> to <offsetTmp> at the local variable which its local index is <varIndex>
+	public void localVarAssignment(int varIndex, TEMP offsetTmp, TEMP tmpRvalue) {
+		// newOffsetTmp = local variable
+		TEMP newOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		loadFromLocal(newOffsetTmp, varIndex);
+
+		// newOffsetTmp += offsetTmp
+		add(newOffsetTmp, newOffsetTmp, offsetTmp, false);
+
+		// *newOffsetTmp = tmpRvalue
+		int newOffsetTmpInd = newOffsetTmp.getSerialNumber();
+		int tmpRvalueInd = tmpRvalue.getSerialNumber();
+		textSegment += String.format("\tsw Temp_%d, 0(Temp_%d)\n", tmpRvalueInd, newOffsetTmpInd);
+	}
+
 	public void storeLocalVar(int ind, TEMP initialValueTmp) {
 		int idx = initialValueTmp.getSerialNumber();
 		int offset = (-1) * (ind * WORD_SIZE + 40); // 40 is for storing tmps
@@ -418,6 +433,16 @@ public class MIPSGenerator {
 		int dstTempInd = dstTemp.getSerialNumber();
 		int arrayOffsetTmpInd = arrayOffsetTmp.getSerialNumber();
 		textSegment += String.format("\tlw Temp_%d, 0(Temp_%d)\n", dstTempInd, arrayOffsetTmpInd);
+	}
+
+	public void assignTmpWithOffset(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
+		// check access violation
+		checkAccessViolation(arrayTmp, subscriptTemp);
+
+		// offset = dstTemp = (subscriptTemp + 1) * 4
+		movFromTmpToTmp(dstTemp, subscriptTemp);
+		addConstIntToTmp(dstTemp, 1); // 1 is for the size of the array (which is its first element)
+		multTmpByConstInt(dstTemp, WORD_SIZE);
 	}
 
 //	public void assignArrayElementWithTmp(TEMP arrayTmp, TEMP subscriptTemp, TEMP srcTemp) {

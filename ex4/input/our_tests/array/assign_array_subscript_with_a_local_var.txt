@@ -1,0 +1,7 @@
+array arrayType = int [];
+
+void f() {
+	arrayType arr := new int[20];
+	int x := 3;
+	arr[19] := x;
+}
