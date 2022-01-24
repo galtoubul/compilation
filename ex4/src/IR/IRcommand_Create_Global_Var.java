@@ -1,11 +1,9 @@
 package IR;
 
-import TEMP.*;
+import global_variables.GlobalVariables;
 import MIPS.*;
-import GlobalVariables.*;
 
-public class IRcommand_Create_Global_Var extends IRcommand
-{
+public class IRcommand_Create_Global_Var extends IRcommand_IDTransform {
 	String varLabel;
 	String varType;
 	String stringConst = null;
@@ -38,7 +36,7 @@ public class IRcommand_Create_Global_Var extends IRcommand
 		this.varType = varType;
 		this.objConst = obj;
 	}
-	
+
 	/***************/
 	/* MIPS me !!! */
 	/***************/
@@ -46,22 +44,25 @@ public class IRcommand_Create_Global_Var extends IRcommand
 		System.out.println("-- IRcommand_Create_Global_Var MIPSme");
 
 		if (varType == "string" && stringConst != null) {
-			/* string z := "abc"; --> str_const<num>: .asciiz "abc"
-			 						  globsl_z: .word str_const<num>   */
+			/*
+			 * string z := "abc"; --> str_const<num>: .asciiz "abc"
+			 * globsl_z: .word str_const<num>
+			 */
 
-			// get string const label 											(str_const<num>)
+			// get string const label (str_const<num>)
 			String stringConstLabel = GlobalVariables.getStringConstLabel();
 
-			// initialize a string const label with the string const value 		(str_const<num>: .asciiz "abc")
+			// initialize a string const label with the string const value (str_const<num>:
+			// .asciiz "abc")
 			MIPSGenerator.getInstance().initializeGlobalVar(stringConstLabel, stringConst);
 
-			// initialize the global variable label with the string const label (globsl_z: .word str_const<num>)
+			// initialize the global variable label with the string const label (globsl_z:
+			// .word str_const<num>)
 			MIPSGenerator.getInstance().initializeGlobalVarWithStringConstLabel(varLabel, stringConstLabel);
-		}
-		else if (varType == "int" && intConst != Integer.MAX_VALUE) {
+		} else if (varType == "int" && intConst != Integer.MAX_VALUE) {
 			MIPSGenerator.getInstance().initializeGlobalVar(varLabel, intConst);
-		}
-		else { // global var was only declared (without initialization) or it was initialized with null
+		} else { // global var was only declared (without initialization) or it was initialized
+					// with null
 			MIPSGenerator.getInstance().declareGlobalVar(varLabel, varType);
 		}
 	}

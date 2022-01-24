@@ -1,19 +1,15 @@
 package IR;
 
 import TEMP.*;
+
 import MIPS.*;
 
-public class IRcommand_Call_Func_Exp extends IRcommand {
-	TEMP dst;
-	String funcName;
-	TEMP_LIST argsTempList;
-	
+public class IRcommand_Call_Func_Exp extends IRcommand_Call_Func {
+
 	public IRcommand_Call_Func_Exp(TEMP dst, String funcName, TEMP_LIST argsTempList) {
-		this.dst = dst;
-		this.funcName = funcName;
-		this.argsTempList = argsTempList;
+		super(dst, funcName, argsTempList);
 	}
-	
+
 	/***************/
 	/* MIPS me !!! */
 	/***************/

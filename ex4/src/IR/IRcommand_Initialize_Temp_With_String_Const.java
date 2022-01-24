@@ -1,11 +1,13 @@
 package IR;
 
 import TEMP.*;
+import global_variables.GlobalVariables;
 import MIPS.*;
-import GlobalVariables.*;
 
-public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand
-{
+import java.util.HashSet;
+import java.util.Set;
+
+public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand {
 	public TEMP dst;
 	public String stringConst;
 
@@ -13,7 +15,7 @@ public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand
 		this.dst = dst;
 		this.stringConst = stringConst;
 	}
-	
+
 	/***************/
 	/* MIPS me !!! */
 	/***************/
@@ -22,5 +24,12 @@ public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand
 		String stringConstLabel = GlobalVariables.getStringConstLabel();
 		MIPSGenerator.getInstance().initializeGlobalVar(stringConstLabel, stringConst);
 		MIPSGenerator.getInstance().loadAddress(dst, stringConstLabel);
+	}
+
+	@Override
+	public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
+		HashSet<TEMP> in = new HashSet<>(liveTemps);
+		in.remove(this.dst);
+		return in;
 	}
 }

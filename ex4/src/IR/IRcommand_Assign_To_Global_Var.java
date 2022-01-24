@@ -1,6 +1,10 @@
 package IR;
 
 import TEMP.*;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import MIPS.*;
 
 public class IRcommand_Assign_To_Global_Var extends IRcommand {
@@ -20,5 +24,11 @@ public class IRcommand_Assign_To_Global_Var extends IRcommand {
 		System.out.println("-- IRcommand_Assign_To_Global_Var MIPSme");
 		MIPSGenerator.getInstance().globalVarAssignment(varLabel, tmpRvalue);
 	}
-}
 
+	@Override
+	public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
+		HashSet<TEMP> in = new HashSet<>(liveTemps);
+		in.add(this.tmpRvalue);
+		return in;
+	}
+}
