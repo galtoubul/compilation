@@ -4,19 +4,16 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.*;
 import TYPES.*;
+import ast_annotation.AstAnnotation;
+import ast_notation_type.AstNotationType;
+import global_variables.GlobalVariables;
 import TEMP.*;
-import AstNotationType.*;
-import NotationTable.*;
 import IR.*;
-import GlobalVariables.*;
-import AstAnnotation.*;
-
 
 public class AST_VAR_DECLERATION extends AST_VAR_DEC {
     public String id;
     public String varType;
     public AstAnnotation astAnnotation;
-
 
     public AST_VAR_DECLERATION(AST_TYPE type, String id) {
         super(type, id);
@@ -94,7 +91,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
         System.out.format("\t\tinserted variable %s of type %s to the symbol table\n", var.name,
                 var.type.name);
-//        setNotation(var.type.name);
+        // setNotation(var.type.name);
         this.varType = var.type.name;
         setNotation(localVarInd);
         return var;
@@ -104,11 +101,10 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         System.out.println("-- AST_VAR_DECLERATION setNotation");
 
         ScopeType scopeType = SYMBOL_TABLE.getInstance().currentScopeType();
-        if (scopeType == scopeType.Global) {
+        if (scopeType == ScopeType.Global) {
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
             System.out.format("\t\t%s is a global variable\n", id);
-        }
-        else { // local
+        } else { // local
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, localVarInd);
             int ind = localVarInd.orElse(-1);
             System.out.format("\t\t%s is a local variable | its index = %s\n", id, ind);
@@ -117,12 +113,11 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
 
     public TEMP IRme() {
         System.out.println("-- AST_VAR_DECLERATION IRme");
-        if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR){
+        if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
             System.out.println("\t\tglobal variable");
             String globalVarLabel = GlobalVariables.insertGlobal(this.id, this.varType);
             IR.getInstance().Add_IRcommand(new IRcommand_Create_Global_Var(globalVarLabel, varType));
-        }
-        else { // local variable
+        } else { // local variable
             System.out.println("\t\tlocal variable");
         }
         return null;

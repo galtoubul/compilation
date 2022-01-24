@@ -1,8 +1,9 @@
 package SYMBOL_TABLE;
 
 import TYPES.TYPE;
+import ast_notation_type.AstNotationType;
+
 import java.util.Optional;
-import AstNotationType.AstNotationType;
 
 public class SymbolTableEntry {
 	final int index;
@@ -23,7 +24,7 @@ public class SymbolTableEntry {
 	}
 
 	SymbolTableEntry(int index, String name, TYPE type, boolean isType, Optional<Integer> position,
-					 Optional<AstNotationType> astNotationType) {
+			Optional<AstNotationType> astNotationType) {
 		this.index = index;
 		this.name = name;
 		this.type = type;
@@ -31,7 +32,7 @@ public class SymbolTableEntry {
 		this.position = position.orElse(0);
 		this.astNotationType = astNotationType.orElse(null);
 		System.out.format("\t\t---- SymbolTableEntry index = %d | " +
-						"name = %s | type = %s | isType = %s | position = %d | type = %s\n",
+				"name = %s | type = %s | isType = %s | position = %d | type = %s\n",
 				index, name, type, isType, this.position, this.astNotationType);
 	}
 }

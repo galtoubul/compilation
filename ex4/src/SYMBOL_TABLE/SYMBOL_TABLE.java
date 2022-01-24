@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.Stack;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.stream.IntStream;
-import TYPES.*;
-import AstNotationType.AstNotationType;
 
+import pair.Pair;
+import TYPES.*;
+import ast_notation_type.AstNotationType;
 
 public class SYMBOL_TABLE {
 
@@ -16,7 +16,7 @@ public class SYMBOL_TABLE {
 	private static SYMBOL_TABLE instance = null;
 
 	private HashMap<String, Stack<SymbolTableEntry>> table = new HashMap<>();
-	private Stack<SimpleEntry<ScopeEntry, ArrayList<String>>> scopes = new Stack<>();
+	private Stack<Pair<ScopeEntry, ArrayList<String>>> scopes = new Stack<>();
 
 	public static SYMBOL_TABLE getInstance() {
 		if (instance == null) {
@@ -92,7 +92,7 @@ public class SYMBOL_TABLE {
 		return Optional.of(idStack.peek());
 	}
 
-	private SimpleEntry<ScopeEntry, ArrayList<String>> currentScopePair() {
+	private Pair<ScopeEntry, ArrayList<String>> currentScopePair() {
 		return this.scopes.peek();
 	}
 
@@ -114,7 +114,8 @@ public class SYMBOL_TABLE {
 	/**
 	 * If `name` is not in the current scope, insert it with type `type`.
 	 */
-	public void enter(String name, TYPE type, boolean isType, Optional<Integer> position, Optional<AstNotationType> astNotationType) {
+	public void enter(String name, TYPE type, boolean isType, Optional<Integer> position,
+			Optional<AstNotationType> astNotationType) {
 		Stack<SymbolTableEntry> idStack = this.table.get(name);
 		if (idStack == null) {
 			idStack = new Stack<>();
@@ -147,7 +148,7 @@ public class SYMBOL_TABLE {
 	}
 
 	public void beginScope(ScopeType scopeType, String scopeName) {
-		this.scopes.push(new SimpleEntry<ScopeEntry, ArrayList<String>>(new ScopeEntry(scopeType, scopeName),
+		this.scopes.push(new Pair<ScopeEntry, ArrayList<String>>(new ScopeEntry(scopeType, scopeName),
 				new ArrayList<>()));
 	}
 
@@ -178,7 +179,7 @@ public class SYMBOL_TABLE {
 	 */
 	public Optional<ScopeEntry> findScopeType(ScopeType scopeType) {
 		return this.scopes.stream()
-				.map(SimpleEntry::getKey)
+				.map(Pair::getKey)
 				.filter(scope -> scope.scopeType == scopeType)
 				.findFirst();
 	}
@@ -204,10 +205,10 @@ public class SYMBOL_TABLE {
 	/**
 	 * Find the closest scope and its index with the type `scopeType`.
 	 */
-	private Optional<SimpleEntry<Integer, ScopeEntry>> findIndexedScopeType(ScopeType scopeType) {
+	private Optional<Pair<Integer, ScopeEntry>> findIndexedScopeType(ScopeType scopeType) {
 		return IntStream
 				.range(0, this.currentScopeIndex())
-				.mapToObj(i -> new SimpleEntry<Integer, ScopeEntry>(i, this.getScope(i)))
+				.mapToObj(i -> new Pair<Integer, ScopeEntry>(i, this.getScope(i)))
 				.filter(indexedScope -> indexedScope.getValue().scopeType == scopeType)
 				.findFirst();
 	}
@@ -215,7 +216,7 @@ public class SYMBOL_TABLE {
 	public Optional<TYPE> findPotentialMember(String name) {
 		Optional<SymbolTableEntry> firstEntry = this.findEntry(name);
 
-		Optional<SimpleEntry<Integer, ScopeEntry>> classScope = this.findIndexedScopeType(ScopeType.Class);
+		Optional<Pair<Integer, ScopeEntry>> classScope = this.findIndexedScopeType(ScopeType.Class);
 
 		if (!firstEntry.isPresent() || (classScope.isPresent() && firstEntry.get().index < classScope.get().getKey())) {
 			TYPE_CLASS classType = (TYPE_CLASS) this.find(classScope.get().getValue().scopeName.get());

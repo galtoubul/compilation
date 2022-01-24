@@ -1,8 +1,9 @@
-package GlobalVariables;
+package global_variables;
 
 import java.util.HashMap;
-import javafx.util.Pair;
-import AstNotationType.*;
+
+import pair.Pair;
+
 import java.util.*;
 
 public class GlobalVariables {
@@ -15,7 +16,7 @@ public class GlobalVariables {
         int i = 0;
         String generatedLabel = label;
         while (labels.contains(generatedLabel)) {
-            generatedLabel = String.format("%s%d",label, i++);
+            generatedLabel = String.format("%s%d", label, i++);
         }
         labels.add(generatedLabel);
         return generatedLabel;
@@ -31,8 +32,9 @@ public class GlobalVariables {
 
     public static String insertGlobal(String globalVarName, String type) {
         String label = getGlobalLabel(globalVarName);
-        System.out.format("-- NotationTable\n\t\t inserted %s to globalVarNameToLabelTypePair with label %s\n", globalVarName, label);
-        Pair<String, String> labelTypePair = new Pair <>(label, type);
+        System.out.format("-- NotationTable\n\t\t inserted %s to globalVarNameToLabelTypePair with label %s\n",
+                globalVarName, label);
+        Pair<String, String> labelTypePair = new Pair<>(label, type);
         globalVarNameToLabelTypePair.put(globalVarName, labelTypePair);
         return label;
     }

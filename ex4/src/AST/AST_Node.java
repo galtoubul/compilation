@@ -1,9 +1,5 @@
 package AST;
 
-import java.util.Optional;
-
-import TYPES.TYPE;
-
 public abstract class AST_Node {
 	/*******************************************/
 	/* The serial number is for debug purposes */

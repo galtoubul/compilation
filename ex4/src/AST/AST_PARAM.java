@@ -3,11 +3,9 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
-import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 import TYPES.TYPE_VOID;
-import java.util.Optional;
-import AstNotationType.AstNotationType;
+import ast_notation_type.AstNotationType;
 
 public class AST_PARAM extends AST_Node {
 	public AST_TYPE type;

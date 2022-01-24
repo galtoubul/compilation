@@ -3,7 +3,6 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
-import TYPES.TYPE_NONE;
 import TEMP.*;
 
 public class AST_EXP_VAR extends AST_EXP {
@@ -47,7 +46,8 @@ public class AST_EXP_VAR extends AST_EXP {
 
 		TYPE varType = this.var.SemantMe(classId);
 
-		// won't reach this point if varType = null since the above SemantMe should throw an error
+		// won't reach this point if varType = null since the above SemantMe should
+		// throw an error
 		if (varType == null) {
 			System.out.format(">> ERROR [" + lineNum + "] parameter use before define\n");
 			throw new SemanticErrorException("" + lineNum);

@@ -1,4 +1,4 @@
-package AstNotationType;
+package ast_notation_type;
 
 public enum AstNotationType {
     parameter,
@@ -21,4 +21,3 @@ public enum AstNotationType {
         return astNotationType;
     }
 }
-

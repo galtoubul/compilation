@@ -4,15 +4,12 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
-import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
-import AstNotationType.AstNotationType;
+import ast_notation_type.AstNotationType;
 import TEMP.*;
-
-
 
 public class AST_VAR_NEW extends AST_VAR_DEC {
     public AST_NEW_EXP initialValue;
@@ -106,7 +103,8 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         // If the initialization is of a class field, it must be initialized with a
         // constant; and a new-expression is not a constant
         if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class) {
-            System.out.format(">> ERROR [%d:%d] classs fields can only be initialized with constant values\n", 2, 2, id);
+            System.out.format(">> ERROR [%d:%d] classs fields can only be initialized with constant values\n", 2, 2,
+                    id);
             throw new SemanticErrorException("" + lineNum);
         }
 
