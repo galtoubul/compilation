@@ -81,8 +81,19 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 			throw new SemanticErrorException("" + lineNum);
 		}
 
-		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(((AST.AST_VAR_SIMPLE) var).name);
-		varName = ((AST.AST_VAR_SIMPLE) var).name;
+		AST_VAR_SIMPLE varSimple;
+		if (var instanceof AST.AST_VAR_SIMPLE) {
+			varSimple = ((AST.AST_VAR_SIMPLE)var);
+		}
+		else if (var instanceof AST.AST_VAR_SUBSCRIPT) {
+			varSimple = (AST.AST_VAR_SIMPLE) ((AST.AST_VAR_SUBSCRIPT) var).var;
+		}
+		else { // instanceof AST.AST_VAR_FIELD
+			varSimple = (AST.AST_VAR_SIMPLE) ((AST.AST_VAR_FIELD) var).var;
+		}
+
+		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(varSimple.name);
+		varName = varSimple.name;
 		setNotation(Optional.of(entry.get().position));
 
 		return null;
@@ -106,20 +117,29 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 	public TEMP IRme() {
 		System.out.println("-- AST_STMT_ASSIGN IRme");
 
+		TEMP rValueTmp = exp.IRme();
+		TEMP lValueTmp = var.IRme();
+
 		if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
 			System.out.format("\t\t%s is a global variable\n", varName);
 
 			String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
 			String globalVarType = GlobalVariables.getGlobalVarType(((AST.AST_VAR_SIMPLE) var).name);
 
-			TEMP tmpRvalue = exp.IRme();
-			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, tmpRvalue));
+			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, rValueTmp));
 		} else { // local variable
 			System.out.format("\t\t%s is a local variable\n", varName);
 
-			TEMP tmpRvalue = exp.IRme();
 			int localVarInd = astAnnotation.ind.orElse(-1);
-			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, tmpRvalue));
+			if (var instanceof AST.AST_VAR_SUBSCRIPT) {
+				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(localVarInd, lValueTmp, rValueTmp));
+			}
+			else if (var instanceof AST.AST_VAR_FIELD) {
+				// todo
+			}
+			else { // instanceof AST.AST_VAR_SIMPLE
+				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
+			}
 		}
 
 		return null;

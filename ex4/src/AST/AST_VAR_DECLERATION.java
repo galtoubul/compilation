@@ -112,6 +112,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
 
     public TEMP IRme() {
         System.out.println("-- AST_VAR_DECLERATION IRme");
+
         if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
             System.out.println("\t\tglobal variable");
             String globalVarLabel = GlobalVariables.insertGlobal(this.id, this.varType);

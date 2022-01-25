@@ -11,18 +11,30 @@ public class MIPSGenerator {
 
 	private int WORD_SIZE = 4;
 	private int TMPS_BACKUP_SPACE = 40; // t0 - t9 backup
+	private String ABORT_LABEL = "abort_label";
+	private boolean add_abort_flag = false;
 	private PrintWriter fileWriter;
 	private String dataSegment = "";
 	private String textSegment = "";
 
-	public void finalizeFile() {
+	public void addMain() {
 		textSegment += String.format("main:\n");
 		textSegment += String.format("\tjal user_main\n");
-		textSegment += String.format("\tli $v0,10\n");
-		textSegment += String.format("\tsyscall\n");
+		exit();
+	}
+	
+	public void finalizeFile() {
+		addMain();
+
+		if (add_abort_flag) {
+			textSegment += String.format("%s:\n", ABORT_LABEL);
+			exit();
+		}
+		
 		fileWriter.format(dataSegment);
 		fileWriter.format(".text\n");
 		fileWriter.format(textSegment);
+
 		fileWriter.close();
 	}
 
@@ -133,6 +145,11 @@ public class MIPSGenerator {
 		textSegment += String.format("\tmov $a0, Temp_%d\n", sizeTmpInd);
 		malloc(resultPtrTmp);
 	}
+	
+	public void exit() {
+		textSegment += String.format("\tli $v0, 10\n");
+		textSegment += String.format("\tsyscall\n");
+	}
 
 	/************************************************
 	 * Arithmetics
@@ -215,6 +232,21 @@ public class MIPSGenerator {
 		int rValueTmpInd = tmpRvalue.getSerialNumber();
 		int offset = (-1) * (varIndex * WORD_SIZE + TMPS_BACKUP_SPACE);
 		textSegment += String.format("\tsw Temp_%d, %d($fp)\n", rValueTmpInd, offset);
+	}
+
+	// assign <tmpRvalue> to <offsetTmp> at the local variable which its local index is <varIndex>
+	public void localVarAssignment(int varIndex, TEMP offsetTmp, TEMP tmpRvalue) {
+		// newOffsetTmp = local variable
+		TEMP newOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		loadFromLocal(newOffsetTmp, varIndex);
+
+		// newOffsetTmp += offsetTmp
+		add(newOffsetTmp, newOffsetTmp, offsetTmp, false);
+
+		// *newOffsetTmp = tmpRvalue
+		int newOffsetTmpInd = newOffsetTmp.getSerialNumber();
+		int tmpRvalueInd = tmpRvalue.getSerialNumber();
+		textSegment += String.format("\tsw Temp_%d, 0(Temp_%d)\n", tmpRvalueInd, newOffsetTmpInd);
 	}
 
 	public void storeLocalVar(int ind, TEMP initialValueTmp) {
@@ -360,6 +392,82 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsw Temp_%d, 0(Temp_%d)\n", subscriptTempInd, dstTempInd);
 	}
 
+	public void loadArraySize(TEMP dstTmp, TEMP arrayTmp) {
+		int dstTmpInd = dstTmp.getSerialNumber();
+		int arrayTmpInd = arrayTmp.getSerialNumber();
+		
+		textSegment += String.format("\tlw Temp_%d, 0(Temp_%d)\n", dstTmpInd, arrayTmpInd);
+	}
+	
+	public void checkAccessViolation(TEMP arrayTmp, TEMP subscriptTemp) {
+
+		label(Labels.getAvialableLabel("check_access_violation_start"));
+
+		// add abort stub in the end of the text segment
+		add_abort_flag = true;
+
+		// check for a negative index
+		bltz(subscriptTemp, ABORT_LABEL);
+		
+		// check for an index which is bigger than array size
+		TEMP arraySizeTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		loadArraySize(arraySizeTmp, arrayTmp);
+		bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
+
+		label(Labels.getAvialableLabel("after_check_access_violation"));
+	}
+
+	public void assignTmpWithArrayElement(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
+		
+		// check access violation
+		checkAccessViolation(arrayTmp, subscriptTemp);
+		
+		// calc offset
+		TEMP arrayOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		movFromTmpToTmp(arrayOffsetTmp, subscriptTemp);
+		addConstIntToTmp(arrayOffsetTmp, 1); // 1 is for the size of the array (which is its first element)
+		multTmpByConstInt(arrayOffsetTmp, WORD_SIZE);
+
+		// load from offset
+		add(arrayOffsetTmp, arrayOffsetTmp, arrayTmp, false);
+		int dstTempInd = dstTemp.getSerialNumber();
+		int arrayOffsetTmpInd = arrayOffsetTmp.getSerialNumber();
+		textSegment += String.format("\tlw Temp_%d, 0(Temp_%d)\n", dstTempInd, arrayOffsetTmpInd);
+	}
+
+	public void assignTmpWithOffset(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
+		// check access violation
+		checkAccessViolation(arrayTmp, subscriptTemp);
+
+		// offset = dstTemp = (subscriptTemp + 1) * 4
+		movFromTmpToTmp(dstTemp, subscriptTemp);
+		addConstIntToTmp(dstTemp, 1); // 1 is for the size of the array (which is its first element)
+		multTmpByConstInt(dstTemp, WORD_SIZE);
+	}
+
+//	public void assignArrayElementWithTmp(TEMP arrayTmp, TEMP subscriptTemp, TEMP srcTemp) {
+//
+//		// check access violation
+//		String abortLabel = Labels.getAvialableLabel("abort");
+//		checkAccessViolation(arrayTmp, subscriptTemp, abortLabel);
+//
+//		// calc offset
+//		TEMP arrayOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+//		movFromTmpToTmp(arrayOffsetTmp, subscriptTemp);
+//		addConstIntToTmp(arrayOffsetTmp, 1); // 1 is for the size of the array (which is its first element)
+//		multTmpByConstInt(arrayOffsetTmp, WORD_SIZE);
+//
+//		// load from offset
+//		add(arrayOffsetTmp, arrayOffsetTmp, arrayTmp, false);
+//		int dstTempInd = dstTemp.getSerialNumber();
+//		int arrayOffsetTmpInd = arrayOffsetTmp.getSerialNumber();
+//		textSegment += String.format("\tlw Temp_%d, 0(Temp_%d)\n", dstTempInd, arrayOffsetTmpInd);
+//
+//		// abort:
+//		label(abortLabel);
+//		exit();
+//	}
+
 	/************************************************
 	 * Branches
 	 ************************************************/
@@ -369,6 +477,11 @@ public class MIPSGenerator {
 		int i2 = oprnd2.getSerialNumber();
 
 		textSegment += String.format("\tblt Temp_%d, Temp_%d, %s\n", i1, i2, label);
+	}
+
+	public void bltz(TEMP oprnd, String label) {
+		int i = oprnd.getSerialNumber();
+		textSegment += String.format("\tbltz Temp_%d, %s\n", i, label);
 	}
 
 	public void bgt(TEMP oprnd1, TEMP oprnd2, String label) {
