@@ -25,4 +25,8 @@ public class IRcommand_Jump_Label extends IRcommand_IDTransform {
 	public void MIPSme() {
 		MIPSGenerator.getInstance().jump(label_name);
 	}
+
+	public String jumpLabel() {
+		return this.label_name;
+	}
 }

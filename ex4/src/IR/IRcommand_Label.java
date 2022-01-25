@@ -16,4 +16,8 @@ public class IRcommand_Label extends IRcommand_IDTransform {
 	public void MIPSme() {
 		MIPSGenerator.getInstance().label(label);
 	}
+
+	public String label() {
+		return this.label;
+	}
 }

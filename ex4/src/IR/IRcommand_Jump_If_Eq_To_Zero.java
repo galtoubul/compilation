@@ -32,4 +32,8 @@ public class IRcommand_Jump_If_Eq_To_Zero extends IRcommand {
 		in.add(this.t);
 		return in;
 	}
+
+	public String jumpLabel() {
+		return this.label;
+	}
 }
