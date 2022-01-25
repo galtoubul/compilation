@@ -2,11 +2,47 @@ package register_alloc;
 
 import java.util.ArrayDeque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import IR.IRcommandList;
 import TEMP.TEMP;
 
 public class RegisterAllocation {
+    /**
+     * Try to allocate up to `registers` registers and map them to the existing
+     * temporaries appearing in `function`, without any interferences (namely, a
+     * single register cannot be allocated to two interfering temporaries).
+     * 
+     * @param function  An IR function code.
+     * @param registers The maximum amount of registers to map to the temporaries in
+     *                  the function.
+     * @return A map from the temporaries to registers, if such mapping exists. The
+     *         registers are represented as integers in the range [0, `registers`).
+     * 
+     *         If the the given amound of registers cannot be allocated for the
+     *         temporaries, return an empty `Optional` instance.
+     */
+    public static Optional<HashMap<TEMP, Integer>> allocateRegisters(IRcommandList function, int registers) {
+        return colorInterferenceGraph(new InterferenceGraph(livenessAnalysis(ControlFlowGraph.backwardCFG(function))),
+                registers);
+    }
+
+    /**
+     * Run liveness analysis on a (reversed) CFG, and return the resulting
+     * interference sets.
+     * 
+     * While the liveness analysis itself returns an interference set for every
+     * command, note that the exact mapping of commands to sets is not important in
+     * the registers allocation process.
+     * 
+     * @param graph A CFG of a function with reversed edges.
+     * @return A list of sets of interfering temporaries.
+     */
+    private static List<Set<TEMP>> livenessAnalysis(ControlFlowGraph graph) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Color an interference graph with (up to) `colors` colors.
