@@ -1,7 +1,6 @@
 package register_alloc;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
@@ -21,9 +20,16 @@ import IR.IRcommand_Label;
  */
 class ControlFlowGraph {
 
-    Collection<Node> nodes;
+    /**
+     * A list of all the nodes in the graph.
+     * 
+     * The nodes are stored as a `Deque`, to easily go over them in a reverse order.
+     * This should improve the performance of liveness analysis, since it will go
+     * over consequtive nodes from end to start.
+     */
+    ArrayDeque<Node> nodes;
 
-    private ControlFlowGraph(Collection<Node> nodes) {
+    private ControlFlowGraph(ArrayDeque<Node> nodes) {
         this.nodes = nodes;
     }
 
@@ -50,13 +56,13 @@ class ControlFlowGraph {
         // seen, we have to construct the CFG in two passes on the code: one for
         // detecting all the jumps, and the other for constructing the neighbors.
 
-        HashMap<IRcommand, Node> nodes = new HashMap<>();
+        HashMap<IRcommand, Node> commandsToNodes = new HashMap<>();
         HashMap<String, Node> labelsNeighbors = new HashMap<>();
 
         // Construct the CFG nodes and update all the label neighbors
         for (IRcommand command : code) {
             Node node = new Node(command, new HashSet<>());
-            nodes.put(command, node);
+            commandsToNodes.put(command, node);
 
             if (command instanceof IRcommand_Jump_If_Eq_To_Zero) {
                 labelsNeighbors.put(((IRcommand_Jump_If_Eq_To_Zero) command).jumpLabel(), node);
@@ -66,9 +72,10 @@ class ControlFlowGraph {
         }
 
         // Construct the graph
+        ArrayDeque<Node> nodes = new ArrayDeque<>();
         Optional<Node> previous = Optional.empty();
         for (IRcommand command : code) {
-            Node node = nodes.get(command);
+            Node node = commandsToNodes.get(command);
 
             // Update neighbors of current node
             if (command instanceof IRcommand_Label) {
@@ -87,9 +94,12 @@ class ControlFlowGraph {
             } else {
                 previous = Optional.of(node);
             }
+
+            // Add the node to the graph
+            nodes.push(node);
         }
 
-        return new ControlFlowGraph(nodes.values());
+        return new ControlFlowGraph(nodes);
     }
 
     /**
