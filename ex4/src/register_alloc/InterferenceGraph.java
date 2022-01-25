@@ -1,7 +1,7 @@
 package register_alloc;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,7 +44,7 @@ class InterferenceGraph {
      *                 from the liveness analysis. Each set represents the live
      *                 temporaries after the execution of said command.
      */
-    public InterferenceGraph(List<Set<TEMP>> liveness) {
+    public InterferenceGraph(Collection<Set<TEMP>> liveness) {
         this.inGraph = new HashMap<>();
 
         // Construct the edges and initialize the `inGraph` flags
@@ -75,7 +75,7 @@ class InterferenceGraph {
      *         itself must be removed, and the stream should be collected into a
      *         set.
      */
-    private HashMap<TEMP, Stream<TEMP>> createLazyEdges(List<Set<TEMP>> liveness) {
+    private HashMap<TEMP, Stream<TEMP>> createLazyEdges(Collection<Set<TEMP>> liveness) {
         HashMap<TEMP, Stream<TEMP>> edges = new HashMap<>();
         for (Set<TEMP> temps : liveness) {
             for (TEMP temp : temps) {

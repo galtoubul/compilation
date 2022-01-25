@@ -1,13 +1,20 @@
 package register_alloc;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import IR.IRcommand;
 import IR.IRcommandList;
 import TEMP.TEMP;
+import pair.Pair;
+import register_alloc.ControlFlowGraph.Node;
 
 public class RegisterAllocation {
     /**
@@ -40,8 +47,49 @@ public class RegisterAllocation {
      * @param graph A CFG of a function with reversed edges.
      * @return A list of sets of interfering temporaries.
      */
-    private static List<Set<TEMP>> livenessAnalysis(ControlFlowGraph graph) {
-        throw new UnsupportedOperationException();
+    private static Collection<Set<TEMP>> livenessAnalysis(ControlFlowGraph graph) {
+        // Performs the analysis using chaotic iteration: each node is mapped to a value
+        // (the interference set), and until we get to a fixpoint (namely, all the
+        // values stays the same), we update a node's value by joining it with the
+        // transformed value of the previous node.
+        //
+        // To be more efficient, the unfixed values are stored in a worklist. Thus, we
+        // always work only on the values that have been changed, and we can easily
+        // detect when we reached a fixpoint.
+
+        Map<Node, Set<TEMP>> liveness = graph.nodes.stream()
+                .collect(Collectors.toMap(node -> node, node -> new HashSet<TEMP>()));
+        ArrayDeque<Pair<Node, Set<TEMP>>> worklist = new ArrayDeque<>();
+
+        // TODO Instead initialize with all the nodes?
+        worklist.push(new Pair<>(graph.nodes.peek(), new HashSet<TEMP>()));
+
+        // Join every node's value with its resulting transformation until a fixed point
+        // is reached
+        while (!worklist.isEmpty()) {
+            Pair<Node, Set<TEMP>> incomming = worklist.pop();
+            Node node = incomming.getKey();
+
+            Set<TEMP> value = liveness.get(node);
+
+            // Excluding the first value of the initial node, `incoming` is the performed on
+            // `value`
+            Set<TEMP> newValue = incomming.getValue();
+            newValue.addAll(value);
+
+            // Check if a fixed point has been reached for `node`, if not update the
+            // liveness value and the worklist
+            if (!value.equals(newValue)) {
+                liveness.put(node, newValue);
+
+                for (Node neighbor : node.neighbors) {
+                    worklist.push(new Pair<>(neighbor, node.command.transform(newValue)));
+                }
+            }
+
+        }
+
+        return liveness.values();
     }
 
     /**

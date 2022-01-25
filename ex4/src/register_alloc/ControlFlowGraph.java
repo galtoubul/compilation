@@ -106,7 +106,7 @@ class ControlFlowGraph {
      * A node in the CFG includes a command, and points to some neighbors.
      * Specifically, it can have at most two neighbors.
      */
-    private static class Node {
+    static class Node {
         IRcommand command;
 
         Set<Node> neighbors; // Will have up to two neighbors
