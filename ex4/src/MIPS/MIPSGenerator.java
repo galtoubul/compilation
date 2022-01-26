@@ -133,7 +133,8 @@ public class MIPSGenerator {
 
 	public void initTmpWithZero(TEMP dstTmp) {
 		int dstTmpInd = dstTmp.getSerialNumber();
-		textSegment += String.format("\tmov %s, $zero\n", tempString(dstTmpInd));
+		moveRegisters(tempString(dstTmpInd), "$zero");
+		// textSegment += String.format("\tmov %s, $zero\n", tempString(dstTmpInd));
 	}
 
 	public void malloc(TEMP resultPtrTmp) {
@@ -141,7 +142,8 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsyscall\n");
 
 		int resultPtrTmpInd = resultPtrTmp.getSerialNumber();
-		textSegment += String.format("\tmov %s, $v0\n", tempString(resultPtrTmpInd));
+		moveRegisters(tempString(resultPtrTmpInd), "$v0");
+		// textSegment += String.format("\tmov %s, $v0\n", tempString(resultPtrTmpInd));
 	}
 
 	public void malloc(TEMP resultPtrTmp, int size) {
@@ -151,7 +153,8 @@ public class MIPSGenerator {
 
 	public void malloc(TEMP resultPtrTmp, TEMP sizeTmp) {
 		int sizeTmpInd = sizeTmp.getSerialNumber();
-		textSegment += String.format("\tmov $a0, %s\n", tempString(sizeTmpInd));
+		moveRegisters("$a0", tempString(sizeTmpInd));
+		// textSegment += String.format("\tmov $a0, %s\n", tempString(sizeTmpInd));
 		malloc(resultPtrTmp);
 	}
 
@@ -200,11 +203,7 @@ public class MIPSGenerator {
 	}
 
 	public void add(TEMP dst, TEMP oprnd1, TEMP oprnd2, boolean checkOverflow) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-		int dstidx = dst.getSerialNumber();
-
-		textSegment += String.format("\tadd %s, %s, %s\n", tempString(dstidx), tempString(i1), tempString(i2));
+		textSegment += String.format("\tadd %s\n", binopString(dst, oprnd1, oprnd2));
 
 		// we don't want to check overflow when summing len(s1) + len(s2) of strings for
 		// mallocing mem for s1s2
@@ -214,11 +213,7 @@ public class MIPSGenerator {
 	}
 
 	public void sub(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-		int dstidx = dst.getSerialNumber();
-
-		textSegment += String.format("\tsub %s, %s, %s\n", tempString(dstidx), tempString(i1), tempString(i2));
+		textSegment += String.format("\tsub %s\n", binopString(dst, oprnd1, oprnd2));
 		checkLimits(dst);
 	}
 
@@ -227,11 +222,7 @@ public class MIPSGenerator {
 	}
 
 	public void mul(TEMP dst, TEMP oprnd1, TEMP oprnd2, boolean checkOverflow) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-		int dstidx = dst.getSerialNumber();
-
-		textSegment += String.format("\tmul %s, %s, %s\n", tempString(dstidx), tempString(i1), tempString(i2));
+		textSegment += String.format("\tmul %s\n", binopString(dst, oprnd1, oprnd2));
 
 		if (checkOverflow) {
 			checkLimits(dst);
@@ -239,12 +230,16 @@ public class MIPSGenerator {
 	}
 
 	public void div(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
+		textSegment += String.format("\tdiv %s\n", binopString(dst, oprnd1, oprnd2));
+		checkLimits(dst);
+	}
+
+	private static String binopString(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
 		int i1 = oprnd1.getSerialNumber();
 		int i2 = oprnd2.getSerialNumber();
 		int dstidx = dst.getSerialNumber();
 
-		textSegment += String.format("\tdiv %s, %s, %s\n", tempString(dstidx), tempString(i1), tempString(i2));
-		checkLimits(dst);
+		return String.format("\t%s, %s, %s", tempString(dstidx), tempString(i1), tempString(i2));
 	}
 
 	/************************************************
@@ -510,10 +505,7 @@ public class MIPSGenerator {
 	 ************************************************/
 
 	public void blt(TEMP oprnd1, TEMP oprnd2, String label) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-
-		textSegment += String.format("\tblt %s, %s, %s\n", tempString(i1), tempString(i2), label);
+		this.branchBinop("blt", oprnd1, oprnd2, label);
 	}
 
 	public void bltz(TEMP oprnd, String label) {
@@ -522,44 +514,36 @@ public class MIPSGenerator {
 	}
 
 	public void bgt(TEMP oprnd1, TEMP oprnd2, String label) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-
-		textSegment += String.format("\tbgt %s, %s, %s\n", tempString(i1), tempString(i2), label);
+		this.branchBinop("bgt", oprnd1, oprnd2, label);
 	}
 
 	public void bge(TEMP oprnd1, TEMP oprnd2, String label) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-
-		textSegment += String.format("\tbge %s, %s, %s\n", tempString(i1), tempString(i2), label);
+		this.branchBinop("bge", oprnd1, oprnd2, label);
 	}
 
 	public void ble(TEMP oprnd1, TEMP oprnd2, String label) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-
-		textSegment += String.format("\tble %s, %s, %s\n", tempString(i1), tempString(i2), label);
+		this.branchBinop("ble", oprnd1, oprnd2, label);
 	}
 
 	public void bne(TEMP oprnd1, TEMP oprnd2, String label) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-
-		textSegment += String.format("\tbne %s, %s, %s\n", tempString(i1), tempString(i2), label);
+		this.branchBinop("bne", oprnd1, oprnd2, label);
 	}
 
 	public void beq(TEMP oprnd1, TEMP oprnd2, String label) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-
-		textSegment += String.format("\tbeq %s, %s, %s\n", tempString(i1), tempString(i2), label);
+		this.branchBinop("beq", oprnd1, oprnd2, label);
 	}
 
 	public void beqz(TEMP oprnd1, String label) {
 		int i1 = oprnd1.getSerialNumber();
 
 		textSegment += String.format("\tbeq %s, $zero, %s\n", tempString(i1), label);
+	}
+
+	private void branchBinop(String command, TEMP oprnd1, TEMP oprnd2, String label) {
+		int i1 = oprnd1.getSerialNumber();
+		int i2 = oprnd2.getSerialNumber();
+
+		this.textSegment += String.format("\t%s %s, %s, %s\n", command, tempString(i1), tempString(i2), label);
 	}
 
 	/************************************************
@@ -606,7 +590,8 @@ public class MIPSGenerator {
 
 		// store return value in dst
 		int dstidx = dst.getSerialNumber();
-		textSegment += String.format("\tmov %s, $v0\n", tempString(dstidx));
+		moveRegisters(tempString(dstidx), "$v0");
+		// textSegment += String.format("\tmov %s, $v0\n", tempString(dstidx));
 	}
 
 	/*********************************************
@@ -648,7 +633,8 @@ public class MIPSGenerator {
 
 	public void funcEpilogue(String funcName) {
 		label(Labels.getAvialableLabel(funcName + "_epilogue"));
-		textSegment += String.format("\tmov $sp, $fp\n");
+		moveRegisters("$sp", "$fp");
+		// textSegment += String.format("\tmov $sp, $fp\n");
 		registersRestore();
 		textSegment += String.format("\tlw $fp, 0($sp)\n");
 		textSegment += String.format("\tlw $ra, 4($sp)\n");
@@ -658,7 +644,8 @@ public class MIPSGenerator {
 
 	public void doReturn(TEMP expRetReg) {
 		int expRetRegIdx = expRetReg.getSerialNumber();
-		textSegment += String.format("\tmov $v0, %s\n", tempString(expRetRegIdx));
+		moveRegisters("$v0", tempString(expRetRegIdx));
+		// textSegment += String.format("\tmov $v0, %s\n", tempString(expRetRegIdx));
 	}
 
 	/**************************************/
