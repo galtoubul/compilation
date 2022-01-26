@@ -151,6 +151,18 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsyscall\n");
 	}
 
+	public void PrintInt(int tmpInd) {
+		textSegment += String.format("\tli $a0, %d\n", tmpInd);
+		textSegment += String.format("\tli $v0, 1\n");
+		textSegment += String.format("\tsyscall\n");
+	}
+
+	public void PrintString(int tmpInd) {
+		textSegment += String.format("\tli $a0, Temp_%d\n", tmpInd);
+		textSegment += String.format("\tli $v0, 4\n");
+		textSegment += String.format("\tsyscall\n");
+	}
+
 	/************************************************
 	 * Arithmetics
 	 ************************************************/
@@ -556,6 +568,12 @@ public class MIPSGenerator {
 
 		// restore sp
 		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
+		if (funcName.equals("PrintInt")) {
+			PrintInt(argsTempList.head.getSerialNumber());
+		}
+		if (funcName.equals("PrintString")) {
+			PrintString(argsTempList.head.getSerialNumber());
+		}
 	}
 
 	public void callFuncExp(TEMP dst, String funcName, TEMP_LIST argsTempList) {
