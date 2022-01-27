@@ -238,8 +238,17 @@ public class MIPSGenerator {
 	}
 
 	public void div(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
+		String div_by_0 = Labels.getAvialableLabel("div_by_0");
+		String end_div = Labels.getAvialableLabel("end_div");
+		beqz(oprnd2, div_by_0);
 		textSegment += String.format("\tdiv %s\n", binopString(dst, oprnd1, oprnd2));
 		checkLimits(dst);
+		jump(end_div);
+		label(div_by_0);
+		textSegment += String.format("\tli $a0, $string_illegal_div_by_0\n");
+		textSegment += String.format("\tli $v0, 4\n");
+		textSegment += String.format("\tsyscall\n");
+		label(end_div);
 	}
 
 	private static String binopString(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
@@ -449,12 +458,14 @@ public class MIPSGenerator {
 	public void checkAccessViolation(TEMP arrayTmp, TEMP subscriptTemp) {
 
 		label(Labels.getAvialableLabel("check_access_violation_start"));
+		String after_check_access_violation = Labels.getAvialableLabel("after_check_access_violation");
+		String invalid_access = Labels.getAvialableLabel("invalid_access");
 
 		// add abort stub in the end of the text segment
 		add_abort_flag = true;
 
 		// check for a negative index
-		bltz(subscriptTemp, ABORT_LABEL);
+		bltz(subscriptTemp, invalid_access);
 
 		// check for an index which is bigger than array size
 		// TEMP arraySizeTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
@@ -464,9 +475,15 @@ public class MIPSGenerator {
 		this.textSegment += String.format("lw %s, 0(%s)", ARRAY_SIZE_REG, tempString(arrayTmp.getSerialNumber()));
 		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
 		this.textSegment += String.format("bge %s, %s, %s", tempString(subscriptTemp.getSerialNumber()),
-				ARRAY_SIZE_REG, ABORT_LABEL);
+				ARRAY_SIZE_REG, invalid_access);
 
-		label(Labels.getAvialableLabel("after_check_access_violation"));
+		jump(after_check_access_violation);
+		label(invalid_access);
+		textSegment += String.format("\tli $a0, $string_access_violation\n");
+		textSegment += String.format("\tli $v0, 4\n");
+		textSegment += String.format("\tsyscall\n");
+
+		label(after_check_access_violation);
 	}
 
 	public void assignTmpWithArrayElement(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
