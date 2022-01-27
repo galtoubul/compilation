@@ -198,6 +198,14 @@ public class MIPSGenerator {
 		label(afterLimitsChecksLabel);
 	}
 
+	private void binopRegisters(String operation, String dst, String r1, String value) {
+		this.textSegment += String.format("\t%s %s, %s, %s\n", operation, dst, r1, value);
+	}
+
+	private void selfBinopRegister(String operation, String register, int constant) {
+		this.binopRegisters(operation, register, register, String.valueOf(constant));
+	}
+
 	public void add(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
 		add(dst, oprnd1, oprnd2, true);
 	}
@@ -252,19 +260,20 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsw %s, %d($fp)\n", tempString(rValueTmpInd), offset);
 	}
 
-	// assign <tmpRvalue> to <offsetTmp> at the local variable which its local index is <varIndex>
-	public void localVarAssignment(int varIndex, TEMP offsetTmp, TEMP tmpRvalue) {
-		// newOffsetTmp = local variable
-		TEMP newOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-		loadFromLocal(newOffsetTmp, varIndex);
+	// assign <tmpRvalue> to <offsetTmp> at the local variable which its local index
+	// is <varIndex>
+	public void localVarAssignment(TEMP arrayTemp, TEMP offsetTmp, TEMP tmpRvalue) {
+		// // newOffsetTmp = local variable
+		// TEMP newOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// loadFromLocal(newOffsetTmp, varIndex);
 
 		// newOffsetTmp += offsetTmp
-		add(newOffsetTmp, newOffsetTmp, offsetTmp, false);
+		add(arrayTemp, arrayTemp, offsetTmp, false);
 
 		// *newOffsetTmp = tmpRvalue
-		int newOffsetTmpInd = newOffsetTmp.getSerialNumber();
+		int arrayTempInd = arrayTemp.getSerialNumber();
 		int tmpRvalueInd = tmpRvalue.getSerialNumber();
-		textSegment += String.format("\tsw Temp_%d, 0(Temp_%d)\n", tmpRvalueInd, newOffsetTmpInd);
+		textSegment += String.format("\tsw %s, 0(%s)\n", tempString(tmpRvalueInd), tempString(arrayTempInd));
 	}
 
 	public void storeLocalVar(int ind, TEMP initialValueTmp) {
@@ -350,9 +359,11 @@ public class MIPSGenerator {
 	 ************************************************/
 
 	public void calcStringLengthIntoTmp(TEMP stringLenTmp, TEMP stringTmp) {
-		TEMP stringByteTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// TEMP stringByteTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		String loopLabel = Labels.getAvialableLabel("str_len_loop");
 		String endLabel = Labels.getAvialableLabel("str_len_end");
+
+		final String STRING_LENGTH_REG = "$s0";
 
 		// initialize stringLenTmp
 		initTmpWithZero(stringLenTmp);
@@ -361,16 +372,20 @@ public class MIPSGenerator {
 		label(loopLabel);
 
 		// load byte
-		lbFromTmpToTmp(stringByteTemp, stringTmp, 0);
+		// lbFromTmpToTmp(stringByteTemp, stringTmp, 0);
+		this.textSegment += String.format("\tlb %s, %d(%s)\n", STRING_LENGTH_REG, 0,
+				tempString(stringTmp.getSerialNumber()));
 
 		// stop counting if reached the string's end
-		beqz(stringByteTemp, endLabel);
+		// beqz(stringByteTemp, endLabel);
+		this.textSegment += String.format("\tbeq %s, $zero, %s\n", STRING_LENGTH_REG, endLabel);
 
 		// increase counter by one
 		addConstIntToTmp(stringLenTmp, 1);
 
 		// increase byte pointer by one
-		addConstIntToTmp(stringByteTemp, 1);
+		// addConstIntToTmp(stringByteTemp, 1);
+		this.selfBinopRegister("add", STRING_LENGTH_REG, 1);
 
 		// j str_len_loop
 		jump(loopLabel);
@@ -407,13 +422,16 @@ public class MIPSGenerator {
 	public void createNewArray(TEMP dstTemp, TEMP subscriptTemp) {
 
 		// calculate the array size
-		TEMP sizeTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
-		movFromTmpToTmp(sizeTemp, subscriptTemp);
-		addConstIntToTmp(sizeTemp, 1); // 1 is for the size of the array (which is its first element)
-		multTmpByConstInt(sizeTemp, WORD_SIZE);
+		// TEMP sizeTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// movFromTmpToTmp(sizeTemp, subscriptTemp);
+
+		final String ALLOC_SIZE_REG = "$a0";
+		moveRegisters(ALLOC_SIZE_REG, tempString(subscriptTemp.getSerialNumber()));
+		this.selfBinopRegister("add", ALLOC_SIZE_REG, 1);
+		this.selfBinopRegister("mul", ALLOC_SIZE_REG, WORD_SIZE);
 
 		// alocate memory for the array
-		malloc(dstTemp, sizeTemp);
+		malloc(dstTemp);
 
 		// first cell of the array should contain its size
 		int subscriptTempInd = subscriptTemp.getSerialNumber();
@@ -439,29 +457,43 @@ public class MIPSGenerator {
 		bltz(subscriptTemp, ABORT_LABEL);
 
 		// check for an index which is bigger than array size
-		TEMP arraySizeTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-		loadArraySize(arraySizeTmp, arrayTmp);
-		bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
+		// TEMP arraySizeTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// loadArraySize(arraySizeTmp, arrayTmp);
+
+		final String ARRAY_SIZE_REG = "$s0";
+		this.textSegment += String.format("lw %s, 0(%s)", ARRAY_SIZE_REG, tempString(arrayTmp.getSerialNumber()));
+		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
+		this.textSegment += String.format("bge %s, %s, %s", tempString(subscriptTemp.getSerialNumber()),
+				ARRAY_SIZE_REG, ABORT_LABEL);
 
 		label(Labels.getAvialableLabel("after_check_access_violation"));
 	}
 
 	public void assignTmpWithArrayElement(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
 
+		final String OFFSET_REG = "$s0";
+
 		// check access violation
 		checkAccessViolation(arrayTmp, subscriptTemp);
 
 		// calc offset
-		TEMP arrayOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-		movFromTmpToTmp(arrayOffsetTmp, subscriptTemp);
-		addConstIntToTmp(arrayOffsetTmp, 1); // 1 is for the size of the array (which is its first element)
-		multTmpByConstInt(arrayOffsetTmp, WORD_SIZE);
+		// TEMP arrayOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// movFromTmpToTmp(arrayOffsetTmp, subscriptTemp);
+		this.moveRegisters(OFFSET_REG, tempString(subscriptTemp.getSerialNumber()));
+		// addConstIntToTmp(arrayOffsetTmp, 1); // 1 is for the size of the array (which
+		// is its first element)
+		this.selfBinopRegister("add", OFFSET_REG, 1); // 1 is for the size of the array (which is its first element)
+		// multTmpByConstInt(arrayOffsetTmp, WORD_SIZE);
+		this.selfBinopRegister("mul", OFFSET_REG, WORD_SIZE);
 
 		// load from offset
-		add(arrayOffsetTmp, arrayOffsetTmp, arrayTmp, false);
+		// add(arrayOffsetTmp, arrayOffsetTmp, arrayTmp, false);
+		this.binopRegisters("addu", OFFSET_REG, tempString(arrayTmp.getSerialNumber()), OFFSET_REG);
 		int dstTempInd = dstTemp.getSerialNumber();
-		int arrayOffsetTmpInd = arrayOffsetTmp.getSerialNumber();
-		textSegment += String.format("\tlw %s, 0(%s)\n", tempString(dstTempInd), tempString(arrayOffsetTmpInd));
+		// int arrayOffsetTmpInd = arrayOffsetTmp.getSerialNumber();
+		// textSegment += String.format("\tlw %s, 0(%s)\n", tempString(dstTempInd),
+		// tempString(arrayOffsetTmpInd));
+		textSegment += String.format("\tlw %s, 0(%s)\n", tempString(dstTempInd), OFFSET_REG);
 	}
 
 	public void assignTmpWithOffset(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
