@@ -1,21 +1,27 @@
 package AST;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 
-import MIPS.MIPSGenerator;
+import IR.IR;
+import IR.IRcommand_ClassDec;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_FUNCTION;
 import TYPES.TYPE_LIST;
+import pair.Pair;
 import TEMP.*;
 
 public class AST_CLASS_DEC extends AST_Node {
     public String id;
     Optional<String> father;
     public AST_CFIELD_LIST fields;
+    public ArrayList<Optional<Object>> initialValues; // Very disgusting
+
+    private ArrayList<Pair<String, String>> vtable = new ArrayList<>();
 
     HashSet<String> vtableMethods;
 
@@ -54,15 +60,21 @@ public class AST_CLASS_DEC extends AST_Node {
     }
 
     private void createVtable() {
-        MIPSGenerator mips_gen = MIPSGenerator.getInstance();
+        // MIPSGenerator mips_gen = MIPSGenerator.getInstance();
         vtableMethods = new HashSet<>();
-        mips_gen.createVtable(id);
+        // mips_gen.createVtable(id);
         AST_CFIELD_LIST ptr1 = this.fields;
         while (ptr1 != null && ptr1.head != null) {
             if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC) {
-                mips_gen.addMethodToVtable(id,((AST_CFIELD_FUNC_DEC) ptr1.head).func.id);
+                this.vtable.add(new Pair<>(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id));
+                // mips_gen.addMethodToVtable(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id);
                 vtableMethods.add(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id);
+            } else {
+                if (((AST_CFIELD_VAR_DEC) ptr1.head).var.type.equals(Type.TYPE_INT)) {
 
+                } else if (((AST_CFIELD_VAR_DEC) ptr1.head).var.type.equals(Type.TYPE_STRING)) {
+
+                }
             }
             ptr1 = ptr1.tail;
         }
@@ -72,13 +84,16 @@ public class AST_CLASS_DEC extends AST_Node {
             while (fatherClass != null) {
                 TYPE_LIST fatherMembers = fatherClass.data_members;
                 while (fatherMembers != null && fatherMembers.head != null) {
-                    if (fatherMembers.head instanceof TYPE_FUNCTION && !vtableMethods.contains(fatherMembers.head.name)) {
-                        mips_gen.addMethodToVtable(fatherClass.name,((TYPE_FUNCTION) fatherMembers.head).name);
+                    if (fatherMembers.head instanceof TYPE_FUNCTION
+                            && !vtableMethods.contains(fatherMembers.head.name)) {
+                        this.vtable.add(new Pair<>(fatherClass.name, ((TYPE_FUNCTION) fatherMembers.head).name));
+                        // mips_gen.addMethodToVtable(fatherClass.name, ((TYPE_FUNCTION)
+                        // fatherMembers.head).name);
                         vtableMethods.add(((TYPE_FUNCTION) fatherMembers.head).name);
                     }
                     fatherMembers = fatherMembers.tail;
                 }
-                if(fatherClass.father.isPresent())
+                if (fatherClass.father.isPresent())
                     fatherClass = fatherClass.father.get();
                 else
                     fatherClass = null;
@@ -89,7 +104,6 @@ public class AST_CLASS_DEC extends AST_Node {
     public TYPE SemantMe() {
         System.out.println("-- AST_CLASS_DEC SemantMe");
         Optional<TYPE_CLASS> base = Optional.empty();
-        createVtable();
         // Validating base class
         if (father.isPresent()) {
             // TYPE fatherType = SYMBOL_TABLE.getInstance().find(this.father.get());
@@ -112,7 +126,8 @@ public class AST_CLASS_DEC extends AST_Node {
         // Begin Class Scope
         SYMBOL_TABLE.getInstance().beginScope(ScopeType.Class, id);
 
-        // Enter the Class Type to the Symbol Table (for semantic checking inside the class's scope)
+        // Enter the Class Type to the Symbol Table (for semantic checking inside the
+        // class's scope)
         int fieldsNum = getFieldsNum();
         SYMBOL_TABLE.getInstance().enter(id, new TYPE_CLASS(base, id, new TYPE_LIST(null, null), fieldsNum), true);
         System.out.println("\t\tline number = " + lineNum);
@@ -126,12 +141,15 @@ public class AST_CLASS_DEC extends AST_Node {
         // Reenter the Class Type to the Symbol Table
         SYMBOL_TABLE.getInstance().enter(id, type, true);
 
+        createVtable();
+
         // Return value is irrelevant for class declarations
         return null;
     }
 
     // TODO
     public TEMP IRme() {
+        IR.getInstance().Add_IRcommand(new IRcommand_ClassDec(this.vtable, id));
         return null;
     }
 }

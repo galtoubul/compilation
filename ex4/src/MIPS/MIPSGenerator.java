@@ -714,6 +714,13 @@ public class MIPSGenerator {
 		dataSegment += String.format(".word %s_%s\n", methodName, className);
 	}
 
+	public void addVtable(List<Pair<String, String>> vtable, String className) {
+		dataSegment += String.format("%s:\n", vtableLabel(className));
+		for (Pair<String, String> entry : vtable) {
+			this.addMethodToVtable(entry.getKey(), entry.getValue());
+		}
+	}
+
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
