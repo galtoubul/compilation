@@ -129,11 +129,13 @@ public class AST_CLASS_DEC extends AST_Node {
         // Enter the Class Type to the Symbol Table (for semantic checking inside the
         // class's scope)
         int fieldsNum = getFieldsNum();
-        SYMBOL_TABLE.getInstance().enter(id, new TYPE_CLASS(base, id, new TYPE_LIST(null, null), fieldsNum), true);
+        TYPE_CLASS scopeDummy = new TYPE_CLASS(base, id, new TYPE_LIST(null, null), fieldsNum);
+        SYMBOL_TABLE.getInstance().enter(id, scopeDummy, true);
         System.out.println("\t\tline number = " + lineNum);
 
         // Semant Data Members
-        TYPE_CLASS type = new TYPE_CLASS(base, id, fields.SemantMe(base.map(classType -> classType.name)), fieldsNum);
+        TYPE_CLASS type = new TYPE_CLASS(base, id, fields.SemantMe(base.map(classType -> classType.name)), fieldsNum,
+                scopeDummy.initialValues);
 
         // End Scope
         SYMBOL_TABLE.getInstance().endScope();

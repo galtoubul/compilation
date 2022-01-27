@@ -5,6 +5,7 @@ import java.util.Optional;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
+import TYPES.TYPE_CLASS;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_VOID;
 import ast_annotation.AstAnnotation;
@@ -78,6 +79,16 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
                 !(initialValue instanceof AST_EXP_NIL)) {
             System.out.format(">> ERROR [%d:%d] class fields can only be initialized with constant values\n", 2, 2, id);
             throw new SemanticErrorException("" + lineNum);
+        }
+
+        if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class) {
+            TYPE_CLASS currentClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance()
+                    .find(SYMBOL_TABLE.getInstance().currentScope().scopeName.get());
+            if (initialValue instanceof AST_EXP_INT) {
+                currentClass.initialValues.add(Optional.of(((AST_EXP_INT) initialValue).value));
+            } else if (initialValue instanceof AST_EXP_STRING) {
+                currentClass.initialValues.add(Optional.of(((AST_EXP_STRING) initialValue).s));
+            }
         }
 
         /***************************************************/

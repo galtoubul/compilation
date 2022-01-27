@@ -2,6 +2,7 @@ package MIPS;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Optional;
 
 import TEMP.*;
 import TYPES.*;
@@ -429,11 +430,20 @@ public class MIPSGenerator {
 		malloc(dstTempReg, classSize);
 
 		final String UTILITY_REG = "$s0";
-		this.textSegment += String.format("la %s, %s\n", UTILITY_REG, vtableLabel(objectType.name));
-		this.textSegment += String.format("sw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg.getSerialNumber()));
-		// this.textSegment += String.format("li %s, %s\n", UTILITY_REG, _);
-		// this.textSegment += String.format("sw %s, 4(%s)", UTILITY_REG,
-		// tempString(dstTempReg.getSerialNumber()));
+		this.textSegment += String.format("\tla %s, %s\n", UTILITY_REG, vtableLabel(objectType.name));
+		this.textSegment += String.format("\tsw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg.getSerialNumber()));
+		System.out.format("Size: %d\n", objectType.initialValues.size());
+		for (Optional<Object> o : objectType.initialValues) {
+			if (o.isPresent()) {
+				if (o.get() instanceof Integer) {
+					this.textSegment += String.format("\tli %s, %s\n", UTILITY_REG, (Integer) o.get());
+				} else {
+					this.textSegment += String.format("\tli %s, %s\n", UTILITY_REG, (String) o.get());
+				}
+				this.textSegment += String.format("\tsw %s, 4(%s)\n", UTILITY_REG,
+						tempString(dstTempReg.getSerialNumber()));
+			}
+		}
 	}
 
 	/************************************************

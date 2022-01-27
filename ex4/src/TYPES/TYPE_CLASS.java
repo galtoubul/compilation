@@ -1,5 +1,6 @@
 package TYPES;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class TYPE_CLASS extends TYPE {
@@ -15,16 +16,30 @@ public class TYPE_CLASS extends TYPE {
 	/**************************************************/
 	public TYPE_LIST data_members;
 
+	/**
+	 * A list of the initial values that data members (variables) may have.
+	 * The value can be either int (stored as an `Integer`) or string (stored as a
+	 * `String`).
+	 */
+	public ArrayList<Optional<Object>> initialValues; // Very disgusting
+
 	public int fieldsNum = 0;
 
 	/****************/
 	/* CTROR(S) ... */
 	/****************/
 	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum) {
+		this(father, name, data_members, fieldsNum,
+				father.isPresent() ? new ArrayList<>(father.get().initialValues) : new ArrayList<>());
+	}
+
+	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum,
+			ArrayList<Optional<Object>> initialValues) {
 		this.name = name;
 		this.father = father;
 		this.data_members = data_members;
 		this.fieldsNum = fieldsNum;
+		this.initialValues = initialValues;
 	}
 
 	/**
