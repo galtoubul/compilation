@@ -248,6 +248,7 @@ public class MIPSGenerator {
 		textSegment += String.format("\tli $a0, $string_illegal_div_by_0\n");
 		textSegment += String.format("\tli $v0, 4\n");
 		textSegment += String.format("\tsyscall\n");
+		exit();
 		label(end_div);
 	}
 
@@ -476,12 +477,13 @@ public class MIPSGenerator {
 		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
 		this.textSegment += String.format("bge %s, %s, %s", tempString(subscriptTemp.getSerialNumber()),
 				ARRAY_SIZE_REG, invalid_access);
-
 		jump(after_check_access_violation);
+
 		label(invalid_access);
 		textSegment += String.format("\tli $a0, $string_access_violation\n");
 		textSegment += String.format("\tli $v0, 4\n");
 		textSegment += String.format("\tsyscall\n");
+		exit();
 
 		label(after_check_access_violation);
 	}
