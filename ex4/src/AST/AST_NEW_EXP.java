@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
+import TYPES.TYPE_CLASS;
 import TYPES.TYPE_INT;
 import TEMP.*;
 import IR.*;
@@ -65,7 +66,7 @@ public class AST_NEW_EXP extends AST_Node {
             IR.getInstance().Add_IRcommand(new IRcommand_New_Array(dst, this.type.getTYPE(lineNum), subscriptTemp));
         } else {
             // object
-            IR.getInstance().Add_IRcommand(new IRcommand_New_Object(dst, this.type.getTYPE(lineNum)));
+            IR.getInstance().Add_IRcommand(new IRcommand_New_Object(dst, (TYPE_CLASS) this.type.getTYPE(lineNum)));
         }
 
         return dst;

@@ -9,10 +9,10 @@ import MIPS.*;
 import TYPES.*;
 
 public class IRcommand_New_Object extends IRcommand {
-	TYPE objectType;
+	TYPE_CLASS objectType;
 	TEMP dstTempReg;
 
-	public IRcommand_New_Object(TEMP dstTempReg, TYPE objectType) {
+	public IRcommand_New_Object(TEMP dstTempReg, TYPE_CLASS objectType) {
 		this.objectType = objectType;
 		this.dstTempReg = dstTempReg;
 	}
