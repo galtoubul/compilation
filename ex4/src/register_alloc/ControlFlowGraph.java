@@ -3,11 +3,11 @@ package register_alloc;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import IR.IRcommand;
-import IR.IRcommandList;
 import IR.IRcommand_Jump_If_Eq_To_Zero;
 import IR.IRcommand_Jump_Label;
 import IR.IRcommand_Label;
@@ -42,7 +42,7 @@ class ControlFlowGraph {
      * @param code The IR code to create the CFG from.
      * @return The CFG of the code, but with all the edges reversed.
      */
-    static ControlFlowGraph backwardCFG(IRcommandList code) {
+    static ControlFlowGraph backwardCFG(List<IRcommand> code) {
         // In order to construct the CFG edges in reverse, if there is a jump in the
         // code we store the source point as a neighbor of the labled destination point,
         // in a map. Otherwise, the (only) neighbor of the next command will be the

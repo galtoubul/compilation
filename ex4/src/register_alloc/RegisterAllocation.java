@@ -4,12 +4,13 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import IR.IRcommandList;
+import IR.IRcommand;
 import TEMP.TEMP;
 import pair.Pair;
 import register_alloc.ControlFlowGraph.Node;
@@ -29,8 +30,8 @@ public class RegisterAllocation {
      *         If the the given amound of registers cannot be allocated for the
      *         temporaries, return an empty `Optional` instance.
      */
-    public static Optional<HashMap<TEMP, Integer>> allocateRegisters(IRcommandList function, int registers) {
-        return colorInterferenceGraph(new InterferenceGraph(livenessAnalysis(ControlFlowGraph.backwardCFG(function))),
+    public static Optional<HashMap<TEMP, Integer>> allocateRegisters(List<IRcommand> code, int registers) {
+        return colorInterferenceGraph(new InterferenceGraph(livenessAnalysis(ControlFlowGraph.backwardCFG(code))),
                 registers);
     }
 
