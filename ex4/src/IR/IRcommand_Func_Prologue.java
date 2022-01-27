@@ -3,11 +3,15 @@
 /***********/
 package IR;
 
-import MIPS.*;
-import SYMBOL_TABLE.*;
-import TYPES.*;
+import java.util.HashSet;
+import java.util.Set;
 
-public class IRcommand_Func_Prologue extends IRcommand_IDTransform {
+import MIPS.MIPSGenerator;
+import SYMBOL_TABLE.SYMBOL_TABLE;
+import TEMP.TEMP;
+import TYPES.TYPE_FUNCTION;
+
+public class IRcommand_Func_Prologue extends IRcommand {
 	int localVarsNum;
 	String funcName;
 
@@ -25,5 +29,10 @@ public class IRcommand_Func_Prologue extends IRcommand_IDTransform {
 	public void MIPSme() {
 		System.out.println("-- IRcommand_Func_Prologue MIPSme");
 		MIPSGenerator.getInstance().funcPrologue(localVarsNum, funcName);
+	}
+
+	@Override
+	public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
+		return new HashSet<>();
 	}
 }
