@@ -1,17 +1,19 @@
 package MIPS;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 import TEMP.*;
 import TYPES.*;
 import labels.Labels;
+import pair.Pair;
 import SYMBOL_TABLE.*;
 
 public class MIPSGenerator {
 
-	private int WORD_SIZE = 4;
-	private int TMPS_BACKUP_SPACE = 40; // t0 - t9 backup
-	private String ABORT_LABEL = "abort_label";
+	private static final int WORD_SIZE = 4;
+	private static final int TMPS_BACKUP_SPACE = 40; // t0 - t9 backup
+	private static final String ABORT_LABEL = "abort_label";
 	private boolean add_abort_flag = false;
 	private PrintWriter fileWriter;
 	private String dataSegment = "";
@@ -245,7 +247,7 @@ public class MIPSGenerator {
 		checkLimits(dst);
 		jump(end_div);
 		label(div_by_0);
-		textSegment += String.format("\tli $a0, $string_illegal_div_by_0\n");
+		textSegment += String.format("\tli $a0, string_illegal_div_by_0\n");
 		textSegment += String.format("\tli $v0, 4\n");
 		textSegment += String.format("\tsyscall\n");
 		exit();
@@ -408,21 +410,30 @@ public class MIPSGenerator {
 	 * Class
 	 ************************************************/
 
-	public int getClassSize(TYPE objectType) {
-		TYPE_CLASS t = ((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(objectType.name));
-
-		int fieldsNumTotal = t.fieldsNum;
-		while (t.father.isPresent()) {
-			t = t.father.get();
-			fieldsNumTotal += t.fieldsNum;
+	public static int getClassSize(TYPE_CLASS objectType) {
+		int fieldsNumTotal = objectType.fieldsNum;
+		while (objectType.father.isPresent()) {
+			objectType = objectType.father.get();
+			fieldsNumTotal += objectType.fieldsNum;
 		}
 
 		return fieldsNumTotal * WORD_SIZE + 4; // 4 is for the vtable
 	}
 
-	public void createNewObject(TEMP dstTempReg, TYPE objectType) {
+	public static String vtableLabel(String className) {
+		return String.format("Vt_%s", className);
+	}
+
+	public void createNewObject(TEMP dstTempReg, TYPE_CLASS objectType) {
 		int classSize = getClassSize(objectType);
 		malloc(dstTempReg, classSize);
+
+		final String UTILITY_REG = "$s0";
+		this.textSegment += String.format("la %s, %s\n", UTILITY_REG, vtableLabel(objectType.name));
+		this.textSegment += String.format("sw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg.getSerialNumber()));
+		// this.textSegment += String.format("li %s, %s\n", UTILITY_REG, _);
+		// this.textSegment += String.format("sw %s, 4(%s)", UTILITY_REG,
+		// tempString(dstTempReg.getSerialNumber()));
 	}
 
 	/************************************************
@@ -480,7 +491,7 @@ public class MIPSGenerator {
 		jump(after_check_access_violation);
 
 		label(invalid_access);
-		textSegment += String.format("\tli $a0, $string_access_violation\n");
+		textSegment += String.format("\tli $a0, string_access_violation\n");
 		textSegment += String.format("\tli $v0, 4\n");
 		textSegment += String.format("\tsyscall\n");
 		exit();
@@ -697,10 +708,6 @@ public class MIPSGenerator {
 		int expRetRegIdx = expRetReg.getSerialNumber();
 		moveRegisters("$v0", tempString(expRetRegIdx));
 		// textSegment += String.format("\tmov $v0, %s\n", tempString(expRetRegIdx));
-	}
-
-	public void createVtable(String className) {
-		dataSegment += String.format("Vt_%s:\n", className);
 	}
 
 	public void addMethodToVtable(String className, String methodName) {
