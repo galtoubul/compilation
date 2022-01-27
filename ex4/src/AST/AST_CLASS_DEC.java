@@ -1,11 +1,14 @@
 package AST;
 
+import java.util.HashSet;
 import java.util.Optional;
 
+import MIPS.MIPSGenerator;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
+import TYPES.TYPE_FUNCTION;
 import TYPES.TYPE_LIST;
 import TEMP.*;
 
@@ -13,6 +16,8 @@ public class AST_CLASS_DEC extends AST_Node {
     public String id;
     Optional<String> father;
     public AST_CFIELD_LIST fields;
+
+    HashSet<String> vtableMethods;
 
     public AST_CLASS_DEC(String id, Optional<String> father, AST_CFIELD_LIST fields) {
         this.id = id;
@@ -48,11 +53,43 @@ public class AST_CLASS_DEC extends AST_Node {
         return fieldsNum;
     }
 
+    private void createVtable() {
+        MIPSGenerator mips_gen = MIPSGenerator.getInstance();
+        vtableMethods = new HashSet<>();
+        mips_gen.createVtable(id);
+        AST_CFIELD_LIST ptr1 = this.fields;
+        while (ptr1 != null && ptr1.head != null) {
+            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC) {
+                mips_gen.addMethodToVtable(id,((AST_CFIELD_FUNC_DEC) ptr1.head).func.id);
+                vtableMethods.add(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id);
+
+            }
+            ptr1 = ptr1.tail;
+        }
+
+        if (father.isPresent()) {
+            TYPE_CLASS fatherClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.father.get());
+            while (fatherClass != null) {
+                TYPE_LIST fatherMembers = fatherClass.data_members;
+                while (fatherMembers != null && fatherMembers.head != null) {
+                    if (fatherMembers.head instanceof TYPE_FUNCTION && !vtableMethods.contains(fatherMembers.head.name)) {
+                        mips_gen.addMethodToVtable(fatherClass.name,((TYPE_FUNCTION) fatherMembers.head).name);
+                        vtableMethods.add(((TYPE_FUNCTION) fatherMembers.head).name);
+                    }
+                    fatherMembers = fatherMembers.tail;
+                }
+                if(fatherClass.father.isPresent())
+                    fatherClass = fatherClass.father.get();
+                else
+                    fatherClass = null;
+            }
+        }
+    }
+
     public TYPE SemantMe() {
         System.out.println("-- AST_CLASS_DEC SemantMe");
-
         Optional<TYPE_CLASS> base = Optional.empty();
-
+        createVtable();
         // Validating base class
         if (father.isPresent()) {
             // TYPE fatherType = SYMBOL_TABLE.getInstance().find(this.father.get());
@@ -95,7 +132,6 @@ public class AST_CLASS_DEC extends AST_Node {
 
     // TODO
     public TEMP IRme() {
-        System.out.println("-- AST_CLASS_DEC IRme");
         return null;
     }
 }

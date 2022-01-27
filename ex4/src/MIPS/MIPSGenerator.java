@@ -473,9 +473,9 @@ public class MIPSGenerator {
 		// loadArraySize(arraySizeTmp, arrayTmp);
 
 		final String ARRAY_SIZE_REG = "$s0";
-		this.textSegment += String.format("lw %s, 0(%s)", ARRAY_SIZE_REG, tempString(arrayTmp.getSerialNumber()));
+		this.textSegment += String.format("\tlw %s, 0(%s)\n", ARRAY_SIZE_REG, tempString(arrayTmp.getSerialNumber()));
 		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
-		this.textSegment += String.format("bge %s, %s, %s", tempString(subscriptTemp.getSerialNumber()),
+		this.textSegment += String.format("\tbge %s, %s, %s\n", tempString(subscriptTemp.getSerialNumber()),
 				ARRAY_SIZE_REG, invalid_access);
 		jump(after_check_access_violation);
 
@@ -697,6 +697,14 @@ public class MIPSGenerator {
 		int expRetRegIdx = expRetReg.getSerialNumber();
 		moveRegisters("$v0", tempString(expRetRegIdx));
 		// textSegment += String.format("\tmov $v0, %s\n", tempString(expRetRegIdx));
+	}
+
+	public void createVtable(String className) {
+		dataSegment += String.format("Vt_%s:\n", className);
+	}
+
+	public void addMethodToVtable(String className, String methodName) {
+		dataSegment += String.format(".word %s_%s\n", methodName, className);
 	}
 
 	/**************************************/

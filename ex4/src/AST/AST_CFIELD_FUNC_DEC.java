@@ -2,6 +2,7 @@ package AST;
 
 import java.util.Optional;
 
+import TEMP.TEMP;
 import TYPES.TYPE;
 
 public class AST_CFIELD_FUNC_DEC extends AST_CFIELD {
@@ -33,5 +34,10 @@ public class AST_CFIELD_FUNC_DEC extends AST_CFIELD {
     @Override
     public TYPE SemantMe(Optional<String> classId, Optional<Integer> fieldInd) {
         return this.func.SemantMe(classId);
+    }
+
+    @Override
+    public TEMP IRme() {
+        return func.IRme();
     }
 }

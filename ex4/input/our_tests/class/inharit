@@ -1,0 +1,9 @@
+class A {
+    int f() { return 1; }
+    int g() { return 2; }
+}
+
+class B extends A {
+    int f() { return 3; }
+    int h() { return 4; }
+}

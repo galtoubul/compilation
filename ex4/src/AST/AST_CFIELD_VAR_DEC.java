@@ -2,6 +2,7 @@ package AST;
 
 import java.util.Optional;
 
+import TEMP.TEMP;
 import TYPES.TYPE;
 
 public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
@@ -31,5 +32,10 @@ public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
     public TYPE SemantMe(Optional<String> classId, Optional<Integer> fieldIndOpt) {
         System.out.println("-- AST_CFIELD_VAR_DEC SemantMe");
         return this.var.SemantMe(classId, fieldIndOpt);
+    }
+
+    @Override
+    public TEMP IRme() {
+        return var.IRme();
     }
 }
