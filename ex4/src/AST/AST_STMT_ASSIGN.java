@@ -83,12 +83,10 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 
 		AST_VAR_SIMPLE varSimple;
 		if (var instanceof AST.AST_VAR_SIMPLE) {
-			varSimple = ((AST.AST_VAR_SIMPLE)var);
-		}
-		else if (var instanceof AST.AST_VAR_SUBSCRIPT) {
+			varSimple = ((AST.AST_VAR_SIMPLE) var);
+		} else if (var instanceof AST.AST_VAR_SUBSCRIPT) {
 			varSimple = (AST.AST_VAR_SIMPLE) ((AST.AST_VAR_SUBSCRIPT) var).var;
-		}
-		else { // instanceof AST.AST_VAR_FIELD
+		} else { // instanceof AST.AST_VAR_FIELD
 			varSimple = (AST.AST_VAR_SIMPLE) ((AST.AST_VAR_FIELD) var).var;
 		}
 
@@ -132,12 +130,23 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 
 			int localVarInd = astAnnotation.ind.orElse(-1);
 			if (var instanceof AST.AST_VAR_SUBSCRIPT) {
-				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(localVarInd, lValueTmp, rValueTmp));
-			}
-			else if (var instanceof AST.AST_VAR_FIELD) {
+				// TEMP arrayTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+				// TEMP offsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+				// TEMP pointerTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+				// IR.getInstance().Add_IRcommand(new
+				// IRcommand_Initialize_Tmp_With_Local_Var(pointerTmp, localVarInd));
+				// IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(arrayTmp,
+				// pointerTmp, offsetTmp));
+				// IR.getInstance().Add_IRcommand(new IRcommand_Store_Tmp_Pointer(arrayTmp,
+				// rValueTmp));
+
+				TEMP arrayTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+				IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Local_Var(arrayTmp, localVarInd));
+				IR.getInstance()
+						.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, lValueTmp, rValueTmp));
+			} else if (var instanceof AST.AST_VAR_FIELD) {
 				// todo
-			}
-			else { // instanceof AST.AST_VAR_SIMPLE
+			} else { // instanceof AST.AST_VAR_SIMPLE
 				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
 			}
 		}
