@@ -2,7 +2,6 @@ package IR;
 
 import TEMP.*;
 import MIPS.*;
-import global_variables.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +17,6 @@ public class IRcommand_Initialize_Temp_With_Offset extends IRcommand {
         this.subscriptTmp = subscriptTmp;
     }
 
-
     /***************/
     /* MIPS me !!! */
     /***************/
@@ -30,6 +28,6 @@ public class IRcommand_Initialize_Temp_With_Offset extends IRcommand {
     @Override
     public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
         // TODO
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
