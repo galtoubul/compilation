@@ -9,7 +9,7 @@ import java.util.Set;
 import MIPS.*;
 import TYPES.*;
 
-public class IRcommand_New_Object extends IRcommand {
+public class IRcommand_New_Object implements IRcommand {
 	TYPE_CLASS objectType;
 	TEMP dstTempReg;
 

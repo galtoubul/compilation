@@ -18,7 +18,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommand_PrintInt extends IRcommand {
+public class IRcommand_PrintInt implements IRcommand {
 	TEMP t;
 
 	public IRcommand_PrintInt(TEMP t) {

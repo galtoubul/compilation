@@ -8,7 +8,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommand_Return extends IRcommand {
+public class IRcommand_Return implements IRcommand {
 	TEMP expRetReg;
 
 	public IRcommand_Return(TEMP expRetReg) {

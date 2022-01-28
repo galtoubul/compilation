@@ -8,7 +8,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommand_Load extends IRcommand {
+public class IRcommand_Load implements IRcommand {
 	TEMP dst;
 	String var_name;
 

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import TEMP.TEMP;
 
-abstract class IRcommand_Initialize_Tmp extends IRcommand {
+abstract class IRcommand_Initialize_Tmp implements IRcommand {
     TEMP dst;
 
     public IRcommand_Initialize_Tmp(TEMP dst) {

@@ -5,7 +5,7 @@ import TEMP.*;
 import java.util.HashSet;
 import java.util.Set;
 
-abstract class IRcommand_Call_Func extends IRcommand {
+abstract class IRcommand_Call_Func implements IRcommand {
     TEMP dst;
     String funcName;
     TEMP_LIST argsTempList;

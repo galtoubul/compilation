@@ -5,7 +5,7 @@ import java.util.Set;
 
 import TEMP.TEMP;
 
-abstract class IRcommand_Binop extends IRcommand {
+abstract class IRcommand_Binop implements IRcommand {
     public TEMP t1;
     public TEMP t2;
     public TEMP dst;

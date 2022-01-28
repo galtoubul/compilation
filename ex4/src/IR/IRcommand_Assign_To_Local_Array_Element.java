@@ -8,7 +8,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommand_Assign_To_Local_Array_Element extends IRcommand {
+public class IRcommand_Assign_To_Local_Array_Element implements IRcommand {
     public TEMP arrayTmp;
     public TEMP offsetTmp;
     public TEMP tmpRvalue;

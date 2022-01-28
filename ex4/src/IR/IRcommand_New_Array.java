@@ -9,7 +9,7 @@ import java.util.Set;
 import MIPS.*;
 import TYPES.*;
 
-public class IRcommand_New_Array extends IRcommand {
+public class IRcommand_New_Array implements IRcommand {
 	public TEMP dstTempReg;
 	public TYPE arrayType;
 	public TEMP subscriptTemp;

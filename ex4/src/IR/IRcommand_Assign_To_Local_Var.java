@@ -8,7 +8,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommand_Assign_To_Local_Var extends IRcommand {
+public class IRcommand_Assign_To_Local_Var implements IRcommand {
 	public int varIndex;
 	public TEMP tmpRvalue;
 

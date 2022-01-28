@@ -18,7 +18,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommand_Store extends IRcommand {
+public class IRcommand_Store implements IRcommand {
 	String var_name;
 	TEMP src;
 

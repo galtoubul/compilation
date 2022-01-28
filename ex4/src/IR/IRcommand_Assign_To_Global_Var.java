@@ -8,7 +8,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommand_Assign_To_Global_Var extends IRcommand {
+public class IRcommand_Assign_To_Global_Var implements IRcommand {
 	public String varLabel;
 	public TEMP tmpRvalue;
 

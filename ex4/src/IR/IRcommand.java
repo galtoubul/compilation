@@ -6,7 +6,7 @@ import java.util.Set;
 
 import TEMP.TEMP;
 
-public abstract class IRcommand {
+public interface IRcommand {
 
 	public abstract void MIPSme(Map<TEMP, Integer> tempMap);
 

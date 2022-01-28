@@ -6,14 +6,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class IRcommand_Initialize_Temp_With_Array_Element extends IRcommand {
+public class IRcommand_Initialize_Temp_With_Array_Element extends IRcommand_Initialize_Tmp {
 
-    public TEMP dstTmp;
     public TEMP arrayTmp;
     public TEMP subscriptTmp;
 
-    public IRcommand_Initialize_Temp_With_Array_Element(TEMP dstTmp, TEMP arrayTmp, TEMP subscriptTmp) {
-        this.dstTmp = dstTmp;
+    public IRcommand_Initialize_Temp_With_Array_Element(TEMP dst, TEMP arrayTmp, TEMP subscriptTmp) {
+        super(dst);
         this.arrayTmp = arrayTmp;
         this.subscriptTmp = subscriptTmp;
     }
@@ -23,13 +22,15 @@ public class IRcommand_Initialize_Temp_With_Array_Element extends IRcommand {
     /***************/
     public void MIPSme(Map<TEMP, Integer> tempMap) {
         System.out.println("-- IRcommand_Initialize_Temp_With_Array_Element MIPSme");
-        MIPSGenerator.getInstance().assignTmpWithArrayElement(tempMap.get(dstTmp), tempMap.get(arrayTmp),
+        MIPSGenerator.getInstance().assignTmpWithArrayElement(tempMap.get(dst), tempMap.get(arrayTmp),
                 tempMap.get(subscriptTmp));
     }
 
     @Override
     public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
-        // TODO
-        throw new UnsupportedOperationException();
+        HashSet<TEMP> in = super.transform(liveTemps);
+        in.add(this.arrayTmp);
+        in.add(this.subscriptTmp);
+        return in;
     }
 }

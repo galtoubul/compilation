@@ -15,7 +15,7 @@ import java.util.Map;
 import MIPS.*;
 import TEMP.TEMP;
 
-public class IRcommand_Jump_Label extends IRcommand_IDTransform {
+public class IRcommand_Jump_Label extends IRcommand_IDTransform implements IRcommand_Jump {
 	String label_name;
 
 	public IRcommand_Jump_Label(String label_name) {
@@ -29,6 +29,7 @@ public class IRcommand_Jump_Label extends IRcommand_IDTransform {
 		MIPSGenerator.getInstance().jump(label_name);
 	}
 
+	@Override
 	public String jumpLabel() {
 		return this.label_name;
 	}

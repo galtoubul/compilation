@@ -8,7 +8,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommand_Jump_If_Eq_To_Zero extends IRcommand {
+public class IRcommand_Jump_If_Eq_To_Zero implements IRcommand_Jump {
 
 	TEMP t;
 	String label;
@@ -34,6 +34,7 @@ public class IRcommand_Jump_If_Eq_To_Zero extends IRcommand {
 		return in;
 	}
 
+	@Override
 	public String jumpLabel() {
 		return this.label;
 	}

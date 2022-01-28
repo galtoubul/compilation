@@ -12,7 +12,7 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import TEMP.TEMP;
 import TYPES.TYPE_FUNCTION;
 
-public class IRcommand_Func_Prologue extends IRcommand {
+public class IRcommand_Func_Prologue implements IRcommand {
 	int localVarsNum;
 	String funcName;
 

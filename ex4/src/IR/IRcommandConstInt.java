@@ -18,7 +18,7 @@ import java.util.Set;
 
 import MIPS.*;
 
-public class IRcommandConstInt extends IRcommand {
+public class IRcommandConstInt implements IRcommand {
 	TEMP t;
 	int value;
 
