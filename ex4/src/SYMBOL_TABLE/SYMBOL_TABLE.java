@@ -218,7 +218,8 @@ public class SYMBOL_TABLE {
 
 		Optional<Pair<Integer, ScopeEntry>> classScope = this.findIndexedScopeType(ScopeType.Class);
 
-		if (!firstEntry.isPresent() || (classScope.isPresent() && firstEntry.get().index < classScope.get().getKey())) {
+		if (classScope.isPresent() && (!firstEntry.isPresent()
+				|| (firstEntry.isPresent() && firstEntry.get().index < classScope.get().getKey()))) {
 			TYPE_CLASS classType = (TYPE_CLASS) this.find(classScope.get().getValue().scopeName.get());
 			Optional<TYPE> member = classType.lookupMemberInAncestors(name).map(type -> {
 				if (type instanceof TYPE_CLASS_VAR_DEC) {
