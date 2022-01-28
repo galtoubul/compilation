@@ -38,7 +38,7 @@ public class IRcommandConstInt implements IRcommand {
 	@Override
 	public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
 		HashSet<TEMP> in = new HashSet<>(liveTemps);
-		in.add(this.t);
+		in.remove(this.t);
 		return in;
 	}
 }
