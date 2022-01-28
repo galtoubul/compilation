@@ -13,7 +13,8 @@ import pair.Pair;
 public class MIPSGenerator {
 
 	private static final int WORD_SIZE = 4;
-	private static final int TMPS_BACKUP_SPACE = 40; // t0 - t9 backup
+	private static final int MAX_TEMPS = 10; // $t0 - $t9
+	private static final int TMPS_BACKUP_SPACE = WORD_SIZE * MAX_TEMPS; // $t0 - $t9 backup
 	private static final String ABORT_LABEL = "abort_label";
 	private boolean add_abort_flag = false;
 	private PrintWriter fileWriter;
@@ -59,7 +60,7 @@ public class MIPSGenerator {
 	 ************************************************/
 
 	private static String tempString(int temp) {
-		return String.format("Temp_%d", temp);
+		return String.format("$t%d", temp);
 	}
 
 	// TODO delete/change
@@ -94,7 +95,7 @@ public class MIPSGenerator {
 	}
 
 	public void liRegString(String reg, int value) {
-		textSegment += String.format("\tli $%s, %d\n", reg, value);
+		textSegment += String.format("\tli %s, %d\n", reg, value);
 	}
 
 	public void lbFromTmpToTmp(int dst, int src, int offset) {
@@ -239,7 +240,7 @@ public class MIPSGenerator {
 	}
 
 	private static String binopString(int dst, int oprnd1, int oprnd2) {
-		return String.format("\t%s, %s, %s", tempString(dst), tempString(oprnd1), tempString(oprnd2));
+		return String.format("%s, %s, %s", tempString(dst), tempString(oprnd1), tempString(oprnd2));
 	}
 
 	/************************************************
@@ -639,17 +640,17 @@ public class MIPSGenerator {
 
 	public void pushRegNameString(String reg) {
 		textSegment += String.format("\tsubu $sp, $sp, 4\n");
-		textSegment += String.format("\tsw $%s, 0($sp)\n", reg);
+		textSegment += String.format("\tsw %s, 0($sp)\n", reg);
 	}
 
 	public void registersBackup() {
-		for (int i = 0; i < 10; i++) {
-			pushRegNameString(String.format("t%d", i));
+		for (int i = 0; i < MAX_TEMPS; i++) {
+			pushRegNameString(tempString(i));
 		}
 	}
 
 	public void registersRestore() {
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < MAX_TEMPS; i++) {
 			int offset = (i + 1) * -4;
 			textSegment += String.format("\tlw $t%d, %d($sp)\n", i, offset);
 		}
