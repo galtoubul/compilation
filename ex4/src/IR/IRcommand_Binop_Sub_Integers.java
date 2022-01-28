@@ -2,6 +2,8 @@ package IR;
 
 import TEMP.*;
 
+import java.util.Map;
+
 import MIPS.*;
 
 public class IRcommand_Binop_Sub_Integers extends IRcommand_Binop {
@@ -13,7 +15,7 @@ public class IRcommand_Binop_Sub_Integers extends IRcommand_Binop {
     /***************/
     /* MIPS me !!! */
     /***************/
-    public void MIPSme() {
-        MIPSGenerator.getInstance().sub(dst, t1, t2);
+    public void MIPSme(Map<TEMP, Integer> tempMap) {
+        MIPSGenerator.getInstance().sub(tempMap.get(dst), tempMap.get(t1), tempMap.get(t2));
     }
 }

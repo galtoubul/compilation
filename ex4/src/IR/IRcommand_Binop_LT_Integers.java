@@ -2,6 +2,9 @@ package IR;
 
 import TEMP.*;
 import labels.Labels;
+
+import java.util.Map;
+
 import MIPS.*;
 
 public class IRcommand_Binop_LT_Integers extends IRcommand_Binop {
@@ -13,7 +16,7 @@ public class IRcommand_Binop_LT_Integers extends IRcommand_Binop {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		/*******************************/
 		/* [1] Allocate 2 fresh labels */
 		/*******************************/
@@ -21,12 +24,16 @@ public class IRcommand_Binop_LT_Integers extends IRcommand_Binop {
 		String label_AssignOne = Labels.getAvialableLabel("AssignOne");
 		String label_AssignZero = Labels.getAvialableLabel("AssignZero");
 
+		int dstId = tempMap.get(this.dst);
+		int t1Id = tempMap.get(this.t1);
+		int t2Id = tempMap.get(this.t2);
+
 		/******************************************/
 		/* [2] if (t1< t2) goto label_AssignOne; */
 		/* if (t1>=t2) goto label_AssignZero; */
 		/******************************************/
-		MIPSGenerator.getInstance().blt(t1, t2, label_AssignOne);
-		MIPSGenerator.getInstance().bge(t1, t2, label_AssignZero);
+		MIPSGenerator.getInstance().blt(t1Id, t2Id, label_AssignOne);
+		MIPSGenerator.getInstance().bge(t1Id, t2Id, label_AssignZero);
 
 		/************************/
 		/* [3] label_AssignOne: */
@@ -36,7 +43,7 @@ public class IRcommand_Binop_LT_Integers extends IRcommand_Binop {
 		/*                      */
 		/************************/
 		MIPSGenerator.getInstance().label(label_AssignOne);
-		MIPSGenerator.getInstance().liTemp(dst, 1);
+		MIPSGenerator.getInstance().liTemp(dstId, 1);
 		MIPSGenerator.getInstance().jump(label_end);
 
 		/*************************/
@@ -47,7 +54,7 @@ public class IRcommand_Binop_LT_Integers extends IRcommand_Binop {
 		/*                       */
 		/*************************/
 		MIPSGenerator.getInstance().label(label_AssignZero);
-		MIPSGenerator.getInstance().liTemp(dst, 0);
+		MIPSGenerator.getInstance().liTemp(dstId, 0);
 		MIPSGenerator.getInstance().jump(label_end);
 
 		/******************/

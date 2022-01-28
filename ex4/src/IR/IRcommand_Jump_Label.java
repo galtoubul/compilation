@@ -3,6 +3,8 @@
 /***********/
 package IR;
 
+import java.util.Map;
+
 /*******************/
 /* GENERAL IMPORTS */
 /*******************/
@@ -11,6 +13,7 @@ package IR;
 /* PROJECT IMPORTS */
 /*******************/
 import MIPS.*;
+import TEMP.TEMP;
 
 public class IRcommand_Jump_Label extends IRcommand_IDTransform {
 	String label_name;
@@ -22,7 +25,7 @@ public class IRcommand_Jump_Label extends IRcommand_IDTransform {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		MIPSGenerator.getInstance().jump(label_name);
 	}
 

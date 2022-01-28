@@ -4,6 +4,12 @@
 package IR;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+
+import TEMP.TEMP;
+import register_alloc.RegisterAllocation;
+import register_alloc.RegisterAllocationErrorException;
 
 // import java.util.Optional;
 
@@ -16,8 +22,10 @@ import java.util.ArrayList;
 /*******************/
 
 public class IR {
-	// private IRcommand head=null;
-	// private IRcommandList commands = null;
+	/**
+	 * The number of temporary registers (`$ti`) in the MIPS code
+	 */
+	private static final int MAX_TEMPS = 10;
 
 	private ArrayList<IRcommand> commands = new ArrayList<>();
 
@@ -28,18 +36,23 @@ public class IR {
 		commands.add(cmd);
 	}
 
+	private HashMap<TEMP, Integer> allocateRegisters() {
+		Optional<HashMap<TEMP, Integer>> tempMap = RegisterAllocation.allocateRegisters(this.commands, MAX_TEMPS);
+		if (!tempMap.isPresent()) {
+			throw new RegisterAllocationErrorException();
+		}
+		return tempMap.get();
+	}
+
 	/***************/
 	/* MIPS me !!! */
 	/***************/
 	public void MIPSme() {
+		HashMap<TEMP, Integer> tempMap = this.allocateRegisters();
+		System.out.println("\n\n\n");
 		for (IRcommand command : this.commands) {
-			command.MIPSme();
+			command.MIPSme(tempMap);
 		}
-
-		// if (head != null)
-		// head.MIPSme();
-		// if (tail != null)
-		// tail.MIPSme();
 	}
 
 	/**************************************/

@@ -3,6 +3,7 @@ package IR;
 import TEMP.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.*;
@@ -17,9 +18,9 @@ public class IRcommand_Return extends IRcommand {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Return MIPSme");
-		MIPSGenerator.getInstance().doReturn(expRetReg);
+		MIPSGenerator.getInstance().doReturn(tempMap.get(expRetReg));
 	}
 
 	@Override

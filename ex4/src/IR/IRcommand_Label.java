@@ -1,6 +1,9 @@
 package IR;
 
+import java.util.Map;
+
 import MIPS.*;
+import TEMP.TEMP;
 
 public class IRcommand_Label extends IRcommand_IDTransform {
 
@@ -13,7 +16,7 @@ public class IRcommand_Label extends IRcommand_IDTransform {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		MIPSGenerator.getInstance().label(label);
 	}
 

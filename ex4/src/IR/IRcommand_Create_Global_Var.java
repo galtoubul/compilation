@@ -1,6 +1,9 @@
 package IR;
 
 import TEMP.*;
+
+import java.util.Map;
+
 import MIPS.*;
 import global_variables.GlobalVariables;
 
@@ -47,7 +50,7 @@ public class IRcommand_Create_Global_Var extends IRcommand_IDTransform {
 		}
 	}
 
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Create_Global_Var MIPSme");
 
 		// global var was only declared (without initialization) or it was initialized
@@ -82,7 +85,7 @@ public class IRcommand_Create_Global_Var extends IRcommand_IDTransform {
 		// the global variable was initialized with
 		// EXP_BINOP/EXP_PAREN/EXP_VAR/AST_VAR_NEW
 		if (initExpTmp != null) {
-			MIPSGenerator.getInstance().globalVarAssignment(varLabel, initExpTmp);
+			MIPSGenerator.getInstance().globalVarAssignment(varLabel, tempMap.get(initExpTmp));
 		}
 	}
 }

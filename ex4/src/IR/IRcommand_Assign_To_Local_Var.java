@@ -3,6 +3,7 @@ package IR;
 import TEMP.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.*;
@@ -19,9 +20,9 @@ public class IRcommand_Assign_To_Local_Var extends IRcommand {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Assign_To_Local_Var MIPSme");
-		MIPSGenerator.getInstance().localVarAssignment(varIndex, tmpRvalue);
+		MIPSGenerator.getInstance().localVarAssignment(varIndex, tempMap.get(tmpRvalue));
 	}
 
 	@Override

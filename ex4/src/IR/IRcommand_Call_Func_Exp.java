@@ -2,6 +2,8 @@ package IR;
 
 import TEMP.*;
 
+import java.util.Map;
+
 import MIPS.*;
 
 public class IRcommand_Call_Func_Exp extends IRcommand_Call_Func {
@@ -13,8 +15,8 @@ public class IRcommand_Call_Func_Exp extends IRcommand_Call_Func {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Call_Func_Exp MIPSme");
-		MIPSGenerator.getInstance().callFuncExp(dst, funcName, argsTempList);
+		MIPSGenerator.getInstance().callFuncExp(tempMap.get(dst), funcName, argsTempList.mapTempsToRegs(tempMap));
 	}
 }

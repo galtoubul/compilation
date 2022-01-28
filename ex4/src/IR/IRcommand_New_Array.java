@@ -3,6 +3,7 @@ package IR;
 import TEMP.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.*;
@@ -22,8 +23,8 @@ public class IRcommand_New_Array extends IRcommand {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
-		MIPSGenerator.getInstance().createNewArray(dstTempReg, subscriptTemp);
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
+		MIPSGenerator.getInstance().createNewArray(tempMap.get(dstTempReg), tempMap.get(subscriptTemp));
 		// MIPSGenerator.getInstance().localVarAssignment(varIndex, dstTempReg);
 	}
 

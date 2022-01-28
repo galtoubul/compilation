@@ -4,6 +4,7 @@
 package IR;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.MIPSGenerator;
@@ -26,7 +27,7 @@ public class IRcommand_Func_Prologue extends IRcommand {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Func_Prologue MIPSme");
 		MIPSGenerator.getInstance().funcPrologue(localVarsNum, funcName);
 	}

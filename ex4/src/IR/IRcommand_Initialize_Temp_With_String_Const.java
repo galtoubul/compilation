@@ -5,6 +5,7 @@ import global_variables.GlobalVariables;
 import MIPS.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand {
@@ -19,11 +20,11 @@ public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Initialize_Temp_With_String_Const MIPSme");
 		String stringConstLabel = GlobalVariables.getStringConstLabel();
 		MIPSGenerator.getInstance().initializeGlobalVar(stringConstLabel, stringConst);
-		MIPSGenerator.getInstance().loadAddress(dst, stringConstLabel);
+		MIPSGenerator.getInstance().loadAddress(tempMap.get(dst), stringConstLabel);
 	}
 
 	@Override

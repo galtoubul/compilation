@@ -1,6 +1,9 @@
 package IR;
 
 import TEMP.*;
+
+import java.util.Map;
+
 import MIPS.*;
 
 public class IRcommand_Initialize_Tmp_With_Parameter extends IRcommand_Initialize_Tmp {
@@ -15,8 +18,8 @@ public class IRcommand_Initialize_Tmp_With_Parameter extends IRcommand_Initializ
     /* MIPS me !!! */
 
     /***************/
-    public void MIPSme() {
+    public void MIPSme(Map<TEMP, Integer> tempMap) {
         System.out.println("-- IRcommand_Initialize_Tmp_With_Parameter MIPSme");
-        MIPSGenerator.getInstance().loadFromParameters(this.dst, paramInd);
+        MIPSGenerator.getInstance().loadFromParameters(tempMap.get(this.dst), paramInd);
     }
 }

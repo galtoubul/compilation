@@ -1,14 +1,14 @@
 package MIPS;
 
 import java.io.PrintWriter;
+import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 
-import TEMP.*;
+// import int.*;
 import TYPES.*;
 import labels.Labels;
 import pair.Pair;
-import SYMBOL_TABLE.*;
 
 public class MIPSGenerator {
 
@@ -45,9 +45,8 @@ public class MIPSGenerator {
 	 * Supported syscalls
 	 ***********************************************/
 
-	public void print_int(TEMP t) {
-		int idx = t.getSerialNumber();
-		textSegment += String.format("\tmove $a0, %s\n", tempString(idx));
+	public void print_int(int temp) {
+		textSegment += String.format("\tmove $a0, %s\n", tempString(temp));
 		textSegment += String.format("\tli $v0, 1\n");
 		textSegment += String.format("\tsyscall\n");
 		textSegment += String.format("\tli $a0, 32\n");
@@ -64,20 +63,17 @@ public class MIPSGenerator {
 	}
 
 	// TODO delete/change
-	public void load(TEMP dst, String var_name) {
-		int idxdst = dst.getSerialNumber();
-		textSegment += String.format("\tlw %s, global_%s\n", tempString(idxdst), var_name);
+	public void load(int dst, String var_name) {
+		textSegment += String.format("\tlw %s, global_%s\n", tempString(dst), var_name);
 	}
 
 	// TODO delete/change
-	public void store(String var_name, TEMP src) {
-		int idxsrc = src.getSerialNumber();
-		textSegment += String.format("\tsw %s, global_%s\n", tempString(idxsrc), var_name);
+	public void store(String var_name, int src) {
+		textSegment += String.format("\tsw %s, global_%s\n", tempString(src), var_name);
 	}
 
-	public void loadAddress(TEMP dstReg, String label) {
-		int dstRegInd = dstReg.getSerialNumber();
-		textSegment += String.format("\tla %s, %s\n", tempString(dstRegInd), label);
+	public void loadAddress(int dstReg, String label) {
+		textSegment += String.format("\tla %s, %s\n", tempString(dstReg), label);
 	}
 
 	public void label(String inlabel) {
@@ -93,32 +89,25 @@ public class MIPSGenerator {
 		textSegment += String.format("\tj %s\n", inlabel);
 	}
 
-	public void liTemp(TEMP t, int value) {
-		int idx = t.getSerialNumber();
-		textSegment += String.format("\tli %s, %d\n", tempString(idx), value);
+	public void liTemp(int temp, int value) {
+		this.liRegString(tempString(temp), value);
 	}
 
 	public void liRegString(String reg, int value) {
 		textSegment += String.format("\tli $%s, %d\n", reg, value);
 	}
 
-	public void lbFromTmpToTmp(TEMP dstTmp, TEMP srcTmp, int offset) {
-		int dstTmpInd = dstTmp.getSerialNumber();
-		int srcTmpInd = srcTmp.getSerialNumber();
-		textSegment += String.format("\tlb %s, %d(%s)\n", tempString(dstTmpInd), offset, tempString(srcTmpInd));
+	public void lbFromTmpToTmp(int dst, int src, int offset) {
+		textSegment += String.format("\tlb %s, %d(%s)\n", tempString(dst), offset, tempString(src));
 	}
 
-	public void sbFromTmpToTmp(TEMP dstTmp, TEMP srcTmp, int offset) {
-		int dstTmpInd = dstTmp.getSerialNumber();
-		int srcTmpInd = srcTmp.getSerialNumber();
-		textSegment += String.format("\tsb %s, %d(%s)\n", tempString(dstTmpInd), offset, tempString(srcTmpInd));
+	public void sbFromTmpToTmp(int dst, int src, int offset) {
+		textSegment += String.format("\tsb %s, %d(%s)\n", tempString(dst), offset, tempString(src));
 	}
 
-	public void addConstIntToTmp(TEMP dstTmp, int constInt) {
-		int dstTmpInd = dstTmp.getSerialNumber();
-
-		textSegment += String.format("\tadd%s %s, %s, %d\n", constInt >= 0 ? "u" : "i", tempString(dstTmpInd),
-				tempString(dstTmpInd), constInt);
+	public void addConstIntToTmp(int dst, int constInt) {
+		textSegment += String.format("\tadd%s %s, %s, %d\n", constInt >= 0 ? "u" : "i", tempString(dst),
+				tempString(dst), constInt);
 
 		// if (constInt >= 0) {
 		// textSegment += String.format("\taddu %s, %s, %d\n", tempString(dstTmpInd),
@@ -129,34 +118,30 @@ public class MIPSGenerator {
 		// }
 	}
 
-	public void multTmpByConstInt(TEMP tmp, int constInt) {
-		int tmpInd = tmp.getSerialNumber();
-		textSegment += String.format("\tmul %s, %s, %d\n", tempString(tmpInd), tempString(tmpInd), constInt);
+	public void multTmpByConstInt(int tmp, int constInt) {
+		textSegment += String.format("\tmul %s, %s, %d\n", tempString(tmp), tempString(tmp), constInt);
 	}
 
-	public void initTmpWithZero(TEMP dstTmp) {
-		int dstTmpInd = dstTmp.getSerialNumber();
-		moveRegisters(tempString(dstTmpInd), "$zero");
+	public void initTmpWithZero(int dst) {
+		moveRegisters(tempString(dst), "$zero");
 		// textSegment += String.format("\tmov %s, $zero\n", tempString(dstTmpInd));
 	}
 
-	public void malloc(TEMP resultPtrTmp) {
+	public void malloc(int resultPtrTmp) {
 		liRegString("v0", 9);
 		textSegment += String.format("\tsyscall\n");
 
-		int resultPtrTmpInd = resultPtrTmp.getSerialNumber();
-		moveRegisters(tempString(resultPtrTmpInd), "$v0");
+		moveRegisters(tempString(resultPtrTmp), "$v0");
 		// textSegment += String.format("\tmov %s, $v0\n", tempString(resultPtrTmpInd));
 	}
 
-	public void malloc(TEMP resultPtrTmp, int size) {
+	public void malloc(int resultPtrTmp, int size) {
 		liRegString("a0", size);
 		malloc(resultPtrTmp);
 	}
 
-	public void malloc(TEMP resultPtrTmp, TEMP sizeTmp) {
-		int sizeTmpInd = sizeTmp.getSerialNumber();
-		moveRegisters("$a0", tempString(sizeTmpInd));
+	public void mallocTmpSize(int resultPtrTmp, int sizeTmp) {
+		moveRegisters("$a0", tempString(sizeTmp));
 		// textSegment += String.format("\tmov $a0, %s\n", tempString(sizeTmpInd));
 		malloc(resultPtrTmp);
 	}
@@ -182,21 +167,19 @@ public class MIPSGenerator {
 	 * Arithmetics
 	 ************************************************/
 
-	public void checkLimits(TEMP dst) {
-		int dstidx = dst.getSerialNumber();
-
+	public void checkLimits(int dst) {
 		// check top limit and fix the result if needed
 		String checkBottomLimitLabel = Labels.getAvialableLabel("check_bottom_limit");
-		textSegment += String.format("\tble %s, 32767, %s\n", tempString(dstidx), checkBottomLimitLabel); // 2^15 - 1 =
-																											// 32767
-		textSegment += String.format("\tli %s, 32767\n", tempString(dstidx)); // fix the result
+		textSegment += String.format("\tble %s, 32767, %s\n", tempString(dst), checkBottomLimitLabel); // 2^15 - 1 =
+																										// 32767
+		textSegment += String.format("\tli %s, 32767\n", tempString(dst)); // fix the result
 
 		// check bottom limit and fix the result if needed
 		label(checkBottomLimitLabel);
 		String afterLimitsChecksLabel = Labels.getAvialableLabel("after_limits_checks");
-		textSegment += String.format("\tbge %s, -32768, %s\n", tempString(dstidx), afterLimitsChecksLabel); // -2^15 =
+		textSegment += String.format("\tbge %s, -32768, %s\n", tempString(dst), afterLimitsChecksLabel); // -2^15 =
 																											// -32768
-		textSegment += String.format("\tli %s, -32768\n", tempString(dstidx)); // fix the result
+		textSegment += String.format("\tli %s, -32768\n", tempString(dst)); // fix the result
 
 		label(afterLimitsChecksLabel);
 	}
@@ -209,11 +192,11 @@ public class MIPSGenerator {
 		this.binopRegisters(operation, register, register, String.valueOf(constant));
 	}
 
-	public void add(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
+	public void add(int dst, int oprnd1, int oprnd2) {
 		add(dst, oprnd1, oprnd2, true);
 	}
 
-	public void add(TEMP dst, TEMP oprnd1, TEMP oprnd2, boolean checkOverflow) {
+	public void add(int dst, int oprnd1, int oprnd2, boolean checkOverflow) {
 		textSegment += String.format("\tadd %s\n", binopString(dst, oprnd1, oprnd2));
 
 		// we don't want to check overflow when summing len(s1) + len(s2) of strings for
@@ -223,16 +206,16 @@ public class MIPSGenerator {
 		}
 	}
 
-	public void sub(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
+	public void sub(int dst, int oprnd1, int oprnd2) {
 		textSegment += String.format("\tsub %s\n", binopString(dst, oprnd1, oprnd2));
 		checkLimits(dst);
 	}
 
-	public void mul(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
+	public void mul(int dst, int oprnd1, int oprnd2) {
 		mul(dst, oprnd1, oprnd2, true);
 	}
 
-	public void mul(TEMP dst, TEMP oprnd1, TEMP oprnd2, boolean checkOverflow) {
+	public void mul(int dst, int oprnd1, int oprnd2, boolean checkOverflow) {
 		textSegment += String.format("\tmul %s\n", binopString(dst, oprnd1, oprnd2));
 
 		if (checkOverflow) {
@@ -240,7 +223,7 @@ public class MIPSGenerator {
 		}
 	}
 
-	public void div(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
+	public void div(int dst, int oprnd1, int oprnd2) {
 		String div_by_0 = Labels.getAvialableLabel("div_by_0");
 		String end_div = Labels.getAvialableLabel("end_div");
 		beqz(oprnd2, div_by_0);
@@ -255,63 +238,52 @@ public class MIPSGenerator {
 		label(end_div);
 	}
 
-	private static String binopString(TEMP dst, TEMP oprnd1, TEMP oprnd2) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-		int dstidx = dst.getSerialNumber();
-
-		return String.format("\t%s, %s, %s", tempString(dstidx), tempString(i1), tempString(i2));
+	private static String binopString(int dst, int oprnd1, int oprnd2) {
+		return String.format("\t%s, %s, %s", tempString(dst), tempString(oprnd1), tempString(oprnd2));
 	}
 
 	/************************************************
 	 * Local Variables
 	 ************************************************/
 
-	public void localVarAssignment(int varIndex, TEMP tmpRvalue) {
-		int rValueTmpInd = tmpRvalue.getSerialNumber();
+	public void localVarAssignment(int varIndex, int tmpRvalue) {
 		int offset = (-1) * (varIndex * WORD_SIZE + TMPS_BACKUP_SPACE);
-		textSegment += String.format("\tsw %s, %d($fp)\n", tempString(rValueTmpInd), offset);
+		textSegment += String.format("\tsw %s, %d($fp)\n", tempString(tmpRvalue), offset);
 	}
 
 	// assign <tmpRvalue> to <offsetTmp> at the local variable which its local index
 	// is <varIndex>
-	public void localVarAssignment(TEMP arrayTemp, TEMP offsetTmp, TEMP tmpRvalue) {
+	public void localVarAssignment(int arrayTemp, int offsetTmp, int tmpRvalue) {
 		// // newOffsetTmp = local variable
-		// TEMP newOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// int newOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		// loadFromLocal(newOffsetTmp, varIndex);
 
 		// newOffsetTmp += offsetTmp
 		add(arrayTemp, arrayTemp, offsetTmp, false);
 
 		// *newOffsetTmp = tmpRvalue
-		int arrayTempInd = arrayTemp.getSerialNumber();
-		int tmpRvalueInd = tmpRvalue.getSerialNumber();
-		textSegment += String.format("\tsw %s, 0(%s)\n", tempString(tmpRvalueInd), tempString(arrayTempInd));
+		textSegment += String.format("\tsw %s, 0(%s)\n", tempString(tmpRvalue), tempString(arrayTemp));
 	}
 
-	public void storeLocalVar(int ind, TEMP initialValueTmp) {
-		int idx = initialValueTmp.getSerialNumber();
+	public void storeLocalVar(int ind, int initialValueTmp) {
 		int offset = (-1) * (ind * WORD_SIZE + 40); // 40 is for storing tmps
-		textSegment += String.format("\tsw %s, %d($fp)\n", tempString(idx), offset);
+		textSegment += String.format("\tsw %s, %d($fp)\n", tempString(initialValueTmp), offset);
 	}
 
-	public void loadFromLocal(TEMP tmp, int localVarInd) {
-		int tmpInd = tmp.getSerialNumber();
+	public void loadFromLocal(int tmp, int localVarInd) {
 		int offset = (-1) * (localVarInd * WORD_SIZE + 40); // 40 is for storing tmps
-		textSegment += String.format("\tlw %s, %d($fp)\n", tempString(tmpInd), offset);
+		textSegment += String.format("\tlw %s, %d($fp)\n", tempString(tmp), offset);
 	}
 
-	public void movFromTmpToTmp(TEMP tmpDst, TEMP tmpSrc) {
-		int tmpDstInd = tmpDst.getSerialNumber();
-		int tmpSrcInd = tmpSrc.getSerialNumber();
-		this.moveRegisters(tempString(tmpDstInd), tempString(tmpSrcInd));
-		// textSegment += String.format("\tmov %s, %s\n", tempString(tmpDstInd),
-		// tempString(tmpSrcInd));
+	public void movFromTmpToTmp(int tmpDst, int tmpSrc) {
+		this.moveRegisters(tempString(tmpDst), tempString(tmpSrc));
+		// textSegment += String.format("\tmov %s, %s\n", tempString(tmpDst),
+		// tempString(tmpSrc));
 	}
 
-	public void storeTempToPointer(TEMP pointerTmp, TEMP tmpRvalue, int index) {
-		textSegment += String.format("\tsw %s, %d(%s)\n", tempString(tmpRvalue.getSerialNumber()), index,
-				tempString(pointerTmp.getSerialNumber()));
+	public void storeTempToPointer(int pointerTmp, int tmpRvalue, int index) {
+		textSegment += String.format("\tsw %s, %d(%s)\n", tempString(tmpRvalue), index,
+				tempString(pointerTmp));
 	}
 
 	public void moveRegisters(String dst, String src) {
@@ -322,10 +294,9 @@ public class MIPSGenerator {
 	 * Parameters
 	 ************************************************/
 
-	public void loadFromParameters(TEMP tmp, int ParamInd) {
-		int tmpInd = tmp.getSerialNumber();
+	public void loadFromParameters(int tmp, int ParamInd) {
 		int offset = ParamInd * WORD_SIZE + 4; // first parameter is at 8($fp), since: prev fp = 0($fp), ra = 4($fp)
-		textSegment += String.format("\tlw %s, %d($fp)\n", tempString(tmpInd), offset);
+		textSegment += String.format("\tlw %s, %d($fp)\n", tempString(tmp), offset);
 	}
 
 	/************************************************
@@ -357,22 +328,20 @@ public class MIPSGenerator {
 	}
 
 	// assign a tmp to a global variable
-	public void globalVarAssignment(String globalVarLabel, TEMP tmpRvalue) {
-		int tmpRvalueInd = tmpRvalue.getSerialNumber();
-		textSegment += String.format("\tsw %s, %s\n", tempString(tmpRvalueInd), globalVarLabel);
+	public void globalVarAssignment(String globalVarLabel, int regRvalue) {
+		textSegment += String.format("\tsw %s, %s\n", tempString(regRvalue), globalVarLabel);
 	}
 
-	public void loadFromGlobal(TEMP tmp, String globalVarLabel) {
-		int tmpInd = tmp.getSerialNumber();
-		textSegment += String.format("\tlw %s, %s\n", tempString(tmpInd), globalVarLabel);
+	public void loadFromGlobal(int tmp, String globalVarLabel) {
+		textSegment += String.format("\tlw %s, %s\n", tempString(tmp), globalVarLabel);
 	}
 
 	/************************************************
 	 * String
 	 ************************************************/
 
-	public void calcStringLengthIntoTmp(TEMP stringLenTmp, TEMP stringTmp) {
-		// TEMP stringByteTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+	public void calcStringLengthIntoTmp(int stringLenTmp, int stringTmp) {
+		// int stringByteTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		String loopLabel = Labels.getAvialableLabel("str_len_loop");
 		String endLabel = Labels.getAvialableLabel("str_len_end");
 
@@ -387,7 +356,7 @@ public class MIPSGenerator {
 		// load byte
 		// lbFromTmpToTmp(stringByteTemp, stringTmp, 0);
 		this.textSegment += String.format("\tlb %s, %d(%s)\n", STRING_LENGTH_REG, 0,
-				tempString(stringTmp.getSerialNumber()));
+				tempString(stringTmp));
 
 		// stop counting if reached the string's end
 		// beqz(stringByteTemp, endLabel);
@@ -425,13 +394,13 @@ public class MIPSGenerator {
 		return String.format("Vt_%s", className);
 	}
 
-	public void createNewObject(TEMP dstTempReg, TYPE_CLASS objectType) {
+	public void createNewObject(int dstTempReg, TYPE_CLASS objectType) {
 		int classSize = getClassSize(objectType);
 		malloc(dstTempReg, classSize);
 
 		final String UTILITY_REG = "$s0";
 		this.textSegment += String.format("\tla %s, %s\n", UTILITY_REG, vtableLabel(objectType.name));
-		this.textSegment += String.format("\tsw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg.getSerialNumber()));
+		this.textSegment += String.format("\tsw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg));
 		System.out.format("Size: %d\n", objectType.initialValues.size());
 		for (Optional<Object> o : objectType.initialValues) {
 			if (o.isPresent()) {
@@ -441,7 +410,7 @@ public class MIPSGenerator {
 					this.textSegment += String.format("\tli %s, %s\n", UTILITY_REG, (String) o.get());
 				}
 				this.textSegment += String.format("\tsw %s, 4(%s)\n", UTILITY_REG,
-						tempString(dstTempReg.getSerialNumber()));
+						tempString(dstTempReg));
 			}
 		}
 	}
@@ -450,14 +419,14 @@ public class MIPSGenerator {
 	 * Array
 	 ************************************************/
 
-	public void createNewArray(TEMP dstTemp, TEMP subscriptTemp) {
+	public void createNewArray(int dstTemp, int subscriptTemp) {
 
 		// calculate the array size
-		// TEMP sizeTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// int sizeTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		// movFromTmpToTmp(sizeTemp, subscriptTemp);
 
 		final String ALLOC_SIZE_REG = "$a0";
-		moveRegisters(ALLOC_SIZE_REG, tempString(subscriptTemp.getSerialNumber()));
+		moveRegisters(ALLOC_SIZE_REG, tempString(subscriptTemp));
 		this.selfBinopRegister("add", ALLOC_SIZE_REG, 1);
 		this.selfBinopRegister("mul", ALLOC_SIZE_REG, WORD_SIZE);
 
@@ -465,19 +434,14 @@ public class MIPSGenerator {
 		malloc(dstTemp);
 
 		// first cell of the array should contain its size
-		int subscriptTempInd = subscriptTemp.getSerialNumber();
-		int dstTempInd = dstTemp.getSerialNumber();
-		textSegment += String.format("\tsw %s, 0(%s)\n", tempString(subscriptTempInd), tempString(dstTempInd));
+		textSegment += String.format("\tsw %s, 0(%s)\n", tempString(subscriptTemp), tempString(dstTemp));
 	}
 
-	public void loadArraySize(TEMP dstTmp, TEMP arrayTmp) {
-		int dstTmpInd = dstTmp.getSerialNumber();
-		int arrayTmpInd = arrayTmp.getSerialNumber();
-
-		textSegment += String.format("\tlw %s, 0(%s)\n", tempString(dstTmpInd), tempString(arrayTmpInd));
+	public void loadArraySize(int dstTmp, int arrayTmp) {
+		textSegment += String.format("\tlw %s, 0(%s)\n", tempString(dstTmp), tempString(arrayTmp));
 	}
 
-	public void checkAccessViolation(TEMP arrayTmp, TEMP subscriptTemp) {
+	public void checkAccessViolation(int arrayTmp, int subscriptTemp) {
 
 		label(Labels.getAvialableLabel("check_access_violation_start"));
 		String after_check_access_violation = Labels.getAvialableLabel("after_check_access_violation");
@@ -490,13 +454,13 @@ public class MIPSGenerator {
 		bltz(subscriptTemp, invalid_access);
 
 		// check for an index which is bigger than array size
-		// TEMP arraySizeTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// int arraySizeTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		// loadArraySize(arraySizeTmp, arrayTmp);
 
 		final String ARRAY_SIZE_REG = "$s0";
-		this.textSegment += String.format("\tlw %s, 0(%s)\n", ARRAY_SIZE_REG, tempString(arrayTmp.getSerialNumber()));
+		this.textSegment += String.format("\tlw %s, 0(%s)\n", ARRAY_SIZE_REG, tempString(arrayTmp));
 		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
-		this.textSegment += String.format("\tbge %s, %s, %s\n", tempString(subscriptTemp.getSerialNumber()),
+		this.textSegment += String.format("\tbge %s, %s, %s\n", tempString(subscriptTemp),
 				ARRAY_SIZE_REG, invalid_access);
 		jump(after_check_access_violation);
 
@@ -509,7 +473,7 @@ public class MIPSGenerator {
 		label(after_check_access_violation);
 	}
 
-	public void assignTmpWithArrayElement(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
+	public void assignTmpWithArrayElement(int dstTemp, int arrayTmp, int subscriptTemp) {
 
 		final String OFFSET_REG = "$s0";
 
@@ -517,9 +481,9 @@ public class MIPSGenerator {
 		checkAccessViolation(arrayTmp, subscriptTemp);
 
 		// calc offset
-		// TEMP arrayOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// int arrayOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		// movFromTmpToTmp(arrayOffsetTmp, subscriptTemp);
-		this.moveRegisters(OFFSET_REG, tempString(subscriptTemp.getSerialNumber()));
+		this.moveRegisters(OFFSET_REG, tempString(subscriptTemp));
 		// addConstIntToTmp(arrayOffsetTmp, 1); // 1 is for the size of the array (which
 		// is its first element)
 		this.selfBinopRegister("add", OFFSET_REG, 1); // 1 is for the size of the array (which is its first element)
@@ -528,15 +492,14 @@ public class MIPSGenerator {
 
 		// load from offset
 		// add(arrayOffsetTmp, arrayOffsetTmp, arrayTmp, false);
-		this.binopRegisters("addu", OFFSET_REG, tempString(arrayTmp.getSerialNumber()), OFFSET_REG);
-		int dstTempInd = dstTemp.getSerialNumber();
+		this.binopRegisters("addu", OFFSET_REG, tempString(arrayTmp), OFFSET_REG);
 		// int arrayOffsetTmpInd = arrayOffsetTmp.getSerialNumber();
 		// textSegment += String.format("\tlw %s, 0(%s)\n", tempString(dstTempInd),
 		// tempString(arrayOffsetTmpInd));
-		textSegment += String.format("\tlw %s, 0(%s)\n", tempString(dstTempInd), OFFSET_REG);
+		textSegment += String.format("\tlw %s, 0(%s)\n", tempString(dstTemp), OFFSET_REG);
 	}
 
-	public void assignTmpWithOffset(TEMP dstTemp, TEMP arrayTmp, TEMP subscriptTemp) {
+	public void assignTmpWithOffset(int dstTemp, int arrayTmp, int subscriptTemp) {
 		// check access violation
 		checkAccessViolation(arrayTmp, subscriptTemp);
 
@@ -546,7 +509,7 @@ public class MIPSGenerator {
 		multTmpByConstInt(dstTemp, WORD_SIZE);
 	}
 
-	// public void assignArrayElementWithTmp(TEMP arrayTmp, TEMP subscriptTemp, TEMP
+	// public void assignArrayElementWithTmp(int arrayTmp, int subscriptTemp, int
 	// srcTemp) {
 	//
 	// // check access violation
@@ -554,7 +517,7 @@ public class MIPSGenerator {
 	// checkAccessViolation(arrayTmp, subscriptTemp, abortLabel);
 	//
 	// // calc offset
-	// TEMP arrayOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+	// int arrayOffsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
 	// movFromTmpToTmp(arrayOffsetTmp, subscriptTemp);
 	// addConstIntToTmp(arrayOffsetTmp, 1); // 1 is for the size of the array (which
 	// is its first element)
@@ -576,46 +539,40 @@ public class MIPSGenerator {
 	 * Branches
 	 ************************************************/
 
-	public void blt(TEMP oprnd1, TEMP oprnd2, String label) {
+	public void blt(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("blt", oprnd1, oprnd2, label);
 	}
 
-	public void bltz(TEMP oprnd, String label) {
-		int i = oprnd.getSerialNumber();
-		textSegment += String.format("\tbltz %s, %s\n", tempString(i), label);
+	public void bltz(int oprnd, String label) {
+		textSegment += String.format("\tbltz %s, %s\n", tempString(oprnd), label);
 	}
 
-	public void bgt(TEMP oprnd1, TEMP oprnd2, String label) {
+	public void bgt(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("bgt", oprnd1, oprnd2, label);
 	}
 
-	public void bge(TEMP oprnd1, TEMP oprnd2, String label) {
+	public void bge(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("bge", oprnd1, oprnd2, label);
 	}
 
-	public void ble(TEMP oprnd1, TEMP oprnd2, String label) {
+	public void ble(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("ble", oprnd1, oprnd2, label);
 	}
 
-	public void bne(TEMP oprnd1, TEMP oprnd2, String label) {
+	public void bne(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("bne", oprnd1, oprnd2, label);
 	}
 
-	public void beq(TEMP oprnd1, TEMP oprnd2, String label) {
+	public void beq(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("beq", oprnd1, oprnd2, label);
 	}
 
-	public void beqz(TEMP oprnd1, String label) {
-		int i1 = oprnd1.getSerialNumber();
-
-		textSegment += String.format("\tbeq %s, $zero, %s\n", tempString(i1), label);
+	public void beqz(int oprnd1, String label) {
+		textSegment += String.format("\tbeq %s, $zero, %s\n", tempString(oprnd1), label);
 	}
 
-	private void branchBinop(String command, TEMP oprnd1, TEMP oprnd2, String label) {
-		int i1 = oprnd1.getSerialNumber();
-		int i2 = oprnd2.getSerialNumber();
-
-		this.textSegment += String.format("\t%s %s, %s, %s\n", command, tempString(i1), tempString(i2), label);
+	private void branchBinop(String command, int oprnd1, int oprnd2, String label) {
+		this.textSegment += String.format("\t%s %s, %s, %s\n", command, tempString(oprnd1), tempString(oprnd2), label);
 	}
 
 	/************************************************
@@ -623,46 +580,52 @@ public class MIPSGenerator {
 	 ************************************************/
 
 	// Push args in reverse and return the number of args
-	public int pushArgs(TEMP_LIST argsTempList) {
-		// base case
-		if (argsTempList == null) {
-			return 0;
+	public void pushArgs(Deque<Integer> argTemps) {
+		// // base case
+		// if (argsTempList == null) {
+		// return 0;
+		// }
+
+		// // recursion
+		// int argsNum = pushArgs(argsTempList.tail) + 1;
+
+		// // push with stack folding
+		// if (argsTempList.head != null) {
+		// pushTempReg(argsTempList.head);
+		// }
+
+		// return argsNum;
+		for (Integer temp : argTemps) {
+			pushTempReg(temp);
 		}
 
-		// recursion
-		int argsNum = pushArgs(argsTempList.tail) + 1;
-
-		// push with stack folding
-		if (argsTempList.head != null) {
-			pushTempReg(argsTempList.head);
-		}
-
-		return argsNum;
+		// return args.size();
 	}
 
-	public void callFuncStmt(TEMP dst, String funcName, TEMP_LIST argsTempList) {
+	public void callFuncStmt(int dst, String funcName, Deque<Integer> argTemps) {
 		// push args
-		int argsNum = pushArgs(argsTempList);
+		int argsNum = argTemps.size();
+		pushArgs(argTemps);
 
 		// jal
 		textSegment += String.format("\tjal %s\n", funcName);
 
 		// restore sp
 		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
+
 		if (funcName.equals("PrintInt")) {
-			PrintInt(argsTempList.head.getSerialNumber());
+			PrintInt(argTemps.getLast());
 		}
 		if (funcName.equals("PrintString")) {
-			PrintString(argsTempList.head.getSerialNumber());
+			PrintString(argTemps.getLast());
 		}
 	}
 
-	public void callFuncExp(TEMP dst, String funcName, TEMP_LIST argsTempList) {
-		callFuncStmt(dst, funcName, argsTempList);
+	public void callFuncExp(int dst, String funcName, Deque<Integer> argTemps) {
+		callFuncStmt(dst, funcName, argTemps);
 
 		// store return value in dst
-		int dstidx = dst.getSerialNumber();
-		moveRegisters(tempString(dstidx), "$v0");
+		moveRegisters(tempString(dst), "$v0");
 		// textSegment += String.format("\tmov %s, $v0\n", tempString(dstidx));
 	}
 
@@ -670,10 +633,8 @@ public class MIPSGenerator {
 	 * Function delaration
 	 ***********************************************/
 
-	public void pushTempReg(TEMP reg) {
-		int regInd = reg.getSerialNumber();
-		textSegment += String.format("\tsubu $sp, $sp, 4\n");
-		textSegment += String.format("\tsw $%s, 0($sp)\n", tempString(regInd));
+	public void pushTempReg(int reg) {
+		this.pushRegNameString(tempString(reg));
 	}
 
 	public void pushRegNameString(String reg) {
@@ -714,9 +675,8 @@ public class MIPSGenerator {
 		textSegment += String.format("\tjr $ra\n");
 	}
 
-	public void doReturn(TEMP expRetReg) {
-		int expRetRegIdx = expRetReg.getSerialNumber();
-		moveRegisters("$v0", tempString(expRetRegIdx));
+	public void doReturn(int expRetReg) {
+		moveRegisters("$v0", tempString(expRetReg));
 		// textSegment += String.format("\tmov $v0, %s\n", tempString(expRetRegIdx));
 	}
 

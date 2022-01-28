@@ -3,6 +3,7 @@ package IR;
 import TEMP.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.*;
@@ -20,9 +21,9 @@ public class IRcommand_Assign_To_Global_Var extends IRcommand {
 	/* MIPS me !!! */
 
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Assign_To_Global_Var MIPSme");
-		MIPSGenerator.getInstance().globalVarAssignment(varLabel, tmpRvalue);
+		MIPSGenerator.getInstance().globalVarAssignment(varLabel, tempMap.get(tmpRvalue));
 	}
 
 	@Override

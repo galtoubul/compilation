@@ -13,6 +13,7 @@ package IR;
 import TEMP.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.*;
@@ -29,9 +30,9 @@ public class IRcommand_Store extends IRcommand {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Store MIPSme");
-		MIPSGenerator.getInstance().store(var_name, src);
+		MIPSGenerator.getInstance().store(var_name, tempMap.get(src));
 	}
 
 	@Override

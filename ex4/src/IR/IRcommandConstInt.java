@@ -13,6 +13,7 @@ package IR;
 import TEMP.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.*;
@@ -29,9 +30,9 @@ public class IRcommandConstInt extends IRcommand {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommandConstInt MIPSme");
-		MIPSGenerator.getInstance().liTemp(t, value);
+		MIPSGenerator.getInstance().liTemp(tempMap.get(t), value);
 	}
 
 	@Override

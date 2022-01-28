@@ -1,13 +1,14 @@
 package IR;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import TEMP.TEMP;
 
 public abstract class IRcommand {
 
-	public abstract void MIPSme();
+	public abstract void MIPSme(Map<TEMP, Integer> tempMap);
 
 	/**
 	 * Transform a set of temporaries according to the given command.

@@ -3,6 +3,7 @@ package IR;
 import TEMP.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.*;
@@ -18,9 +19,9 @@ public class IRcommand_Initialize_Tmp_With_Tmp extends IRcommand_Initialize_Tmp 
     /***************/
     /* MIPS me !!! */
     /***************/
-    public void MIPSme() {
+    public void MIPSme(Map<TEMP, Integer> tempMap) {
         System.out.println("-- IRcommand_Initialize_Tmp_With_Tmp MIPSme");
-        MIPSGenerator.getInstance().movFromTmpToTmp(this.dst, this.src);
+        MIPSGenerator.getInstance().movFromTmpToTmp(tempMap.get(this.dst), tempMap.get(this.src));
     }
 
     @Override

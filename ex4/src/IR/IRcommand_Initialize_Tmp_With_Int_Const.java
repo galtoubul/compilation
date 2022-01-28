@@ -1,6 +1,9 @@
 package IR;
 
 import TEMP.*;
+
+import java.util.Map;
+
 import MIPS.*;
 
 public class IRcommand_Initialize_Tmp_With_Int_Const extends IRcommand_Initialize_Tmp {
@@ -15,8 +18,8 @@ public class IRcommand_Initialize_Tmp_With_Int_Const extends IRcommand_Initializ
     /* MIPS me !!! */
 
     /***************/
-    public void MIPSme() {
+    public void MIPSme(Map<TEMP, Integer> tempMap) {
         System.out.println("-- IRcommand_Initialize_Tmp_With_Int_Const MIPSme");
-        MIPSGenerator.getInstance().liTemp(this.dst, constInt);
+        MIPSGenerator.getInstance().liTemp(tempMap.get(this.dst), constInt);
     }
 }

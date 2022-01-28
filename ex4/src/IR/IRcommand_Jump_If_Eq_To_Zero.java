@@ -3,6 +3,7 @@ package IR;
 import TEMP.*;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import MIPS.*;
@@ -20,10 +21,10 @@ public class IRcommand_Jump_If_Eq_To_Zero extends IRcommand {
 	/***************/
 	/* MIPS me !!! */
 	/***************/
-	public void MIPSme() {
+	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Jump_If_Eq_To_Zero MIPSme");
 
-		MIPSGenerator.getInstance().beqz(t, label);
+		MIPSGenerator.getInstance().beqz(tempMap.get(t), label);
 	}
 
 	@Override

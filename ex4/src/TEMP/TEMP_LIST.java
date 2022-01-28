@@ -1,7 +1,10 @@
 package TEMP;
 
 import java.util.NoSuchElementException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
+import java.util.Map;
 
 public class TEMP_LIST implements Iterable<TEMP> {
     public int length = 0;
@@ -21,6 +24,14 @@ public class TEMP_LIST implements Iterable<TEMP> {
 
     public int length() {
         return this.length;
+    }
+
+    public Deque<Integer> mapTempsToRegs(Map<TEMP, Integer> tempMap) {
+        Deque<Integer> deque = new ArrayDeque<>();
+        for (TEMP temp : this) {
+            deque.push(tempMap.get(temp));
+        }
+        return deque;
     }
 
     private class TempListIterator implements Iterator<TEMP> {

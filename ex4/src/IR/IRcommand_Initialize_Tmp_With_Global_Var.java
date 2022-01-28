@@ -1,6 +1,9 @@
 package IR;
 
 import TEMP.*;
+
+import java.util.Map;
+
 import MIPS.*;
 
 public class IRcommand_Initialize_Tmp_With_Global_Var extends IRcommand_Initialize_Tmp {
@@ -15,8 +18,8 @@ public class IRcommand_Initialize_Tmp_With_Global_Var extends IRcommand_Initiali
     /* MIPS me !!! */
 
     /***************/
-    public void MIPSme() {
+    public void MIPSme(Map<TEMP, Integer> tempMap) {
         System.out.println("-- IRcommand_Initialize_Tmp_With_Global_Var MIPSme");
-        MIPSGenerator.getInstance().loadFromGlobal(this.dst, globalVarLabel);
+        MIPSGenerator.getInstance().loadFromGlobal(tempMap.get(this.dst), globalVarLabel);
     }
 }
