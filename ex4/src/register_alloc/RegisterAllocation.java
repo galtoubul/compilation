@@ -58,10 +58,15 @@ public class RegisterAllocation {
 
         Map<Node, Set<TEMP>> liveness = graph.nodes.stream()
                 .collect(Collectors.toMap(node -> node, node -> new HashSet<TEMP>()));
-        ArrayDeque<Pair<Node, Set<TEMP>>> worklist = new ArrayDeque<>();
 
-        // TODO Instead initialize with all the nodes?
-        worklist.push(new Pair<>(graph.nodes.peek(), new HashSet<TEMP>()));
+        ArrayDeque<Pair<Node, Set<TEMP>>> worklist = new ArrayDeque<>(graph.nodes.stream()
+                .map(node -> new Pair<>(node, (Set<TEMP>) new HashSet<TEMP>()))
+                .collect(Collectors.toList()));
+
+        // Ensure that every node transforms at least once (we must have that since the
+        // initial value of the analysis is bottom (the empty set) (in other analyses it
+        // is usually top))
+        HashSet<Node> firstIteration = new HashSet<>(graph.nodes);
 
         // Join every node's value with its resulting transformation until a fixed point
         // is reached
@@ -78,14 +83,18 @@ public class RegisterAllocation {
 
             // Check if a fixed point has been reached for `node`, if not update the
             // liveness value and the worklist
-            if (!value.equals(newValue)) {
+            boolean first = firstIteration.contains(node);
+            if (first || !value.equals(newValue)) {
                 liveness.put(node, newValue);
 
                 for (Node neighbor : node.neighbors) {
                     worklist.push(new Pair<>(neighbor, node.command.transform(newValue)));
                 }
-            }
 
+                if (first) {
+                    firstIteration.remove(node);
+                }
+            }
         }
 
         return liveness.values();

@@ -50,7 +50,7 @@ class InterferenceGraph {
         // Construct the edges and initialize the `inGraph` flags
         HashMap<TEMP, Stream<TEMP>> lazyEdges = createLazyEdges(liveness);
         HashMap<TEMP, Set<TEMP>> edges = new HashMap<>();
-        for (TEMP temp : edges.keySet()) {
+        for (TEMP temp : lazyEdges.keySet()) {
             edges.put(temp, lazyEdges.get(temp)
                     .filter(neighbor -> temp.getSerialNumber() != neighbor.getSerialNumber())
                     .collect(Collectors.toSet()));
