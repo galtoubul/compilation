@@ -3,6 +3,7 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
+import TYPES.TYPE_CLASS;
 import ast_annotation.AstAnnotation;
 import global_variables.GlobalVariables;
 import TEMP.*;
@@ -116,7 +117,6 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		System.out.println("-- AST_STMT_ASSIGN IRme");
 
 		TEMP rValueTmp = exp.IRme();
-		TEMP lValueTmp = var.IRme();
 
 		if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
 			System.out.format("\t\t%s is a global variable\n", varName);
@@ -125,28 +125,22 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 			String globalVarType = GlobalVariables.getGlobalVarType(((AST.AST_VAR_SIMPLE) var).name);
 
 			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, rValueTmp));
-		} else { // local variable
+		} else {
+			// local variable
 			System.out.format("\t\t%s is a local variable\n", varName);
 
 			int localVarInd = astAnnotation.ind.orElse(-1);
 			if (var instanceof AST.AST_VAR_SUBSCRIPT) {
-				// TEMP arrayTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-				// TEMP offsetTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-				// TEMP pointerTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-				// IR.getInstance().Add_IRcommand(new
-				// IRcommand_Initialize_Tmp_With_Local_Var(pointerTmp, localVarInd));
-				// IR.getInstance().Add_IRcommand(new IRcommand_Binop_Add_Integers(arrayTmp,
-				// pointerTmp, offsetTmp));
-				// IR.getInstance().Add_IRcommand(new IRcommand_Store_Tmp_Pointer(arrayTmp,
-				// rValueTmp));
-
 				TEMP arrayTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+				TEMP offsetTmp = ((AST_VAR_SUBSCRIPT) var).subscript.IRme();
 				IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Local_Var(arrayTmp, localVarInd));
 				IR.getInstance()
-						.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, lValueTmp, rValueTmp));
+						.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
 			} else if (var instanceof AST.AST_VAR_FIELD) {
-				// todo
-			} else { // instanceof AST.AST_VAR_SIMPLE
+				// TODO
+				throw new UnsupportedOperationException();
+			} else {
+				// instanceof AST.AST_VAR_SIMPLE
 				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
 			}
 		}
