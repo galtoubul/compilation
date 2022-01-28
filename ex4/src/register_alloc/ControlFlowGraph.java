@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import IR.IRcommand;
-import IR.IRcommand_Jump_If_Eq_To_Zero;
+import IR.IRcommand_Jump;
 import IR.IRcommand_Jump_Label;
 import IR.IRcommand_Label;
 
@@ -64,10 +64,8 @@ class ControlFlowGraph {
             Node node = new Node(command, new HashSet<>());
             commandsToNodes.put(command, node);
 
-            if (command instanceof IRcommand_Jump_If_Eq_To_Zero) {
-                labelsNeighbors.put(((IRcommand_Jump_If_Eq_To_Zero) command).jumpLabel(), node);
-            } else if (command instanceof IRcommand_Jump_Label) {
-                labelsNeighbors.put(((IRcommand_Jump_Label) command).jumpLabel(), node);
+            if (command instanceof IRcommand_Jump) {
+                labelsNeighbors.put(((IRcommand_Jump) command).jumpLabel(), node);
             }
         }
 
@@ -79,9 +77,10 @@ class ControlFlowGraph {
 
             // Update neighbors of current node
             if (command instanceof IRcommand_Label) {
-                Optional<Node> jumpDest = Optional.ofNullable(labelsNeighbors.get(((IRcommand_Label) command).label()));
-                if (jumpDest.isPresent()) {
-                    node.neighbors.add(jumpDest.get());
+                Optional<Node> jumpSource = Optional
+                        .ofNullable(labelsNeighbors.get(((IRcommand_Label) command).label()));
+                if (jumpSource.isPresent()) {
+                    node.neighbors.add(jumpSource.get());
                 }
             }
             if (previous.isPresent()) {
