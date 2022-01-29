@@ -1,14 +1,17 @@
 package AST;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
+import TYPES.TYPE_CLASS_VAR_DEC;
 import ast_annotation.AstAnnotation;
 import global_variables.GlobalVariables;
 import TEMP.*;
 import IR.*;
 import SYMBOL_TABLE.*;
+import pair.Pair;
 
 public class AST_STMT_ASSIGN extends AST_STMT {
 	/***************/
@@ -137,8 +140,10 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 				IR.getInstance()
 						.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
 			} else if (var instanceof AST.AST_VAR_FIELD) {
-				// TODO
-				throw new UnsupportedOperationException();
+				TEMP varOfTmp = ((AST_VAR_FIELD) var).var.IRme();
+				int fieldInd = ((AST_VAR_FIELD) var).astAnnotation.ind.orElse(-1);
+				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Field(varOfTmp, fieldInd, rValueTmp));
+
 			} else {
 				// instanceof AST.AST_VAR_SIMPLE
 				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));

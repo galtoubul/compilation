@@ -1,16 +1,24 @@
 package AST;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
+import IR.*;
+import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TYPES.TYPE_LIST;
 import TEMP.*;
+import ast_annotation.AstAnnotation;
+import pair.Pair;
 
 public class AST_VAR_FIELD extends AST_VAR {
 	public AST_VAR var;
 	public String fieldName;
+	public AstAnnotation astAnnotation;
+
 
 	public AST_VAR_FIELD(AST_VAR var, String fieldName) {
 
@@ -78,6 +86,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 			System.out.format(">> ERROR [" + lineNum + "] access %s field of a non-class variable\n", fieldName);
 			throw new SemanticErrorException("" + lineNum);
 		}
+		this.setNotation();
 
 		Optional<TYPE> field = ((TYPE_CLASS) varType).lookupMemberInAncestors(this.fieldName);
 		if (field.isPresent()) {
@@ -87,15 +96,48 @@ public class AST_VAR_FIELD extends AST_VAR {
 			System.out.format(">> ERROR [" + lineNum + "] '%s' is a method, not a field variable\n", fieldName);
 			throw new SemanticErrorException("" + lineNum);
 		}
-
 		// fieldName does not exist in class var
 		System.out.format(">> ERROR [" + lineNum + "] there is no field named '%s' in class '%s'\n", fieldName, varType.name);
+		System.out.format(">> ERROR [" + lineNum + "] there is no field named '%s' in class '%s'\n", fieldName, varType.name);
 		throw new SemanticErrorException("" + lineNum);
+	}
+
+	private void setNotation() {
+		System.out.println("-- AST_VAR_FIELD setNotation");
+		System.out.println(var);
+		TYPE_CLASS varClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(var.getSimple().name);
+		TYPE_CLASS classToSearch = varClass;
+		int ind = 0;
+		ArrayList<Pair<String,Optional<Object>>> fields = classToSearch.initialValues;
+		boolean filedFound = false;
+		while(classToSearch != null) {
+			for (Pair<String, Optional<Object>> p : fields) {
+				if (!p.getKey().equals(fieldName)) {
+					ind++;
+				} else {
+					filedFound = true;
+					break;
+				}
+			}
+			if (filedFound) {
+				break;
+			}
+			classToSearch = classToSearch.father.orElse(null);
+			if (classToSearch != null)
+				fields = classToSearch.initialValues;
+		}
+		if (!filedFound) {
+			throw new UnsupportedOperationException(fieldName + " is not field of " + varClass.name);
+		}
+		astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD, Optional.of(ind));
 	}
 
 	// TODO
 	public TEMP IRme() {
 		System.out.println("-- AST_VAR_FIELD IRme");
-		return null;
+		TEMP tmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		TEMP varTmp = var.IRme();
+		IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Temp_With_Object_Field(tmp, varTmp, astAnnotation.ind.orElse(-1)));
+		return tmp;
 	}
 }

@@ -158,8 +158,8 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsyscall\n");
 	}
 
-	public void PrintString(int tmpInd) {
-		textSegment += String.format("\tli $a0, %s\n", tempString(tmpInd));
+	public void PrintString(String strTmp) {
+		textSegment += String.format("\tli $a0, %s\n", strTmp);
 		textSegment += String.format("\tli $v0, 4\n");
 		textSegment += String.format("\tsyscall\n");
 	}
@@ -232,9 +232,7 @@ public class MIPSGenerator {
 		checkLimits(dst);
 		jump(end_div);
 		label(div_by_0);
-		textSegment += String.format("\tli $a0, string_illegal_div_by_0\n");
-		textSegment += String.format("\tli $v0, 4\n");
-		textSegment += String.format("\tsyscall\n");
+		PrintString("string_illegal_div_by_0");
 		exit();
 		label(end_div);
 	}
@@ -251,6 +249,34 @@ public class MIPSGenerator {
 		int offset = (-1) * (varIndex * WORD_SIZE + TMPS_BACKUP_SPACE);
 		textSegment += String.format("\tsw %s, %d($fp)\n", tempString(tmpRvalue), offset);
 	}
+
+	public void fieldAccess(int dst, int tmpRvalue, int fieldInd) {
+		int offset = (fieldInd + 1) * WORD_SIZE;
+		String invalid_ptr = Labels.getAvialableLabel("invalid_ptr");
+		String end = Labels.getAvialableLabel("end");
+		beqz(tmpRvalue,invalid_ptr);
+		textSegment += String.format("\tlw %s, %d(%s)\n", tempString(dst), offset, tempString(tmpRvalue));
+		jump(end);
+		label(invalid_ptr);
+		PrintString("string_invalid_ptr_dref");
+		exit();
+		label(end);
+
+	}
+
+	public void fieldAssignment(int tmpLvalue, int tmpRvalue, int fieldInd) {
+		String invalid_ptr = Labels.getAvialableLabel("invalid_ptr");
+		String end = Labels.getAvialableLabel("end");
+		beqz(tmpLvalue,invalid_ptr);
+		int offset = (fieldInd + 1) * WORD_SIZE;
+		textSegment += String.format("\tsw %s, %d(%s)\n", tempString(tmpRvalue), offset, tempString(tmpLvalue));
+		jump(end);
+		label(invalid_ptr);
+		PrintString("string_invalid_ptr_dref");
+		exit();
+		label(end);
+	}
+
 
 	// assign <tmpRvalue> to <offsetTmp> at the local variable which its local index
 	// is <varIndex>
@@ -403,7 +429,8 @@ public class MIPSGenerator {
 		this.textSegment += String.format("\tla %s, %s\n", UTILITY_REG, vtableLabel(objectType.name));
 		this.textSegment += String.format("\tsw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg));
 		System.out.format("Size: %d\n", objectType.initialValues.size());
-		for (Optional<Object> o : objectType.initialValues) {
+		for (Pair<String,Optional<Object>> p : objectType.initialValues) {
+			Optional<Object> o = p.getValue();
 			if (o.isPresent()) {
 				if (o.get() instanceof Integer) {
 					this.textSegment += String.format("\tli %s, %s\n", UTILITY_REG, (Integer) o.get());
@@ -466,9 +493,7 @@ public class MIPSGenerator {
 		jump(after_check_access_violation);
 
 		label(invalid_access);
-		textSegment += String.format("\tli $a0, string_access_violation\n");
-		textSegment += String.format("\tli $v0, 4\n");
-		textSegment += String.format("\tsyscall\n");
+		PrintString("string_access_violation");
 		exit();
 
 		label(after_check_access_violation);
@@ -618,7 +643,7 @@ public class MIPSGenerator {
 			PrintInt(argTemps.getLast());
 		}
 		if (funcName.equals("PrintString")) {
-			PrintString(argTemps.getLast());
+			PrintString(tempString(argTemps.getLast()));
 		}
 	}
 

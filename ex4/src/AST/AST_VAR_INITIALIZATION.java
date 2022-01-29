@@ -13,6 +13,7 @@ import ast_notation_type.AstNotationType;
 import global_variables.GlobalVariables;
 import IR.*;
 import TEMP.*;
+import pair.Pair;
 
 public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
     public AST_EXP initialValue;
@@ -85,9 +86,9 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
             TYPE_CLASS currentClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance()
                     .find(SYMBOL_TABLE.getInstance().currentScope().scopeName.get());
             if (initialValue instanceof AST_EXP_INT) {
-                currentClass.initialValues.add(Optional.of(((AST_EXP_INT) initialValue).value));
+                currentClass.initialValues.add(new Pair<String,Optional<Object>>(id,Optional.of(((AST_EXP_INT) initialValue).value)));
             } else if (initialValue instanceof AST_EXP_STRING) {
-                currentClass.initialValues.add(Optional.of(((AST_EXP_STRING) initialValue).s));
+                currentClass.initialValues.add(new Pair<String,Optional<Object>>(id,Optional.of(((AST_EXP_STRING) initialValue).s)));
             }
         }
 

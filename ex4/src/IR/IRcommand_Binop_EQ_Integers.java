@@ -28,6 +28,7 @@ public class IRcommand_Binop_EQ_Integers extends IRcommand_Binop {
 		int t1Id = tempMap.get(this.t1);
 		int t2Id = tempMap.get(this.t2);
 
+
 		/******************************************/
 		/* [2] if (t1==t2) goto label_AssignOne; */
 		/* if (t1!=t2) goto label_AssignZero; */

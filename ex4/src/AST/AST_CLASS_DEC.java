@@ -19,7 +19,7 @@ public class AST_CLASS_DEC extends AST_Node {
     public String id;
     Optional<String> father;
     public AST_CFIELD_LIST fields;
-    public ArrayList<Optional<Object>> initialValues; // Very disgusting
+    public ArrayList<Pair<String,Optional<Object>>> initialValues; // Very disgusting
 
     private ArrayList<Pair<String, String>> vtable = new ArrayList<>();
 

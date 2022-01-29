@@ -1,0 +1,18 @@
+class A {
+    int x;
+}
+
+class B extends A {
+    int y;
+}
+
+void foo(int i) {
+    B b := new B;
+    B b2 := b;
+    b.x := i;
+    b.y := b.x + 1;
+    int e := 0;
+    if (b = b) {
+        e := 1;
+    }
+}
