@@ -1,8 +1,11 @@
 package AST;
 
 import java.util.Optional;
-import TEMP.*;
 
+import IR.IR;
+import IR.IRcommandConstInt;
+import TEMP.TEMP;
+import TEMP.TEMP_FACTORY;
 import TYPES.TYPE;
 import TYPES.TYPE_NIL;
 
@@ -14,6 +17,9 @@ public class AST_EXP_NIL extends AST_EXP {
     }
 
     public TEMP IRme() {
-        throw new UnsupportedOperationException();
+        final int NIL_VALUE = 0;
+        TEMP temp = TEMP_FACTORY.getInstance().getFreshTEMP();
+        IR.getInstance().Add_IRcommand(new IRcommandConstInt(temp, NIL_VALUE));
+        return temp;
     }
 }
