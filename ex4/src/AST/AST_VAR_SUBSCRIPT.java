@@ -69,9 +69,9 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 			System.out.format(">> ERROR [%d:%d] negative constant array length\n", 2, 2);
 			throw new SemanticErrorException("" + lineNum);
 		}
+		varName = var.getSimple().name;
 
-		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(((AST.AST_VAR_SIMPLE)var).name);
-		varName = ((AST.AST_VAR_SIMPLE)var).name;
+		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(varName);
 		setNotation(Optional.of(entry.get().position));
 
 		return ((TYPE_ARRAY) type).type;
