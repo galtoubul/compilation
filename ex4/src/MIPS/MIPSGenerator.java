@@ -483,7 +483,7 @@ public class MIPSGenerator {
 
 		// calculate the array size
 		this.binopRegistersConst("add", ALLOC_SIZE_REG, HELPER_REG, 1);
-		this.selfBinopRegister("add", ALLOC_SIZE_REG, 1);
+		// this.selfBinopRegister("add", ALLOC_SIZE_REG, 1);
 		this.selfBinopRegister("mul", ALLOC_SIZE_REG, WORD_SIZE);
 
 		// alocate memory for the array
