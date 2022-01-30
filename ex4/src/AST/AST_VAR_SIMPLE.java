@@ -83,7 +83,6 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 			System.out.format("\t\t%s is a global variable\n", name);
 
 			String globalVarLabel = GlobalVariables.getGlobalVarLabel(name);
-			String globalVarType = GlobalVariables.getGlobalVarType(name);
 
 			IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Global_Var(tmp, globalVarLabel));
 		} else if (astAnnotation.type == AstAnnotation.TYPE.LOCAL_VAR) {

@@ -1,17 +1,14 @@
 package AST;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import TYPES.TYPE;
-import TYPES.TYPE_CLASS;
-import TYPES.TYPE_CLASS_VAR_DEC;
 import ast_annotation.AstAnnotation;
+import ast_notation_type.AstNotationType;
 import global_variables.GlobalVariables;
 import TEMP.*;
 import IR.*;
 import SYMBOL_TABLE.*;
-import pair.Pair;
 
 public class AST_STMT_ASSIGN extends AST_STMT {
 	/***************/
@@ -101,19 +98,33 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		return null;
 	}
 
-	private void setNotation(Optional<Integer> localVarInd) {
+	private void setNotation(Optional<Integer> offset) {
 		System.out.println("-- AST_STMT_ASSIGN setNotation");
 		ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(varName);
+		AstNotationType astNotationType = SYMBOL_TABLE.getInstance().findEntry(varName).get().astNotationType;
+
 		System.out.println("\t\tvariable scope type = " + scopeType);
 
 		if (scopeType == ScopeType.Global) {
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, Optional.empty());
 			System.out.format("\t\t%s is a global variable\n", varName);
+		} else if (astNotationType == AstNotationType.parameter) {
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.PARAMETER, offset);
+			System.out.format("\t\t%s is a parameter | its index = %s\n", varName, offset);
 		} else { // local
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, localVarInd);
-			int ind = localVarInd.orElse(-1);
-			System.out.format("\t\t%s is a local variable | its index = %s\n", varName, ind);
+			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, offset);
+			System.out.format("\t\t%s is a local variable | its index = %s\n", varName, offset);
 		}
+
+		// if (scopeType == ScopeType.Global) {
+		// astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, offset);
+		// System.out.format("\t\t%s is a global variable\n", varName);
+		// } else { // local
+		// astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, offset);
+		// int ind = offset.orElse(-1);
+		// System.out.format("\t\t%s is a local variable | its index = %s\n", varName,
+		// ind);
+		// }
 	}
 
 	public TEMP IRme() {
@@ -124,7 +135,6 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 			System.out.format("\t\t%s is a global variable\n", varName);
 
 			String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
-			String globalVarType = GlobalVariables.getGlobalVarType(((AST.AST_VAR_SIMPLE) var).name);
 
 			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, rValueTmp));
 		} else {
@@ -133,19 +143,13 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 
 			int localVarInd = astAnnotation.ind.orElse(-1);
 			if (var instanceof AST.AST_VAR_SUBSCRIPT) {
-				TEMP arrayTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+				TEMP arrayTmp = ((AST_VAR_SUBSCRIPT) var).var.IRme();
 				AST_EXP subscript = ((AST_VAR_SUBSCRIPT) var).subscript;
-				IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Local_Var(arrayTmp, localVarInd));
-				if (subscript instanceof AST_EXP_INT) {
-					IR.getInstance()
-							.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element_With_Offset(arrayTmp,
-									((AST_EXP_INT) subscript).value, rValueTmp));
-
-				} else {
-					TEMP offsetTmp = subscript.IRme();
-					IR.getInstance()
-							.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
-				}
+				// IR.getInstance().Add_IRcommand(new
+				// IRcommand_Initialize_Tmp_With_Local_Var(arrayTmp, localVarInd));
+				TEMP offsetTmp = subscript.IRme();
+				IR.getInstance()
+						.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
 			} else if (var instanceof AST.AST_VAR_FIELD) {
 				TEMP varOfTmp = ((AST_VAR_FIELD) var).var.IRme();
 				int fieldInd = ((AST_VAR_FIELD) var).astAnnotation.ind.orElse(-1);
