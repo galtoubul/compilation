@@ -10,9 +10,10 @@ import MIPS.*;
 
 public class IRcommand_Return implements IRcommand {
 	TEMP expRetReg;
-
-	public IRcommand_Return(TEMP expRetReg) {
+	String funcName;
+	public IRcommand_Return(TEMP expRetReg, String funcName) {
 		this.expRetReg = expRetReg;
+		this.funcName = funcName;
 	}
 
 	/***************/
@@ -20,7 +21,7 @@ public class IRcommand_Return implements IRcommand {
 	/***************/
 	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Return MIPSme");
-		MIPSGenerator.getInstance().doReturn(tempMap.get(expRetReg));
+		MIPSGenerator.getInstance().doReturn(tempMap.get(expRetReg), funcName);
 	}
 
 	@Override

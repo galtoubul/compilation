@@ -757,8 +757,9 @@ public class MIPSGenerator {
 		textSegment += String.format("\tjr $ra\n");
 	}
 
-	public void doReturn(int expRetReg) {
+	public void doReturn(int expRetReg, String funcName) {
 		moveRegisters("$v0", tempString(expRetReg));
+		jump(funcName+"_epilogue");
 		// textSegment += String.format("\tmove $v0, %s\n", tempString(expRetRegIdx));
 	}
 
