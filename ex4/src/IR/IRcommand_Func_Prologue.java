@@ -16,10 +16,10 @@ public class IRcommand_Func_Prologue implements IRcommand {
 	int localVarsNum;
 	String funcName;
 
-	public IRcommand_Func_Prologue(String funcName) {
+	public IRcommand_Func_Prologue(String funcName, int localVarsNum) {
 		System.out.println("-- IRcommand_Func_Prologue");
 		TYPE_FUNCTION t = (TYPE_FUNCTION) SYMBOL_TABLE.getInstance().find(funcName);
-		this.localVarsNum = t.localVarsNum;
+		this.localVarsNum = localVarsNum;
 		System.out.println("\t\tlocalVarsNum = " + localVarsNum);
 		this.funcName = funcName;
 	}

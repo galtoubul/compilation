@@ -12,6 +12,8 @@ public class AST_FUNC_DEC extends AST_Node {
     public String id;
     public AST_STMT_LIST body;
     public Optional<AST_PARM_LIST> params;
+    public Optional<String> methodClass;
+    public int localVarsNum;
 
     public AST_FUNC_DEC(AST_TYPE returnTypeName, String id, AST_STMT_LIST body, Optional<AST_PARM_LIST> params) {
         System.out.println("-- AST_FUNC_DEC ctor\n\n\t line num = " + lineNum);
@@ -89,7 +91,7 @@ public class AST_FUNC_DEC extends AST_Node {
         }
     }
 
-    private int getLocalVarsNum() {
+    private void setLocalVarsNum() {
         int localVarsNum = 0;
         AST_STMT_LIST ptr1 = this.body;
         while (ptr1 != null && ptr1.head != null) {
@@ -98,7 +100,7 @@ public class AST_FUNC_DEC extends AST_Node {
             }
             ptr1 = ptr1.tail;
         }
-        return localVarsNum;
+        this.localVarsNum = localVarsNum;
     }
 
     public TYPE SemantMe(Optional<String> fatherClassId) {
@@ -118,6 +120,10 @@ public class AST_FUNC_DEC extends AST_Node {
             checkOverloading(fatherClassId);
         }
 
+        if (SYMBOL_TABLE.getInstance().currentScopeType().equals(ScopeType.Class)) {
+            methodClass = SYMBOL_TABLE.getInstance().currentScope().scopeName;
+        }
+
         // Begin Function Scope
         SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function, id);
         System.out.println("\t\tStart of a new scope for function/method " + this.id);
@@ -129,9 +135,9 @@ public class AST_FUNC_DEC extends AST_Node {
         }
 
         // Enter the function/method Type to the Symbol Table
-        int localVarsNum = getLocalVarsNum();
+        setLocalVarsNum();
         System.out.println("\t\tlocalVarsNum = " + localVarsNum);
-        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList, localVarsNum);
+        TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList);
         SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
         System.out.println("\t\tline number = " + lineNum);
@@ -153,9 +159,9 @@ public class AST_FUNC_DEC extends AST_Node {
     // TODO
     public TEMP IRme() {
         System.out.println("-- AST_FUNC_DEC IRme");
-
+        id = this.methodClass != null && this.methodClass.isPresent() ? id +"_"+ this.methodClass.get() : id;
         IR.getInstance().Add_IRcommand(new IRcommand_Label(id));
-        IR.getInstance().Add_IRcommand(new IRcommand_Func_Prologue(id));
+        IR.getInstance().Add_IRcommand(new IRcommand_Func_Prologue(id, localVarsNum));
         IR.getInstance().Add_IRcommand(new IRcommand_Label(id + "_after_prologue"));
 
         if (this.params.isPresent()) {

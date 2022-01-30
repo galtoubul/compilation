@@ -72,7 +72,7 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 
 		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(((AST.AST_VAR_SIMPLE)var).name);
 		varName = ((AST.AST_VAR_SIMPLE)var).name;
-//		setNotation(Optional.of(entry.get().position));
+		setNotation(Optional.of(entry.get().position));
 
 		return ((TYPE_ARRAY) type).type;
 	}

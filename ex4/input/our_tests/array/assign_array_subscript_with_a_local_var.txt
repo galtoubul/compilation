@@ -1,7 +1,8 @@
 array arrayType = int [];
 
-void f() {
+void main() {
 	arrayType arr := new int[20];
-	int x := 3;
-	arr[19] := x;
+	arr[5] := 8;
+	int x := arr[5];
+    PrintInt(arr[x]);
 }

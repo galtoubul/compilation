@@ -1,0 +1,11 @@
+class A {
+    int x := 5;
+    int foo() {
+        return 2;
+    }
+}
+void main() {
+    A a := new A;
+    int y := a.x;
+    PrintInt(y);
+}

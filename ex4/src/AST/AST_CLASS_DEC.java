@@ -151,6 +151,11 @@ public class AST_CLASS_DEC extends AST_Node {
 
     // TODO
     public TEMP IRme() {
+        AST_CFIELD_LIST ptr1 = this.fields;
+        while (ptr1 != null && ptr1.head != null) {
+            ptr1.head.IRme();
+            ptr1 = ptr1.tail;
+        }
         IR.getInstance().Add_IRcommand(new IRcommand_ClassDec(this.vtable, id));
         return null;
     }

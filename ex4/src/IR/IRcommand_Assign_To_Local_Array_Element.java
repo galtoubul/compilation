@@ -18,6 +18,7 @@ public class IRcommand_Assign_To_Local_Array_Element implements IRcommand {
         this.arrayTmp = arrayTmp;
         this.offsetTmp = offsetTmp;
         this.tmpRvalue = tmpRvalue;
+
     }
 
     /***************/
@@ -27,6 +28,9 @@ public class IRcommand_Assign_To_Local_Array_Element implements IRcommand {
         System.out.println("-- IRcommand_Assign_To_Local_Array_Element MIPSme");
         MIPSGenerator.getInstance().localVarAssignment(tempMap.get(arrayTmp), tempMap.get(offsetTmp),
                 tempMap.get(tmpRvalue));
+        for (TEMP t : tempMap.keySet()) {
+            System.out.println(t.getSerialNumber()+" "+tempMap.get(t));
+        }
     }
 
     @Override

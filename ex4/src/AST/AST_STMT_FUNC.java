@@ -96,10 +96,14 @@ public class AST_STMT_FUNC extends AST_STMT {
         if (argsList != null) {
             argsTempList = argsList.IRme();
         }
-
-        TEMP funcRetValTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
-        IR.getInstance().Add_IRcommand(new IRcommand_Call_Func_Stmt(funcRetValTemp, id, argsTempList));
-
+        if (id.equals("PrintInt")) {
+            IR.getInstance().Add_IRcommand(new IRcommand_Call_PrintInt(argsTempList));
+        } else if (id.equals("PrintString")) {
+            IR.getInstance().Add_IRcommand(new IRcommand_Call_PrintString(argsTempList));
+        } else {
+            TEMP funcRetValTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+            IR.getInstance().Add_IRcommand(new IRcommand_Call_Func_Stmt(funcRetValTemp, id, argsTempList));
+        }
         return null;
     }
 }

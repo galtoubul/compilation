@@ -77,6 +77,7 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		System.out.println("-- AST_VAR_SIMPLE IRme");
 
 		TEMP tmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		System.out.println("SIMPLE is " + tmp.getSerialNumber());
 
 		if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
 			System.out.format("\t\t%s is a global variable\n", name);

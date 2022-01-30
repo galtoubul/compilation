@@ -1,22 +1,23 @@
 package IR;
 
 import MIPS.MIPSGenerator;
-import TEMP.*;
+import TEMP.TEMP;
+import TEMP.TEMP_LIST;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class IRcommand_Call_PrintInt implements IRcommand {
+public class IRcommand_Call_PrintString implements IRcommand {
     TEMP_LIST argsTempList;
 
-    public IRcommand_Call_PrintInt(TEMP_LIST argsTempList) {
+    public IRcommand_Call_PrintString(TEMP_LIST argsTempList) {
         this.argsTempList = argsTempList;
     }
 
     @Override
     public void MIPSme(Map<TEMP, Integer> tempMap) {
-        MIPSGenerator.getInstance().PrintInt(tempMap.get(argsTempList.head));
+        MIPSGenerator.getInstance().PrintString(tempMap.get(argsTempList.head));
     }
 
     @Override

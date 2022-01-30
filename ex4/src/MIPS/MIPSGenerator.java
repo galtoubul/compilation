@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 // import int.*;
+import TEMP.TEMP_FACTORY;
 import TYPES.*;
 import labels.Labels;
 import pair.Pair;
@@ -129,7 +130,7 @@ public class MIPSGenerator {
 	}
 
 	public void malloc(int resultPtrTmp) {
-		liRegString("v0", 9);
+		liRegString("$v0", 9);
 		textSegment += String.format("\tsyscall\n");
 
 		moveRegisters(tempString(resultPtrTmp), "$v0");
@@ -137,7 +138,7 @@ public class MIPSGenerator {
 	}
 
 	public void malloc(int resultPtrTmp, int size) {
-		liRegString("a0", size);
+		liRegString("$a0", size);
 		malloc(resultPtrTmp);
 	}
 
@@ -153,13 +154,24 @@ public class MIPSGenerator {
 	}
 
 	public void PrintInt(int tmpInd) {
-		textSegment += String.format("\tli $a0, %d\n", tmpInd);
+		textSegment += String.format("\tmove $a0, %s\n", tempString(tmpInd));
+		textSegment += String.format("\tli $v0, 1\n");
+		textSegment += String.format("\tsyscall\n");
+	}
+	public void PrintInt(String temp) {
+		textSegment += String.format("\tmove $a0, %s\n", temp);
 		textSegment += String.format("\tli $v0, 1\n");
 		textSegment += String.format("\tsyscall\n");
 	}
 
-	public void PrintString(String strTmp) {
-		textSegment += String.format("\tli $a0, %s\n", strTmp);
+	public void PrintString(int tmpInd) {
+		textSegment += String.format("\tmove $a0, %s\n", tempString(tmpInd));
+		textSegment += String.format("\tli $v0, 4\n");
+		textSegment += String.format("\tsyscall\n");
+	}
+
+	public void PrintWord(String word) {
+		textSegment += String.format("\tla $a0, %s\n", word);
 		textSegment += String.format("\tli $v0, 4\n");
 		textSegment += String.format("\tsyscall\n");
 	}
@@ -232,7 +244,7 @@ public class MIPSGenerator {
 		checkLimits(dst);
 		jump(end_div);
 		label(div_by_0);
-		PrintString("string_illegal_div_by_0");
+		PrintWord("string_illegal_div_by_0");
 		exit();
 		label(end_div);
 	}
@@ -258,10 +270,16 @@ public class MIPSGenerator {
 		textSegment += String.format("\tlw %s, %d(%s)\n", tempString(dst), offset, tempString(tmpRvalue));
 		jump(end);
 		label(invalid_ptr);
-		PrintString("string_invalid_ptr_dref");
+		PrintWord("string_invalid_ptr_dref");
 		exit();
 		label(end);
 
+	}
+
+	public void assignToArrayElementWithOffset(int arrayTemp, int ind, int tmpRvalue) {
+		int offset = (ind + 1) * WORD_SIZE;
+		System.out.println("**********************" + offset);
+		textSegment += String.format("\tsw %s, %d(%s)\n", tempString(tmpRvalue), offset, tempString(arrayTemp));
 	}
 
 	public void fieldAssignment(int tmpLvalue, int tmpRvalue, int fieldInd) {
@@ -272,7 +290,7 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsw %s, %d(%s)\n", tempString(tmpRvalue), offset, tempString(tmpLvalue));
 		jump(end);
 		label(invalid_ptr);
-		PrintString("string_invalid_ptr_dref");
+		PrintWord("string_invalid_ptr_dref");
 		exit();
 		label(end);
 	}
@@ -286,10 +304,15 @@ public class MIPSGenerator {
 		// loadFromLocal(newOffsetTmp, varIndex);
 
 		// newOffsetTmp += offsetTmp
+		checkAccessViolation(arrayTemp,offsetTmp);
+		addConstIntToTmp(offsetTmp, 1);
+		System.out.format("%d, %d, %d\n", arrayTemp, offsetTmp, tmpRvalue);
+		multTmpByConstInt(offsetTmp, 4);
 		add(arrayTemp, arrayTemp, offsetTmp, false);
-
 		// *newOffsetTmp = tmpRvalue
 		textSegment += String.format("\tsw %s, 0(%s)\n", tempString(tmpRvalue), tempString(arrayTemp));
+
+
 	}
 
 	public void storeLocalVar(int ind, int initialValueTmp) {
@@ -488,12 +511,47 @@ public class MIPSGenerator {
 		final String ARRAY_SIZE_REG = "$s0";
 		this.textSegment += String.format("\tlw %s, 0(%s)\n", ARRAY_SIZE_REG, tempString(arrayTmp));
 		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
+//		PrintInt(ARRAY_SIZE_REG);
+//		PrintWord("WS");
+//		PrintInt(subscriptTemp);
+//		PrintWord("WS");
+
 		this.textSegment += String.format("\tbge %s, %s, %s\n", tempString(subscriptTemp),
 				ARRAY_SIZE_REG, invalid_access);
 		jump(after_check_access_violation);
 
 		label(invalid_access);
-		PrintString("string_access_violation");
+		PrintWord("string_access_violation");
+		exit();
+
+		label(after_check_access_violation);
+	}
+
+	public void checkAccessViolationWithConst(int arrayTmp, int subscript) {
+
+		label(Labels.getAvialableLabel("check_access_violation_start"));
+		String after_check_access_violation = Labels.getAvialableLabel("after_check_access_violation");
+		String invalid_access = Labels.getAvialableLabel("invalid_access");
+
+		// add abort stub in the end of the text segment
+		add_abort_flag = true;
+
+		// check for a negative index
+		bltzConst(subscript, invalid_access);
+
+		// check for an index which is bigger than array size
+		// int arraySizeTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
+		// loadArraySize(arraySizeTmp, arrayTmp);
+
+		final String ARRAY_SIZE_REG = "$s0";
+		this.textSegment += String.format("\tlw %s, 0(%s)\n", ARRAY_SIZE_REG, tempString(arrayTmp));
+		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
+		this.textSegment += String.format("\tbge %d, %s, %s\n", subscript,
+				ARRAY_SIZE_REG, invalid_access);
+		jump(after_check_access_violation);
+
+		label(invalid_access);
+		PrintWord("string_access_violation");
 		exit();
 
 		label(after_check_access_violation);
@@ -573,6 +631,11 @@ public class MIPSGenerator {
 		textSegment += String.format("\tbltz %s, %s\n", tempString(oprnd), label);
 	}
 
+	public void bltzConst(int n, String label) {
+		textSegment += String.format("\tbltz %d, %s\n", n, label);
+	}
+
+
 	public void bgt(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("bgt", oprnd1, oprnd2, label);
 	}
@@ -639,12 +702,7 @@ public class MIPSGenerator {
 		// restore sp
 		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
 
-		if (funcName.equals("PrintInt")) {
-			PrintInt(argTemps.getLast());
-		}
-		if (funcName.equals("PrintString")) {
-			PrintString(tempString(argTemps.getLast()));
-		}
+
 	}
 
 	public void callFuncExp(int dst, String funcName, Deque<Integer> argTemps) {
@@ -683,9 +741,9 @@ public class MIPSGenerator {
 
 	public void funcPrologue(int localVarsNum, String funcName) {
 		label(Labels.getAvialableLabel(funcName + "_prologue"));
-		pushRegNameString("ra");
-		pushRegNameString("fp");
-		textSegment += String.format("\tmov $fp, $sp\n");
+		pushRegNameString("$ra");
+		pushRegNameString("$fp");
+		textSegment += String.format("\tmove $fp, $sp\n");
 		registersBackup();
 		textSegment += String.format("\tsub $sp, $sp, %d\n", localVarsNum * WORD_SIZE);
 	}
@@ -703,7 +761,7 @@ public class MIPSGenerator {
 
 	public void doReturn(int expRetReg) {
 		moveRegisters("$v0", tempString(expRetReg));
-		// textSegment += String.format("\tmov $v0, %s\n", tempString(expRetRegIdx));
+		// textSegment += String.format("\tmove $v0, %s\n", tempString(expRetRegIdx));
 	}
 
 	public void addMethodToVtable(String className, String methodName) {
@@ -762,6 +820,8 @@ public class MIPSGenerator {
 			instance.fileWriter.print("string_access_violation: .asciiz \"Access Violation\"\n");
 			instance.fileWriter.print("string_illegal_div_by_0: .asciiz \"Illegal Division By Zero\"\n");
 			instance.fileWriter.print("string_invalid_ptr_dref: .asciiz \"Invalid Pointer Dereference\"\n");
+			instance.fileWriter.print("WS: .asciiz \" \"\n");
+
 		}
 		return instance;
 	}

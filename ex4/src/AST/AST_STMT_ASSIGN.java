@@ -120,7 +120,6 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		System.out.println("-- AST_STMT_ASSIGN IRme");
 
 		TEMP rValueTmp = exp.IRme();
-
 		if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
 			System.out.format("\t\t%s is a global variable\n", varName);
 
@@ -135,10 +134,17 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 			int localVarInd = astAnnotation.ind.orElse(-1);
 			if (var instanceof AST.AST_VAR_SUBSCRIPT) {
 				TEMP arrayTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-				TEMP offsetTmp = ((AST_VAR_SUBSCRIPT) var).subscript.IRme();
-				IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Local_Var(arrayTmp, localVarInd));
-				IR.getInstance()
-						.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
+				AST_EXP subscript = ((AST_VAR_SUBSCRIPT) var).subscript;
+				if (subscript instanceof AST_EXP_INT) {
+					IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Local_Var(arrayTmp, localVarInd));
+					IR.getInstance()
+							.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element_With_Offset(arrayTmp, ((AST_EXP_INT) subscript).value, rValueTmp));
+
+				} else {
+					TEMP offsetTmp = subscript.IRme();
+					IR.getInstance()
+							.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
+				}
 			} else if (var instanceof AST.AST_VAR_FIELD) {
 				TEMP varOfTmp = ((AST_VAR_FIELD) var).var.IRme();
 				int fieldInd = ((AST_VAR_FIELD) var).astAnnotation.ind.orElse(-1);
