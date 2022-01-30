@@ -13,6 +13,7 @@ import IR.*;
 
 public class AST_STMT_RETURN extends AST_STMT {
     public Optional<AST_EXP> exp;
+    String funcName;
 
     public AST_STMT_RETURN(Optional<AST_EXP> exp) {
         this.exp = exp;
@@ -55,7 +56,7 @@ public class AST_STMT_RETURN extends AST_STMT {
         // funciton declarations
         ScopeEntry scope = SYMBOL_TABLE.getInstance().findScopeType(ScopeType.Function).get();
         TYPE returnType = ((TYPE_FUNCTION) SYMBOL_TABLE.getInstance().find(scope.scopeName.get())).returnType;
-
+        funcName = scope.scopeName.orElse("no_name");
         if (this.exp.isPresent()) {
             if (returnType == TYPE_VOID.getInstance()) {
                 System.out.format(">> ERROR [%d:%d] cannot return a value, since the return type is void\n", 2, 2);
@@ -79,7 +80,7 @@ public class AST_STMT_RETURN extends AST_STMT {
         System.out.println("-- AST_STMT_RETURN IRme");
         if (this.exp.isPresent()) {
             TEMP expRetReg = this.exp.get().IRme();
-            IR.getInstance().Add_IRcommand(new IRcommand_Return(expRetReg));
+            IR.getInstance().Add_IRcommand(new IRcommand_Return(expRetReg, funcName));
         }
         return null;
     }
