@@ -2,7 +2,6 @@ package AST;
 
 import java.util.Optional;
 
-import TEMP.TEMP;
 import TYPES.TYPE;
 
 public class AST_CFIELD_FUNC_DEC extends AST_CFIELD {
@@ -37,7 +36,7 @@ public class AST_CFIELD_FUNC_DEC extends AST_CFIELD {
     }
 
     @Override
-    public TEMP IRme() {
-        return func.IRme();
+    public void IRme() {
+        func.IRme();
     }
 }

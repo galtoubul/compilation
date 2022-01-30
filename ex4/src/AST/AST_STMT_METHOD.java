@@ -3,7 +3,6 @@ package AST;
 import java.util.Optional;
 
 import IR.IR;
-import IR.IRcommand_Call_Method_Exp;
 import IR.IRcommand_Call_Method_Stmt;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
@@ -103,7 +102,8 @@ public class AST_STMT_METHOD extends AST_STMT {
         return funcType.returnType;
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         System.out.println("-- AST_STMT_METHOD IRme");
 
         TEMP_LIST argsTempList = null;
@@ -113,8 +113,6 @@ public class AST_STMT_METHOD extends AST_STMT {
 
         IR.getInstance().Add_IRcommand(new IRcommand_Call_Method_Stmt(var.IRme(), this.offset,
                 argsTempList));
-
-        return null;
     }
 
 }

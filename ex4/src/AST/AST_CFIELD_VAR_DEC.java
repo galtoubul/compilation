@@ -2,7 +2,6 @@ package AST;
 
 import java.util.Optional;
 
-import TEMP.TEMP;
 import TYPES.TYPE;
 
 public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
@@ -35,7 +34,7 @@ public class AST_CFIELD_VAR_DEC extends AST_CFIELD {
     }
 
     @Override
-    public TEMP IRme() {
-        return var.IRme();
+    public void IRme() {
+        var.IRme();
     }
 }

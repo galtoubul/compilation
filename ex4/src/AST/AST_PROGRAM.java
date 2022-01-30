@@ -1,7 +1,6 @@
 package AST;
 
 import TYPES.TYPE;
-import TEMP.*;
 
 public class AST_PROGRAM extends AST_Node {
     public AST_DEC_LIST decList;
@@ -26,8 +25,8 @@ public class AST_PROGRAM extends AST_Node {
         return decList.SemantMe();
     }
 
-    public TEMP IRme() {
+    public void IRme() {
         System.out.println("-- AST_PROGRAM IRme");
-        return decList.IRme();
+        decList.IRme();
     }
 }

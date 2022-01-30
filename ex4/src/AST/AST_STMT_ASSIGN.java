@@ -127,7 +127,8 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		// }
 	}
 
-	public TEMP IRme() {
+	@Override
+	public void IRme() {
 		System.out.println("-- AST_STMT_ASSIGN IRme");
 
 		TEMP rValueTmp = exp.IRme();
@@ -160,7 +161,5 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
 			}
 		}
-
-		return null;
 	}
 }

@@ -89,7 +89,8 @@ public class AST_STMT_FUNC extends AST_STMT {
         return funcType.returnType;
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         System.out.println("-- AST_STMT_FUNC IRme");
 
         TEMP_LIST argsTempList = null;
@@ -103,6 +104,5 @@ public class AST_STMT_FUNC extends AST_STMT {
         } else {
             IR.getInstance().Add_IRcommand(new IRcommand_Call_Func_Stmt(id, argsTempList));
         }
-        return null;
     }
 }

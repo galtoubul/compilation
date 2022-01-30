@@ -61,10 +61,10 @@ public class AST_STMT_LIST extends AST_Node {
 
 			if (head instanceof AST.AST_STMT_VAR_DEC) {
 				Optional<Integer> localVarIndexOpt = Optional.of(localVarIndex + 1);
-				System.out.println("\t\thead is instance of AST.AST_STMT_VAR_DEC\n\t\tlocalVarIndexOpt = " + localVarIndexOpt);
-				((AST.AST_STMT_VAR_DEC)head).SemantMe(classId, localVarIndexOpt);
-			}
-			else {
+				System.out.println(
+						"\t\thead is instance of AST.AST_STMT_VAR_DEC\n\t\tlocalVarIndexOpt = " + localVarIndexOpt);
+				((AST.AST_STMT_VAR_DEC) head).SemantMe(classId, localVarIndexOpt);
+			} else {
 				head.SemantMe(classId);
 			}
 		}
@@ -78,11 +78,11 @@ public class AST_STMT_LIST extends AST_Node {
 		return null;
 	}
 
-	public TEMP IRme() {
+	public void IRme() {
 		System.out.println("-- AST_STMT_LIST IRme");
-		if (head != null) head.IRme();
-		if (tail != null) tail.IRme();
-
-		return null;
+		if (head != null)
+			head.IRme();
+		if (tail != null)
+			tail.IRme();
 	}
 }

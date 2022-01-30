@@ -86,9 +86,11 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
             TYPE_CLASS currentClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance()
                     .find(SYMBOL_TABLE.getInstance().currentScope().scopeName.get());
             if (initialValue instanceof AST_EXP_INT) {
-                currentClass.initialValues.add(new Pair<String,Optional<Object>>(id,Optional.of(((AST_EXP_INT) initialValue).value)));
+                currentClass.initialValues
+                        .add(new Pair<String, Optional<Object>>(id, Optional.of(((AST_EXP_INT) initialValue).value)));
             } else if (initialValue instanceof AST_EXP_STRING) {
-                currentClass.initialValues.add(new Pair<String,Optional<Object>>(id,Optional.of(((AST_EXP_STRING) initialValue).s)));
+                currentClass.initialValues
+                        .add(new Pair<String, Optional<Object>>(id, Optional.of(((AST_EXP_STRING) initialValue).s)));
             }
         }
 
@@ -122,7 +124,8 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         }
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         System.out.format("-- AST_VAR_INITIALIZATION IRme\n\t\tid = %s\n", id);
 
         if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
@@ -155,7 +158,5 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
             int localVarInd = astAnnotation.ind.orElse(-1);
             IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
         }
-
-        return null;
     }
 }

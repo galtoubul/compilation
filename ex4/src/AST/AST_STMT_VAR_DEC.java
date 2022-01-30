@@ -3,7 +3,6 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
-import TEMP.*;
 
 public class AST_STMT_VAR_DEC extends AST_STMT {
     public AST_VAR_DEC varDec;
@@ -23,10 +22,11 @@ public class AST_STMT_VAR_DEC extends AST_STMT {
         return this.varDec.SemantMe(classId, localVarIndexOpt);
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         System.out.println("-- AST_STMT_VAR_DEC IRme");
         String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
         System.out.println("\t\tcaller = " + callerClassName);
-        return this.varDec.IRme();
+        this.varDec.IRme();
     }
 }

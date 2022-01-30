@@ -7,7 +7,6 @@ import TYPES.*;
 import ast_annotation.AstAnnotation;
 import ast_notation_type.AstNotationType;
 import global_variables.GlobalVariables;
-import TEMP.*;
 import IR.*;
 import pair.Pair;
 
@@ -84,7 +83,7 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class) {
             TYPE_CLASS currentClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance()
                     .find(SYMBOL_TABLE.getInstance().currentScope().scopeName.get());
-                currentClass.initialValues.add(new Pair<String,Optional<Object>>(id,Optional.empty()));
+            currentClass.initialValues.add(new Pair<String, Optional<Object>>(id, Optional.empty()));
         }
 
         String callerClassName = (Thread.currentThread().getStackTrace())[2].getClassName();
@@ -117,7 +116,8 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         }
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         System.out.println("-- AST_VAR_DECLERATION IRme");
 
         if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
@@ -127,7 +127,6 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         } else { // local variable
             System.out.println("\t\tlocal variable");
         }
-        return null;
     }
 
 }

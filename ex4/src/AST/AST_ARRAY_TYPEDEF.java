@@ -4,7 +4,6 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_ARRAY;
 import TYPES.TYPE_VOID;
-import TEMP.*;
 
 public class AST_ARRAY_TYPEDEF extends AST_Node {
     public AST_TYPE type;
@@ -61,8 +60,7 @@ public class AST_ARRAY_TYPEDEF extends AST_Node {
         return null;
     }
 
-    public TEMP IRme() {
+    public void IRme() {
         System.out.println("-- AST_ARRAY_TYPEDEF IRme");
-        return null;
     }
 }

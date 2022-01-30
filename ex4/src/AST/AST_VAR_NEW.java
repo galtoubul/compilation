@@ -130,7 +130,8 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
         }
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         System.out.println("-- AST_VAR_NEW IRme");
 
         TEMP rValueTmp = initialValue.IRme();
@@ -148,7 +149,5 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
             int localVarInd = astAnnotation.ind.orElse(-1);
             IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
         }
-
-        return null;
     }
 }

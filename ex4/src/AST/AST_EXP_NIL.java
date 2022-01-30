@@ -13,5 +13,7 @@ public class AST_EXP_NIL extends AST_EXP {
         return TYPE_NIL.getInstance();
     }
 
-    public TEMP IRme() { return null; }
+    public TEMP IRme() {
+        throw new UnsupportedOperationException();
+    }
 }

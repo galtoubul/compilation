@@ -52,7 +52,8 @@ public class AST_STMT_WHILE extends AST_STMT {
 		return null;
 	}
 
-	public TEMP IRme() {
+	@Override
+	public void IRme() {
 		System.out.println("-- AST_STMT_WHILE IRme");
 
 		// Aalocate 2 fresh labels
@@ -65,7 +66,5 @@ public class AST_STMT_WHILE extends AST_STMT {
 		body.IRme();
 		IR.getInstance().Add_IRcommand(new IRcommand_Jump_Label(label_start));
 		IR.getInstance().Add_IRcommand(new IRcommand_Label(label_end));
-
-		return null;
 	}
 }

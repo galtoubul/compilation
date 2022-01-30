@@ -1,7 +1,6 @@
 package AST;
 
 import TYPES.TYPE;
-import TEMP.*;
 
 public class AST_DEC_LIST extends AST_Node {
 	public AST_DEC head;
@@ -69,13 +68,14 @@ public class AST_DEC_LIST extends AST_Node {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, tail.SerialNumber);
 	}
 
-	public TEMP IRme()
-	{
+	public void IRme() {
 		System.out.println("-- AST_DEC_LIST IRme");
-		if (head != null) head.IRme();
-		if (tail != null) tail.IRme();
-
-		return null;
+		if (head != null) {
+			head.IRme();
+		}
+		if (tail != null) {
+			tail.IRme();
+		}
 	}
 
 }

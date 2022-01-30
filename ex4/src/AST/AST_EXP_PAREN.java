@@ -18,5 +18,7 @@ public class AST_EXP_PAREN extends AST_EXP {
     }
 
     // TODO
-    public TEMP IRme() { return null; }
+    public TEMP IRme() {
+        throw new UnsupportedOperationException();
+    }
 }

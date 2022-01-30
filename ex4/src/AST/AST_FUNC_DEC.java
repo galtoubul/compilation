@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.*;
 import TYPES.*;
-import TEMP.*;
 import IR.*;
 
 public class AST_FUNC_DEC extends AST_Node {
@@ -157,9 +156,9 @@ public class AST_FUNC_DEC extends AST_Node {
     }
 
     // TODO
-    public TEMP IRme() {
+    public void IRme() {
         System.out.println("-- AST_FUNC_DEC IRme");
-        id = this.methodClass != null && this.methodClass.isPresent() ? id +"_"+ this.methodClass.get() : id;
+        id = this.methodClass != null && this.methodClass.isPresent() ? id + "_" + this.methodClass.get() : id;
         IR.getInstance().Add_IRcommand(new IRcommand_Label(id));
         IR.getInstance().Add_IRcommand(new IRcommand_Func_Prologue(id, localVarsNum));
         IR.getInstance().Add_IRcommand(new IRcommand_Label(id + "_after_prologue"));
@@ -173,7 +172,5 @@ public class AST_FUNC_DEC extends AST_Node {
         }
 
         IR.getInstance().Add_IRcommand(new IRcommand_Func_Epilogue(id));
-
-        return null;
     }
 }

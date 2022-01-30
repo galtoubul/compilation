@@ -84,7 +84,8 @@ public class AST_STMT_IF extends AST_STMT {
 		return null;
 	}
 
-	public TEMP IRme() {
+	@Override
+	public void IRme() {
 		System.out.println("-- AST_STMT_IF IRme");
 
 		TEMP condTmp = cond.IRme();
@@ -92,7 +93,5 @@ public class AST_STMT_IF extends AST_STMT {
 		IR.getInstance().Add_IRcommand(new IRcommand_Jump_If_Eq_To_Zero(condTmp, label));
 		body.IRme();
 		IR.getInstance().Add_IRcommand(new IRcommand_Label(label));
-
-		return null;
 	}
 }

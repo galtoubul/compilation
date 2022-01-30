@@ -1,7 +1,6 @@
 package AST;
 
 import TYPES.TYPE;
-import TEMP.*;
 
 public class AST_DEC_ARRAY_TYPEDEF extends AST_DEC {
     public AST_ARRAY_TYPEDEF typedef;
@@ -30,9 +29,9 @@ public class AST_DEC_ARRAY_TYPEDEF extends AST_DEC {
         return null;
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         System.out.println("-- AST_DEC_ARRAY_TYPEDEF IRme");
         this.typedef.IRme();
-        return null;
     }
 }

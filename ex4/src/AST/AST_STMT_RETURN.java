@@ -82,12 +82,12 @@ public class AST_STMT_RETURN extends AST_STMT {
         return null;
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         System.out.println("-- AST_STMT_RETURN IRme");
         if (this.exp.isPresent()) {
             TEMP expRetReg = this.exp.get().IRme();
             IR.getInstance().Add_IRcommand(new IRcommand_Return(expRetReg, funcName));
         }
-        return null;
     }
 }

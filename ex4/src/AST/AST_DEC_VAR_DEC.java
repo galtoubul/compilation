@@ -3,7 +3,6 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
-import TEMP.*;
 
 public class AST_DEC_VAR_DEC extends AST_DEC {
     public AST_VAR_DEC varDec;
@@ -19,10 +18,10 @@ public class AST_DEC_VAR_DEC extends AST_DEC {
         return null;
     }
 
-    public TEMP IRme() {
+    @Override
+    public void IRme() {
         if (varDec != null) {
             varDec.IRme();
         }
-        return null;
     }
 }
