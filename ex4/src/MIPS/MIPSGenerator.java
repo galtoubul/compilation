@@ -690,7 +690,7 @@ public class MIPSGenerator {
 		// return args.size();
 	}
 
-	public void callFuncStmt(int dst, String funcName, Deque<Integer> argTemps) {
+	public void callFuncStmt(String funcName, Deque<Integer> argTemps) {
 		// push args
 		int argsNum = argTemps.size();
 		pushArgs(argTemps);
@@ -703,12 +703,38 @@ public class MIPSGenerator {
 
 	}
 
-	public void callFuncExp(int dst, String funcName, Deque<Integer> argTemps) {
-		callFuncStmt(dst, funcName, argTemps);
+	public void callFuncExp(int dstTemp, String funcName, Deque<Integer> argTemps) {
+		callFuncStmt(funcName, argTemps);
 
 		// store return value in dst
-		moveRegisters(tempString(dst), "$v0");
-		// textSegment += String.format("\tmov %s, $v0\n", tempString(dstidx));
+		moveRegisters(tempString(dstTemp), "$v0");
+	}
+
+	public void callMethodStmt(int objectTemp, int methodOffset, Deque<Integer> argTemps) {
+		final String VTABLE_REG = "$s0";
+		final String METHOD_REG = "$s1";
+
+		// Push arguments, including the object itself
+		argTemps.addLast(objectTemp);
+		int argsNum = argTemps.size();
+		this.pushArgs(argTemps);
+
+		// Get the method from the virtual table
+		this.textSegment += String.format("\tlw %s, 0(%s)\n", VTABLE_REG, tempString(objectTemp));
+		this.textSegment += String.format("\tlw %s, %d(%s)\n", METHOD_REG, methodOffset, VTABLE_REG);
+
+		// jalr
+		this.textSegment += String.format("\tjalr %s\n", METHOD_REG);
+
+		// restore sp
+		this.textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
+	}
+
+	public void callMethodExp(int dstTemp, int objectTemp, int methodOffset, Deque<Integer> argTemps) {
+		this.callMethodStmt(objectTemp, methodOffset, argTemps);
+
+		// store return value in dst
+		moveRegisters(tempString(dstTemp), "$v0");
 	}
 
 	/*********************************************
@@ -759,7 +785,7 @@ public class MIPSGenerator {
 
 	public void doReturn(int expRetReg, String funcName) {
 		moveRegisters("$v0", tempString(expRetReg));
-		jump(funcName+"_epilogue");
+		jump(funcName + "_epilogue");
 		// textSegment += String.format("\tmove $v0, %s\n", tempString(expRetRegIdx));
 	}
 
