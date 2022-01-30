@@ -10,7 +10,7 @@ import MIPS.*;
 
 public class IRcommand_Call_Func_Exp extends IRcommand_Call_Func {
 
-	TEMP dst;
+	private TEMP dst;
 
 	public IRcommand_Call_Func_Exp(TEMP dst, String funcName, TEMP_LIST argsTempList) {
 		super(funcName, argsTempList);
