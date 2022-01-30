@@ -57,6 +57,12 @@ public class AST_STMT_RETURN extends AST_STMT {
         ScopeEntry scope = SYMBOL_TABLE.getInstance().findScopeType(ScopeType.Function).get();
         TYPE returnType = ((TYPE_FUNCTION) SYMBOL_TABLE.getInstance().find(scope.scopeName.get())).returnType;
         funcName = scope.scopeName.orElse("no_name");
+        Optional<ScopeEntry> classScope = SYMBOL_TABLE.getInstance().findScopeType(ScopeType.Class);
+        if (classScope.isPresent()) {
+            // Update the function name to bear the class name
+            funcName += "_" + classScope.get().scopeName.get();
+        }
+
         if (this.exp.isPresent()) {
             if (returnType == TYPE_VOID.getInstance()) {
                 System.out.format(">> ERROR [%d:%d] cannot return a value, since the return type is void\n", 2, 2);
