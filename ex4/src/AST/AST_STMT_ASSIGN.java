@@ -89,9 +89,9 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		if (var instanceof AST.AST_VAR_SIMPLE) {
 			varSimple = ((AST.AST_VAR_SIMPLE) var);
 		} else if (var instanceof AST.AST_VAR_SUBSCRIPT) {
-			varSimple = (AST.AST_VAR_SIMPLE) ((AST.AST_VAR_SUBSCRIPT) var).var;
+			varSimple = ((AST.AST_VAR_SUBSCRIPT) var).var.getSimple();
 		} else { // instanceof AST.AST_VAR_FIELD
-			varSimple = (AST.AST_VAR_SIMPLE) ((AST.AST_VAR_FIELD) var).var;
+			varSimple = ((AST.AST_VAR_FIELD) var).var.getSimple();
 		}
 
 		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(varSimple.name);
