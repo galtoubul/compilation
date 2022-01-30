@@ -139,10 +139,7 @@ public class RegisterAllocation {
             graph.reinsertTemp(temp);
 
             // Find the first color that does not collide with existing neighboring colors
-            int freshColor = graph
-                    .neighbors(temp)
-                    .map(neighbor -> coloring.get(neighbor))
-                    .reduce(0, (current, next) -> current < next ? current : next + 1);
+            int freshColor = getFreshColor(graph, temp, coloring);
 
             if (freshColor > colors) {
                 return Optional.empty();
@@ -151,6 +148,14 @@ public class RegisterAllocation {
         }
 
         return Optional.of(coloring);
+    }
+
+    private static int getFreshColor(InterferenceGraph graph, TEMP temp, HashMap<TEMP, Integer> coloring) {
+        return graph
+                .neighbors(temp)
+                .map(neighbor -> coloring.get(neighbor))
+                .sorted()
+                .reduce(0, (current, next) -> current < next ? current : next + 1);
     }
 
 }
