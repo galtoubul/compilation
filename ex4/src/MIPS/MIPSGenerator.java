@@ -200,6 +200,10 @@ public class MIPSGenerator {
 		this.textSegment += String.format("\t%s %s, %s, %s\n", operation, dst, r1, value);
 	}
 
+	private void binopRegistersConst(String operation, String dst, String r1, int constant) {
+		this.textSegment += String.format("\t%s %s, %s, %s\n", operation, dst, r1, String.valueOf(constant));
+	}
+
 	private void selfBinopRegister(String operation, String register, int constant) {
 		this.binopRegisters(operation, register, register, String.valueOf(constant));
 	}
@@ -469,12 +473,13 @@ public class MIPSGenerator {
 
 	public void createNewArray(int dstTemp, int subscriptTemp) {
 
-		// calculate the array size
-		// int sizeTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
-		// movFromTmpToTmp(sizeTemp, subscriptTemp);
-
+		final String HELPER_REG = "$s0";
 		final String ALLOC_SIZE_REG = "$a0";
-		moveRegisters(ALLOC_SIZE_REG, tempString(subscriptTemp));
+
+		moveRegisters(HELPER_REG, tempString(subscriptTemp));
+
+		// calculate the array size
+		this.binopRegistersConst("add", ALLOC_SIZE_REG, HELPER_REG, 1);
 		this.selfBinopRegister("add", ALLOC_SIZE_REG, 1);
 		this.selfBinopRegister("mul", ALLOC_SIZE_REG, WORD_SIZE);
 
@@ -482,7 +487,7 @@ public class MIPSGenerator {
 		malloc(dstTemp);
 
 		// first cell of the array should contain its size
-		textSegment += String.format("\tsw %s, 0(%s)\n", tempString(subscriptTemp), tempString(dstTemp));
+		textSegment += String.format("\tsw %s, 0(%s)\n", HELPER_REG, tempString(dstTemp));
 	}
 
 	public void loadArraySize(int dstTmp, int arrayTmp) {
