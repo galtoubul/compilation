@@ -1,8 +1,11 @@
 package AST;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import IR.IR;
 import IR.IRcommand_ClassDec;
@@ -19,7 +22,7 @@ public class AST_CLASS_DEC extends AST_Node {
     public String id;
     Optional<String> father;
     public AST_CFIELD_LIST fields;
-    public ArrayList<Pair<String,Optional<Object>>> initialValues; // Very disgusting
+    public ArrayList<Pair<String, Optional<Object>>> initialValues; // Very disgusting
 
     private ArrayList<Pair<String, String>> vtable = new ArrayList<>();
 
@@ -60,14 +63,12 @@ public class AST_CLASS_DEC extends AST_Node {
     }
 
     private void createVtable() {
-        // MIPSGenerator mips_gen = MIPSGenerator.getInstance();
-        vtableMethods = new HashSet<>();
-        // mips_gen.createVtable(id);
+        this.vtableMethods = new HashSet<>();
+        ArrayDeque<Pair<String, String>> vtable = new ArrayDeque<>();
         AST_CFIELD_LIST ptr1 = this.fields;
         while (ptr1 != null && ptr1.head != null) {
             if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC) {
-                this.vtable.add(new Pair<>(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id));
-                // mips_gen.addMethodToVtable(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id);
+                vtable.push(new Pair<>(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id));
                 vtableMethods.add(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id);
             } else {
                 if (((AST_CFIELD_VAR_DEC) ptr1.head).var.type.equals(Type.TYPE_INT)) {
@@ -86,9 +87,7 @@ public class AST_CLASS_DEC extends AST_Node {
                 while (fatherMembers != null && fatherMembers.head != null) {
                     if (fatherMembers.head instanceof TYPE_FUNCTION
                             && !vtableMethods.contains(fatherMembers.head.name)) {
-                        this.vtable.add(new Pair<>(fatherClass.name, ((TYPE_FUNCTION) fatherMembers.head).name));
-                        // mips_gen.addMethodToVtable(fatherClass.name, ((TYPE_FUNCTION)
-                        // fatherMembers.head).name);
+                        vtable.push(new Pair<>(fatherClass.name, ((TYPE_FUNCTION) fatherMembers.head).name));
                         vtableMethods.add(((TYPE_FUNCTION) fatherMembers.head).name);
                     }
                     fatherMembers = fatherMembers.tail;
@@ -99,6 +98,8 @@ public class AST_CLASS_DEC extends AST_Node {
                     fatherClass = null;
             }
         }
+
+        this.vtable = new ArrayList<>(vtable);
     }
 
     public TYPE SemantMe() {
@@ -144,6 +145,10 @@ public class AST_CLASS_DEC extends AST_Node {
         SYMBOL_TABLE.getInstance().enter(id, type, true);
 
         createVtable();
+        type.methodOffsets = IntStream
+                .range(0, this.vtable.size())
+                .boxed()
+                .collect(Collectors.toMap(index -> this.vtable.get(index).getValue(), index -> index));
 
         // Return value is irrelevant for class declarations
         return null;
@@ -156,7 +161,7 @@ public class AST_CLASS_DEC extends AST_Node {
             ptr1.head.IRme();
             ptr1 = ptr1.tail;
         }
-        IR.getInstance().Add_IRcommand(new IRcommand_ClassDec(this.vtable, id));
+        IR.getInstance().Add_IRcommand(new IRcommand_ClassDec(new ArrayList<>(this.vtable), id));
         return null;
     }
 }

@@ -3,6 +3,7 @@ package TYPES;
 import pair.Pair;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Optional;
 
 public class TYPE_CLASS extends TYPE {
@@ -23,7 +24,9 @@ public class TYPE_CLASS extends TYPE {
 	 * The value can be either int (stored as an `Integer`) or string (stored as a
 	 * `String`).
 	 */
-	public ArrayList<Pair<String,Optional<Object>>> initialValues; // Very disgusting
+	public ArrayList<Pair<String, Optional<Object>>> initialValues; // Very disgusting
+
+	public Map<String, Integer> methodOffsets;
 
 	public int fieldsNum = 0;
 
@@ -36,7 +39,7 @@ public class TYPE_CLASS extends TYPE {
 	}
 
 	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum,
-					  ArrayList<Pair<String,Optional<Object>>> initialValues) {
+			ArrayList<Pair<String, Optional<Object>>> initialValues) {
 		this.name = name;
 		this.father = father;
 		this.data_members = data_members;
