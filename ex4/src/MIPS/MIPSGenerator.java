@@ -15,6 +15,7 @@ public class MIPSGenerator {
 	private static final int MAX_TEMPS = 10; // $t0 - $t9
 	private static final int TMPS_BACKUP_SPACE = WORD_SIZE * MAX_TEMPS; // $t0 - $t9 backup
 	private static final String ABORT_LABEL = "abort_label";
+	private static final String SPACE_LABLE = "WS";
 	private boolean add_abort_flag = false;
 	private PrintWriter fileWriter;
 	private String dataSegment = "";
@@ -155,12 +156,14 @@ public class MIPSGenerator {
 		textSegment += String.format("\tmove $a0, %s\n", tempString(tmpInd));
 		textSegment += String.format("\tli $v0, 1\n");
 		textSegment += String.format("\tsyscall\n");
+		PrintWord(SPACE_LABLE);
 	}
 
 	public void PrintInt(String temp) {
 		textSegment += String.format("\tmove $a0, %s\n", temp);
 		textSegment += String.format("\tli $v0, 1\n");
 		textSegment += String.format("\tsyscall\n");
+		PrintWord(SPACE_LABLE);
 	}
 
 	public void PrintString(int tmpInd) {
@@ -513,11 +516,6 @@ public class MIPSGenerator {
 		final String ARRAY_SIZE_REG = "$s0";
 		this.textSegment += String.format("\tlw %s, 0(%s)\n", ARRAY_SIZE_REG, tempString(arrayTmp));
 		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
-		// PrintInt(ARRAY_SIZE_REG);
-		// PrintWord("WS");
-		// PrintInt(subscriptTemp);
-		// PrintWord("WS");
-
 		this.textSegment += String.format("\tbge %s, %s, %s\n", tempString(subscriptTemp),
 				ARRAY_SIZE_REG, invalid_access);
 		jump(after_check_access_violation);
@@ -820,7 +818,7 @@ public class MIPSGenerator {
 			instance.fileWriter.print("string_access_violation: .asciiz \"Access Violation\"\n");
 			instance.fileWriter.print("string_illegal_div_by_0: .asciiz \"Illegal Division By Zero\"\n");
 			instance.fileWriter.print("string_invalid_ptr_dref: .asciiz \"Invalid Pointer Dereference\"\n");
-			instance.fileWriter.print("WS: .asciiz \" \"\n");
+			instance.fileWriter.format("%s: .asciiz \" \"\n", SPACE_LABLE);
 
 		}
 		return instance;
