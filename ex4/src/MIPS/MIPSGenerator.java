@@ -5,8 +5,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 
-// import int.*;
-import TEMP.TEMP_FACTORY;
 import TYPES.*;
 import labels.Labels;
 import pair.Pair;
@@ -158,6 +156,7 @@ public class MIPSGenerator {
 		textSegment += String.format("\tli $v0, 1\n");
 		textSegment += String.format("\tsyscall\n");
 	}
+
 	public void PrintInt(String temp) {
 		textSegment += String.format("\tmove $a0, %s\n", temp);
 		textSegment += String.format("\tli $v0, 1\n");
@@ -266,7 +265,7 @@ public class MIPSGenerator {
 		int offset = (fieldInd + 1) * WORD_SIZE;
 		String invalid_ptr = Labels.getAvialableLabel("invalid_ptr");
 		String end = Labels.getAvialableLabel("end");
-		beqz(tmpRvalue,invalid_ptr);
+		beqz(tmpRvalue, invalid_ptr);
 		textSegment += String.format("\tlw %s, %d(%s)\n", tempString(dst), offset, tempString(tmpRvalue));
 		jump(end);
 		label(invalid_ptr);
@@ -285,7 +284,7 @@ public class MIPSGenerator {
 	public void fieldAssignment(int tmpLvalue, int tmpRvalue, int fieldInd) {
 		String invalid_ptr = Labels.getAvialableLabel("invalid_ptr");
 		String end = Labels.getAvialableLabel("end");
-		beqz(tmpLvalue,invalid_ptr);
+		beqz(tmpLvalue, invalid_ptr);
 		int offset = (fieldInd + 1) * WORD_SIZE;
 		textSegment += String.format("\tsw %s, %d(%s)\n", tempString(tmpRvalue), offset, tempString(tmpLvalue));
 		jump(end);
@@ -295,7 +294,6 @@ public class MIPSGenerator {
 		label(end);
 	}
 
-
 	// assign <tmpRvalue> to <offsetTmp> at the local variable which its local index
 	// is <varIndex>
 	public void localVarAssignment(int arrayTemp, int offsetTmp, int tmpRvalue) {
@@ -304,14 +302,13 @@ public class MIPSGenerator {
 		// loadFromLocal(newOffsetTmp, varIndex);
 
 		// newOffsetTmp += offsetTmp
-		checkAccessViolation(arrayTemp,offsetTmp);
+		checkAccessViolation(arrayTemp, offsetTmp);
 		addConstIntToTmp(offsetTmp, 1);
 		System.out.format("%d, %d, %d\n", arrayTemp, offsetTmp, tmpRvalue);
 		multTmpByConstInt(offsetTmp, 4);
 		add(arrayTemp, arrayTemp, offsetTmp, false);
 		// *newOffsetTmp = tmpRvalue
 		textSegment += String.format("\tsw %s, 0(%s)\n", tempString(tmpRvalue), tempString(arrayTemp));
-
 
 	}
 
@@ -452,7 +449,7 @@ public class MIPSGenerator {
 		this.textSegment += String.format("\tla %s, %s\n", UTILITY_REG, vtableLabel(objectType.name));
 		this.textSegment += String.format("\tsw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg));
 		System.out.format("Size: %d\n", objectType.initialValues.size());
-		for (Pair<String,Optional<Object>> p : objectType.initialValues) {
+		for (Pair<String, Optional<Object>> p : objectType.initialValues) {
 			Optional<Object> o = p.getValue();
 			if (o.isPresent()) {
 				if (o.get() instanceof Integer) {
@@ -511,10 +508,10 @@ public class MIPSGenerator {
 		final String ARRAY_SIZE_REG = "$s0";
 		this.textSegment += String.format("\tlw %s, 0(%s)\n", ARRAY_SIZE_REG, tempString(arrayTmp));
 		// bge(subscriptTemp, arraySizeTmp, ABORT_LABEL);
-//		PrintInt(ARRAY_SIZE_REG);
-//		PrintWord("WS");
-//		PrintInt(subscriptTemp);
-//		PrintWord("WS");
+		// PrintInt(ARRAY_SIZE_REG);
+		// PrintWord("WS");
+		// PrintInt(subscriptTemp);
+		// PrintWord("WS");
 
 		this.textSegment += String.format("\tbge %s, %s, %s\n", tempString(subscriptTemp),
 				ARRAY_SIZE_REG, invalid_access);
@@ -635,7 +632,6 @@ public class MIPSGenerator {
 		textSegment += String.format("\tbltz %d, %s\n", n, label);
 	}
 
-
 	public void bgt(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("bgt", oprnd1, oprnd2, label);
 	}
@@ -701,7 +697,6 @@ public class MIPSGenerator {
 
 		// restore sp
 		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
-
 
 	}
 

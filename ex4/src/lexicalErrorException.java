@@ -1,2 +1,2 @@
-public class lexicalErrorException extends IllegalStateException{
+public class lexicalErrorException extends IllegalStateException {
 }
