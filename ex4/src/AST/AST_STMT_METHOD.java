@@ -2,34 +2,44 @@ package AST;
 
 import java.util.Optional;
 
+import IR.IR;
+import IR.IRcommand_Call_Method_Exp;
+import IR.IRcommand_Call_Method_Stmt;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TEMP.*;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_FUNCTION;
 import TYPES.TYPE_LIST;
+import pair.Pair;
 
 public class AST_STMT_METHOD extends AST_STMT {
     public String id;
     public AST_EXP_LIST argsList;
     public AST_VAR var;
+    public int offset;
 
-    public AST_STMT_METHOD(AST_VAR var, String id, AST_EXP_LIST pl) {
+    public AST_STMT_METHOD(AST_VAR var, String id, AST_EXP_LIST argsList) {
         this.id = id;
-        this.argsList = pl;
         this.var = var;
+        if (argsList == null) {
+            this.argsList = new AST_EXP_LIST(null, null);
+        } else {
+            this.argsList = argsList;
+        }
     }
 
-    private TYPE_FUNCTION getFunctionType() {
+    private Pair<TYPE_CLASS, TYPE_FUNCTION> getMethodTypes() {
         // Search the function in the symbol table or class scopes
         TYPE_CLASS methodClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(var.getSimple().name);
         TYPE_CLASS classToSearch = methodClass;
         while (classToSearch != null) {
-            TYPE_LIST members =(classToSearch).data_members;
+            TYPE_LIST members = (classToSearch).data_members;
             while (members != null && members.head != null) {
                 if (members.head instanceof TYPE_FUNCTION && members.head.name.equals(id)) {
-                    return (TYPE_FUNCTION) members.head;
+                    return new Pair<>(classToSearch, (TYPE_FUNCTION) members.head);
                 }
+                members = members.tail;
             }
             classToSearch = classToSearch.father.orElse(null);
         }
@@ -70,11 +80,14 @@ public class AST_STMT_METHOD extends AST_STMT {
 
     @Override
     public TYPE SemantMe(Optional<String> fatherClassId) {
-        System.out.println("-- AST_EXP_FUNC SemantMe");
+        System.out.println("-- AST_STMT_METHOD SemantMe");
 
-        System.out.println("-- AST_EXP_FUNC SemantMe\n\n\tline number = " + lineNum);
-        TYPE_FUNCTION funcType = getFunctionType();
-        System.out.println("-- AST_EXP_FUNC\n\t\tfuncType.name = " + funcType.name);
+        var.SemantMe(fatherClassId);
+
+        System.out.println("-- AST_STMT_METHOD SemantMe\n\n\tline number = " + lineNum);
+        Pair<TYPE_CLASS, TYPE_FUNCTION> types = getMethodTypes();
+        TYPE_FUNCTION funcType = types.getValue();
+        System.out.println("-- AST_STMT_METHOD\n\t\tfuncType.name = " + funcType.name);
 
         TYPE_LIST paramsTypes = funcType.params;
         // checkForEmptyLists(paramsTypes);
@@ -82,15 +95,25 @@ public class AST_STMT_METHOD extends AST_STMT {
         if (paramsTypes == null) {
             paramsTypes = new TYPE_LIST(null, null);
         }
-        if (argsList != null) {
-            TYPE_LIST argsTypes = this.argsList.SemantMe(fatherClassId);
-            checkMatchingParamsArgs(argsTypes, paramsTypes);
-        }
+
+        TYPE_LIST argsTypes = this.argsList.SemantMe(fatherClassId);
+        checkMatchingParamsArgs(argsTypes, paramsTypes);
+
+        this.offset = types.getKey().methodOffsets.get(this.id);
         return funcType.returnType;
     }
 
     public TEMP IRme() {
-        System.out.println("--AST_STMT_METHOD IRme");
+        System.out.println("-- AST_STMT_METHOD IRme");
+
+        TEMP_LIST argsTempList = null;
+        if (argsList != null) {
+            argsTempList = argsList.IRme();
+        }
+
+        IR.getInstance().Add_IRcommand(new IRcommand_Call_Method_Stmt(var.IRme(), this.offset,
+                argsTempList));
+
         return null;
     }
 
