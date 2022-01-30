@@ -22,4 +22,9 @@ public class IRcommand_Initialize_Tmp_With_Parameter extends IRcommand_Initializ
         System.out.println("-- IRcommand_Initialize_Tmp_With_Parameter MIPSme");
         MIPSGenerator.getInstance().loadFromParameters(tempMap.get(this.dst), paramInd);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s := param%d", this.dst, this.paramInd);
+    }
 }

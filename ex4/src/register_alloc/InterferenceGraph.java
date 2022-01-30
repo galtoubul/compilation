@@ -150,4 +150,14 @@ class InterferenceGraph {
     public Stream<TEMP> neighbors(TEMP temp) {
         return this.edges.get(temp).stream().filter(neighbor -> this.inGraph.get(neighbor));
     }
+
+    public void print() {
+        this.stream()
+                .forEach(temp -> System.out.format(
+                        "t%d -> %s\n",
+                        temp.getSerialNumber(),
+                        this.neighbors(temp)
+                                .map(neighbor -> String.format("%s", neighbor))
+                                .collect(Collectors.toList())));
+    }
 }

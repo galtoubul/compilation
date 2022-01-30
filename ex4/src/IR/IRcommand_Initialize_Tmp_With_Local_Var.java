@@ -21,4 +21,9 @@ public class IRcommand_Initialize_Tmp_With_Local_Var extends IRcommand_Initializ
         System.out.println("-- IRcommand_Initialize_Tmp_With_Local_Var MIPSme");
         MIPSGenerator.getInstance().loadFromLocal(tempMap.get(this.dst), localVarInd);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s := var%d", this.dst, this.localVarInd);
+    }
 }

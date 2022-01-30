@@ -33,4 +33,9 @@ public class IRcommand_Jump_Label extends IRcommand_IDTransform implements IRcom
 	public String jumpLabel() {
 		return this.label_name;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("jump %s", this.label_name);
+	}
 }

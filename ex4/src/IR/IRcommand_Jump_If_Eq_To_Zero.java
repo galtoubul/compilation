@@ -38,4 +38,9 @@ public class IRcommand_Jump_If_Eq_To_Zero implements IRcommand_Jump {
 	public String jumpLabel() {
 		return this.label;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("beqz %s, %s", this.t, this.label);
+	}
 }

@@ -36,4 +36,9 @@ public class IRcommand_Func_Prologue implements IRcommand {
 	public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
 		return new HashSet<>();
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s prologue", this.funcName);
+	}
 }

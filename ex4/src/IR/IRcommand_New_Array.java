@@ -35,4 +35,9 @@ public class IRcommand_New_Array implements IRcommand {
 		in.add(this.subscriptTemp);
 		return in;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s := new_array %s[%s]", this.dstTempReg, this.arrayType, this.subscriptTemp);
+	}
 }

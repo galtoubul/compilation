@@ -7,6 +7,7 @@ import TEMP.TEMP_LIST;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class IRcommand_Call_PrintInt implements IRcommand {
     TEMP_LIST argsTempList;
@@ -27,5 +28,12 @@ public class IRcommand_Call_PrintInt implements IRcommand {
             in.add(temp);
         }
         return in;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("PrintInt(%s)",
+                String.join(", ",
+                        this.argsTempList.stream().map(temp -> temp.toString()).collect(Collectors.toList())));
     }
 }

@@ -31,4 +31,9 @@ public class IRcommand_New_Object implements IRcommand {
 		in.remove(this.dstTempReg);
 		return in;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s := new %s", this.dstTempReg, this.objectType.name);
+	}
 }

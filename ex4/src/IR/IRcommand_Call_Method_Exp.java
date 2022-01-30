@@ -37,4 +37,13 @@ public class IRcommand_Call_Method_Exp extends IRcommand_Call_Func {
         in.add(this.objectTmp);
         return in;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s.%d(%s)",
+                this.objectTmp,
+                this.methodOffset,
+                String.join(", ",
+                        this.argsTempList.stream().map(temp -> temp.toString()).collect(Collectors.toList())));
+    }
 }

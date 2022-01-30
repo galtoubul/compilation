@@ -23,4 +23,9 @@ public class IRcommand_Func_Epilogue extends IRcommand_IDTransform {
 		System.out.println("-- IRcommand_Func_Epilogue MIPSme");
 		MIPSGenerator.getInstance().funcEpilogue(funcName);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s epilogue", this.funcName);
+	}
 }

@@ -23,4 +23,9 @@ public class IRcommand_Label extends IRcommand_IDTransform {
 	public String label() {
 		return this.label;
 	}
+
+	@Override
+	public String toString() {
+		return this.label + ":";
+	}
 }

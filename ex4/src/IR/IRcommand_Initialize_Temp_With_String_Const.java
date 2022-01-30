@@ -23,4 +23,9 @@ public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand_Initi
 		MIPSGenerator.getInstance().initializeGlobalVar(stringConstLabel, stringConst);
 		MIPSGenerator.getInstance().loadAddress(tempMap.get(dst), stringConstLabel);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s := %s", this.dst, this.stringConst);
+	}
 }

@@ -26,4 +26,11 @@ public class IRcommand_Call_Method_Stmt extends IRcommand_Call_Func {
         MIPSGenerator.getInstance().callMethodStmt(tempMap.get(objectTmp), methodOffset,
                 this.argsTempList.mapTempsToRegs(tempMap));
     }
+
+    @Override
+    public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
+        HashSet<TEMP> in = super.transform(liveTemps);
+        in.add(this.objectTmp);
+        return in;
+    }
 }

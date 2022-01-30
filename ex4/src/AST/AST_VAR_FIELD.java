@@ -19,7 +19,6 @@ public class AST_VAR_FIELD extends AST_VAR {
 	public String fieldName;
 	public AstAnnotation astAnnotation;
 
-
 	public AST_VAR_FIELD(AST_VAR var, String fieldName) {
 
 		SerialNumber = AST_Node_Serial_Number.getFresh();
@@ -97,8 +96,10 @@ public class AST_VAR_FIELD extends AST_VAR {
 			throw new SemanticErrorException("" + lineNum);
 		}
 		// fieldName does not exist in class var
-		System.out.format(">> ERROR [" + lineNum + "] there is no field named '%s' in class '%s'\n", fieldName, varType.name);
-		System.out.format(">> ERROR [" + lineNum + "] there is no field named '%s' in class '%s'\n", fieldName, varType.name);
+		System.out.format(">> ERROR [" + lineNum + "] there is no field named '%s' in class '%s'\n", fieldName,
+				varType.name);
+		System.out.format(">> ERROR [" + lineNum + "] there is no field named '%s' in class '%s'\n", fieldName,
+				varType.name);
 		throw new SemanticErrorException("" + lineNum);
 	}
 
@@ -108,9 +109,9 @@ public class AST_VAR_FIELD extends AST_VAR {
 		TYPE_CLASS varClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(var.getSimple().name);
 		TYPE_CLASS classToSearch = varClass;
 		int ind = 0;
-		ArrayList<Pair<String,Optional<Object>>> fields = classToSearch.initialValues;
+		ArrayList<Pair<String, Optional<Object>>> fields = classToSearch.initialValues;
 		boolean filedFound = false;
-		while(classToSearch != null) {
+		while (classToSearch != null) {
 			for (Pair<String, Optional<Object>> p : fields) {
 				if (!p.getKey().equals(fieldName)) {
 					ind++;
@@ -137,7 +138,8 @@ public class AST_VAR_FIELD extends AST_VAR {
 		System.out.println("-- AST_VAR_FIELD IRme");
 		TEMP tmp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		TEMP varTmp = var.IRme();
-		IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Temp_With_Object_Field(tmp, varTmp, astAnnotation.ind.orElse(-1)));
+		IR.getInstance().Add_IRcommand(
+				new IRcommand_Initialize_Temp_With_Object_Field(tmp, varTmp, astAnnotation.ind.orElse(-1)));
 		return tmp;
 	}
 }

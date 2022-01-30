@@ -41,4 +41,9 @@ public class IRcommandConstInt implements IRcommand {
 		in.remove(this.t);
 		return in;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s := %d", this.t, value);
+	}
 }

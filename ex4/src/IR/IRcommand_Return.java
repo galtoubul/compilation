@@ -11,6 +11,7 @@ import MIPS.*;
 public class IRcommand_Return implements IRcommand {
 	TEMP expRetReg;
 	String funcName;
+
 	public IRcommand_Return(TEMP expRetReg, String funcName) {
 		this.expRetReg = expRetReg;
 		this.funcName = funcName;
@@ -29,5 +30,10 @@ public class IRcommand_Return implements IRcommand {
 		HashSet<TEMP> in = new HashSet<>(liveTemps);
 		in.add(this.expRetReg);
 		return in;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("return %s", this.expRetReg);
 	}
 }

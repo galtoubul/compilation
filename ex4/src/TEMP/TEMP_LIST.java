@@ -1,6 +1,8 @@
 package TEMP;
 
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -60,5 +62,9 @@ public class TEMP_LIST implements Iterable<TEMP> {
     @Override
     public Iterator<TEMP> iterator() {
         return new TempListIterator(this);
+    }
+
+    public Stream<TEMP> stream() {
+        return StreamSupport.stream(this.spliterator(), true);
     }
 }

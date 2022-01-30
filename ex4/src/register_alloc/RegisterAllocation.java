@@ -97,6 +97,14 @@ public class RegisterAllocation {
             }
         }
 
+        System.out.println();
+        graph.nodes.stream().forEach(node -> System.out.format("%10s %-25s %-10s\n",
+                node.command.transform(liveness.get(node)).stream().map(temp -> temp.getSerialNumber())
+                        .collect(Collectors.toList()),
+                node.command,
+                liveness.get(node).stream().map(temp -> temp.getSerialNumber()).collect(Collectors.toList())));
+        System.out.println();
+
         return liveness.values();
     }
 
@@ -121,6 +129,9 @@ public class RegisterAllocation {
             return Optional.empty();
         }
 
+        System.out.println();
+        graph.print();
+
         HashMap<TEMP, Integer> coloring = new HashMap<>();
 
         // Stack of temporaries that were removed from the interference graph
@@ -131,12 +142,20 @@ public class RegisterAllocation {
         graph.stream().forEach(temp -> {
             graph.removeTemp(temp);
             removedStack.push(temp);
+            // System.out.format("\nRemoved: t%d\n", temp.getSerialNumber());
+            // graph.print();
+            // System.out.println(removedStack.stream().map(removed -> String.format("t%d",
+            // removed.getSerialNumber()))
+            // .collect(Collectors.toList()));
         });
 
         // Reinsert the temporaries to the interference graph and color them
         // appropriately
         for (TEMP temp : removedStack) {
             graph.reinsertTemp(temp);
+
+            // System.out.println();
+            // graph.print();
 
             // Find the first color that does not collide with existing neighboring colors
             int freshColor = getFreshColor(graph, temp, coloring);
@@ -146,6 +165,10 @@ public class RegisterAllocation {
             }
             coloring.put(temp, freshColor);
         }
+
+        System.out.println();
+        graph.stream()
+                .forEach(temp -> System.out.format("%s -> %s\n", temp, coloring.get(temp)));
 
         return Optional.of(coloring);
     }

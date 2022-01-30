@@ -31,4 +31,9 @@ public class IRcommand_Assign_To_Local_Var implements IRcommand {
 		in.add(this.tmpRvalue);
 		return in;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("var%d := %s", this.varIndex, this.tmpRvalue);
+	}
 }
