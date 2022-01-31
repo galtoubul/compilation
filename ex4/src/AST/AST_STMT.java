@@ -9,7 +9,7 @@ public abstract class AST_STMT extends AST_Node {
 		System.out.print("UNKNOWN AST STATEMENT NODE");
 	}
 
-	abstract public TYPE SemantMe(Optional<String> classId);
+	abstract public TYPE SemantMe(Optional<String> classId, int localVarIndex);
 
 	abstract public void IRme();
 }

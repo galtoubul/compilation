@@ -51,7 +51,8 @@ public class AST_STMT_RETURN extends AST_STMT {
         }
     }
 
-    public TYPE SemantMe(Optional<String> classId) {
+    @Override
+    public TYPE SemantMe(Optional<String> classId, int localVarIndex) {
         // It is guaranteed syntacticly thet return statements are only present in
         // funciton declarations
         ScopeEntry scope = SYMBOL_TABLE.getInstance().findScopeType(ScopeType.Function).get();

@@ -3,13 +3,12 @@ package AST;
 import java.util.Optional;
 
 import TYPES.TYPE;
-import TEMP.*;
 
 public class AST_STMT_LIST extends AST_Node {
 
 	public AST_STMT head;
 	public AST_STMT_LIST tail;
-	public int localVarIndex = 0;
+	private int localVarsNum = 0;
 
 	public AST_STMT_LIST(AST_STMT head, AST_STMT_LIST tail) {
 		SerialNumber = AST_Node_Serial_Number.getFresh();
@@ -53,29 +52,54 @@ public class AST_STMT_LIST extends AST_Node {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, tail.SerialNumber);
 	}
 
-	public TYPE SemantMe(Optional<String> classId) {
+	public TYPE SemantMe(Optional<String> classId, int localVarIndex) {
 		System.out.println("-- AST_STMT_LIST SemantMe");
 
-		if (head != null) {
-			System.out.println("\t\thead != null");
-
-			if (head instanceof AST.AST_STMT_VAR_DEC) {
-				Optional<Integer> localVarIndexOpt = Optional.of(localVarIndex + 1);
-				System.out.println(
-						"\t\thead is instance of AST.AST_STMT_VAR_DEC\n\t\tlocalVarIndexOpt = " + localVarIndexOpt);
-				((AST.AST_STMT_VAR_DEC) head).SemantMe(classId, localVarIndexOpt);
-			} else {
-				head.SemantMe(classId);
-			}
+		if (head == null) {
+			return null;
 		}
+
+		System.out.println("\t\thead != null");
+
+		int localVar = head instanceof AST.AST_STMT_VAR_DEC ? 1 : 0;
+
+		head.SemantMe(classId, localVarIndex + localVar);
 
 		if (tail != null) {
 			System.out.println("\t\ttail != null");
-			tail.localVarIndex = head instanceof AST.AST_STMT_VAR_DEC ? localVarIndex + 1 : localVarIndex;
-			tail.SemantMe(classId);
+			tail.SemantMe(classId, localVarIndex + localVar);
 		}
 
+		this.localVarsNum = this.calculateLocalVarsNum();
+		System.out.println(this.head);
+		System.out.println(this.localVarsNum);
+		System.out.println();
+
 		return null;
+	}
+
+	int localVarsNum() {
+		return this.localVarsNum;
+	}
+
+	private int calculateLocalVarsNum() {
+		int localVarsNum = 0;
+
+		if (this.head != null) {
+			if (this.head instanceof AST_STMT_IF) {
+				localVarsNum = ((AST_STMT_IF) this.head).body.calculateLocalVarsNum();
+			} else if (this.head instanceof AST_STMT_WHILE) {
+				localVarsNum = ((AST_STMT_WHILE) this.head).body.calculateLocalVarsNum();
+			} else if (this.head instanceof AST_STMT_VAR_DEC) {
+				localVarsNum = 1;
+			}
+		}
+
+		if (this.tail != null) {
+			localVarsNum += this.tail.calculateLocalVarsNum();
+		}
+
+		return localVarsNum;
 	}
 
 	public void IRme() {

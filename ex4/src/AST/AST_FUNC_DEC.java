@@ -90,18 +90,6 @@ public class AST_FUNC_DEC extends AST_Node {
         }
     }
 
-    private void setLocalVarsNum() {
-        int localVarsNum = 0;
-        AST_STMT_LIST ptr1 = this.body;
-        while (ptr1 != null && ptr1.head != null) {
-            if (ptr1.head instanceof AST.AST_STMT_VAR_DEC) {
-                localVarsNum++;
-            }
-            ptr1 = ptr1.tail;
-        }
-        this.localVarsNum = localVarsNum;
-    }
-
     public TYPE SemantMe(Optional<String> fatherClassId) {
         System.out.format("-- AST_FUNC_DEC SemantMe%s\n", fatherClassId.isPresent() ? " extends" : "");
 
@@ -134,7 +122,6 @@ public class AST_FUNC_DEC extends AST_Node {
         }
 
         // Enter the function/method Type to the Symbol Table
-        setLocalVarsNum();
         System.out.println("\t\tlocalVarsNum = " + localVarsNum);
         TYPE_FUNCTION funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList);
         SYMBOL_TABLE.getInstance().enter(id, funcType, false);
@@ -142,7 +129,7 @@ public class AST_FUNC_DEC extends AST_Node {
         System.out.println("\t\tline number = " + lineNum);
 
         // Semant function/method body
-        body.SemantMe(Optional.empty());
+        body.SemantMe(Optional.empty(), 0);
 
         // End Function Scope
         SYMBOL_TABLE.getInstance().endScope();
@@ -150,6 +137,9 @@ public class AST_FUNC_DEC extends AST_Node {
 
         // Enter the function/method Type to the Symbol Table again, as it was
         // popped-out with the rest of the scope
+        // Also update the number of local variables
+        this.localVarsNum = this.body.localVarsNum();
+        funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList, localVarsNum);
         SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
         return funcType;

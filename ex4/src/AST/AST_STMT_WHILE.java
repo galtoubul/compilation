@@ -22,7 +22,8 @@ public class AST_STMT_WHILE extends AST_STMT {
 		this.body = body;
 	}
 
-	public TYPE SemantMe(Optional<String> classId) {
+	@Override
+	public TYPE SemantMe(Optional<String> classId, int localVarIndex) {
 		/****************************/
 		/* [0] Semant the Condition */
 		/****************************/
@@ -39,7 +40,7 @@ public class AST_STMT_WHILE extends AST_STMT {
 		/***************************/
 		/* [2] Semant Loop body */
 		/***************************/
-		body.SemantMe(classId);
+		body.SemantMe(classId, localVarIndex);
 
 		/*****************/
 		/* [3] End Scope */

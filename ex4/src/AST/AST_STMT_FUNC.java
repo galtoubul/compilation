@@ -69,7 +69,7 @@ public class AST_STMT_FUNC extends AST_STMT {
     // diff between args to params: foo(<args>) | puclic int foo(<params>)
 
     @Override
-    public TYPE SemantMe(Optional<String> fatherClassId) {
+    public TYPE SemantMe(Optional<String> fatherClassId, int localVarIndex) {
         System.out.println("-- AST_STMT_FUNC SemantMe");
 
         System.out.println("-- AST_STMT_FUNC SemantMe\n\n\tline number = " + lineNum);

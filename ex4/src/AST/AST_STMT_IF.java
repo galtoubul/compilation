@@ -52,7 +52,8 @@ public class AST_STMT_IF extends AST_STMT {
 			AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, body.SerialNumber);
 	}
 
-	public TYPE SemantMe(Optional<String> classId) {
+	@Override
+	public TYPE SemantMe(Optional<String> classId, int localVarIndex) {
 		System.out.println("-- AST_STMT_IF\n\n\t line num = " + lineNum);
 
 		/****************************/
@@ -71,7 +72,7 @@ public class AST_STMT_IF extends AST_STMT {
 		/***************************/
 		/* [2] Semant Data Members */
 		/***************************/
-		body.SemantMe(classId);
+		body.SemantMe(classId, localVarIndex);
 
 		/*****************/
 		/* [3] End Scope */

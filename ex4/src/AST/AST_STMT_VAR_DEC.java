@@ -12,14 +12,9 @@ public class AST_STMT_VAR_DEC extends AST_STMT {
     }
 
     @Override
-    public TYPE SemantMe(Optional<String> classId) {
-        System.out.println("-- AST_STMT_VAR_DEC SemantMe");
-        return this.varDec.SemantMe(classId, Optional.empty());
-    }
-
-    public TYPE SemantMe(Optional<String> classId, Optional<Integer> localVarIndexOpt) {
+    public TYPE SemantMe(Optional<String> classId, int localVarIndexOpt) {
         System.out.println("-- AST_STMT_VAR_DEC SemantMe\n\t\tlocalVarIndexOpt = " + localVarIndexOpt);
-        return this.varDec.SemantMe(classId, localVarIndexOpt);
+        return this.varDec.SemantMe(classId, Optional.of(localVarIndexOpt));
     }
 
     @Override

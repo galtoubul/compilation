@@ -78,7 +78,7 @@ public class AST_STMT_METHOD extends AST_STMT {
     // diff between args to params: foo(<args>) | puclic int foo(<params>)
 
     @Override
-    public TYPE SemantMe(Optional<String> fatherClassId) {
+    public TYPE SemantMe(Optional<String> fatherClassId, int localVarIndex) {
         System.out.println("-- AST_STMT_METHOD SemantMe");
 
         var.SemantMe(fatherClassId);

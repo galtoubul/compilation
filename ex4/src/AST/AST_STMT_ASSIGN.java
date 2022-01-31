@@ -71,7 +71,8 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		AST_GRAPHVIZ.getInstance().logEdge(SerialNumber, exp.SerialNumber);
 	}
 
-	public TYPE SemantMe(Optional<String> classId) {
+	@Override
+	public TYPE SemantMe(Optional<String> classId, int localVarIndex) {
 		System.out.println("-- AST_STMT_ASSIGN SemantMe");
 		TYPE t1 = var.SemantMe(classId);
 		TYPE t2 = exp.SemantMe(classId);
