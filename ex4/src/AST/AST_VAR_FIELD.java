@@ -71,11 +71,11 @@ public class AST_VAR_FIELD extends AST_VAR {
 	public TYPE SemantMe(Optional<String> fatherClassId) {
 		System.out.println("-- AST_VAR_FIELD SemantMe");
 
-		TYPE varType = null;
+		TYPE_CLASS varType = null;
 
 		// Recursively semant var
 		if (var != null) {
-			varType = var.SemantMe(fatherClassId);
+			varType = (TYPE_CLASS) var.SemantMe(fatherClassId);
 		}
 		System.out.println("-- AST_VAR_FIELD\n\t\tvariable type = " + varType.name);
 
@@ -84,7 +84,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 			System.out.format(">> ERROR [" + lineNum + "] access %s field of a non-class variable\n", fieldName);
 			throw new SemanticErrorException("" + lineNum);
 		}
-		this.setNotation();
+		this.setNotation(varType);
 
 		Optional<TYPE> field = ((TYPE_CLASS) varType).lookupMemberInAncestors(this.fieldName);
 		if (field.isPresent()) {
@@ -102,10 +102,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 		throw new SemanticErrorException("" + lineNum);
 	}
 
-	private void setNotation() {
-		System.out.println("-- AST_VAR_FIELD setNotation");
-		System.out.println(var);
-		TYPE_CLASS varClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(var.getSimple().name);
+	private void setNotation(TYPE_CLASS varClass) {
 		TYPE_CLASS classToSearch = varClass;
 		int ind = 0;
 		ArrayList<Pair<String, Optional<Object>>> fields = classToSearch.initialValues;
