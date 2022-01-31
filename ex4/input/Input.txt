@@ -1,6 +1,52 @@
-array arrayType = int [];
-arrayType arr;
+class A {
+    int m1() {
+        return 1;
+    }
+    int m2() {
+        return 2;
+    }
+    int m4() {
+        return 4;
+    }
+}
 
-void f() {
-	arr := new int[20];
+class B extends A {
+    int m3() {
+        return 3;
+    }
+    int m2() {
+        return 22;
+    }
+    int m1() {
+        return 11;
+    }
+}
+
+class C extends B {
+
+    int m1() {
+        return 111;
+    }
+    int m3() {
+        return 33;
+    }
+    int m2() {
+        return 222;
+    }
+
+}
+
+
+void main() {
+    A a := new A;
+    A ab := new B;
+    B b := new B;
+    C c := new C;
+    PrintInt(a.m1());
+    PrintInt(ab.m1());
+    PrintInt(b.m1());
+    PrintInt(b.m4());
+    PrintInt(c.m4());
+    PrintInt(c.m1());
+
 }

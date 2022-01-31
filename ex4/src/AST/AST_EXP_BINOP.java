@@ -2,6 +2,7 @@ package AST;
 
 import java.util.Optional;
 
+import MIPS.MIPSGenerator;
 import TYPES.*;
 import TEMP.*;
 import IR.IRcommand_Binop_Add_Integers;
@@ -12,6 +13,8 @@ public class AST_EXP_BINOP extends AST_EXP {
 	Binop OP;
 	public AST_EXP left;
 	public AST_EXP right;
+	public TYPE leftType;
+	public TYPE rightType;
 
 	/******************/
 	/* CONSTRUCTOR(S) */
@@ -82,7 +85,8 @@ public class AST_EXP_BINOP extends AST_EXP {
 		if (right != null) {
 			t2 = right.SemantMe(classId);
 		}
-
+		this.leftType = t1;
+		this.rightType = t2;
 		switch (OP) {
 			case EQ:
 				if (!TYPE.isSubtype(t2, t1) && !TYPE.isSubtype(t1, t2)) {
@@ -122,13 +126,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 	public TEMP IRme() {
 		System.out.println("-- AST_EXP_BINOP IRme");
 
-		String leftType = null;
-		String rightType = null;
-		if (left instanceof AST.AST_EXP_VAR && right instanceof AST.AST_EXP_VAR) {
-			leftType = ((AST.AST_EXP_VAR)left).varTypeString;
-			rightType = ((AST.AST_EXP_VAR)right).varTypeString;
-		}
-		System.out.format("\t\tleftType = %s | rightType = %s\n", leftType, rightType);
+		System.out.format("\t\tleftType = %s | rightType = %s\n", leftType.name, rightType.name);
 
 		TEMP t1 = null;
 		TEMP t2 = null;
@@ -143,7 +141,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 
 		switch (OP) {
 			case PLUS:
-				if (leftType == "string" && rightType == "string" ) {
+				if (leftType.name.equals("string") && rightType.name.equals("string")) {
 					System.out.format("\t\t-- strings concatenation");
 					IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst, t1, t2));
 				}
@@ -162,7 +160,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 				IR.getInstance().Add_IRcommand(new IRcommand_Binop_Div_Integers(dst, t1, t2));
 				break;
 			case EQ:
-				if (leftType == "string" && rightType == "string" ) {
+				if (leftType.name.equals("string") && rightType.name.equals("string") ) {
 					System.out.println("\t\t-- equality between strings");
 					IR.getInstance().Add_IRcommand(new IRcommand_Binop_EQ_Strings(dst, t1, t2));
 				}

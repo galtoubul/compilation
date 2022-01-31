@@ -62,44 +62,38 @@ public class AST_CLASS_DEC extends AST_Node {
         return fieldsNum;
     }
 
-    private void createVtable() {
-        this.vtableMethods = new HashSet<>();
-        ArrayDeque<Pair<String, String>> vtable = new ArrayDeque<>();
+    private boolean isOverridesFunc(String funcName) {
         AST_CFIELD_LIST ptr1 = this.fields;
+
         while (ptr1 != null && ptr1.head != null) {
-            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC) {
-                vtable.push(new Pair<>(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id));
-                vtableMethods.add(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id);
-            } else {
-                if (((AST_CFIELD_VAR_DEC) ptr1.head).var.type.equals(Type.TYPE_INT)) {
-
-                } else if (((AST_CFIELD_VAR_DEC) ptr1.head).var.type.equals(Type.TYPE_STRING)) {
-
-                }
+            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC && funcName.equals(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id)) {
+                return true;
             }
             ptr1 = ptr1.tail;
         }
+        return false;
+    }
 
+    private void createVtable() {
+        this.vtableMethods = new HashSet<>();
         if (father.isPresent()) {
             TYPE_CLASS fatherClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.father.get());
-            while (fatherClass != null) {
-                TYPE_LIST fatherMembers = fatherClass.data_members;
-                while (fatherMembers != null && fatherMembers.head != null) {
-                    if (fatherMembers.head instanceof TYPE_FUNCTION
-                            && !vtableMethods.contains(fatherMembers.head.name)) {
-                        vtable.push(new Pair<>(fatherClass.name, ((TYPE_FUNCTION) fatherMembers.head).name));
-                        vtableMethods.add(((TYPE_FUNCTION) fatherMembers.head).name);
-                    }
-                    fatherMembers = fatherMembers.tail;
+            this.vtable = new ArrayList<>(fatherClass.vtable);
+            for (int i = 0; i<this.vtable.size(); i++) {
+                if (this.isOverridesFunc(this.vtable.get(i).getValue())) {
+                    vtableMethods.add(this.vtable.get(i).getValue());
+                    this.vtable.set(i, new Pair<>(id, this.vtable.get(i).getValue()));
                 }
-                if (fatherClass.father.isPresent())
-                    fatherClass = fatherClass.father.get();
-                else
-                    fatherClass = null;
             }
         }
+        AST_CFIELD_LIST ptr1 = this.fields;
 
-        this.vtable = new ArrayList<>(vtable);
+        while (ptr1 != null && ptr1.head != null) {
+            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC && !vtableMethods.contains(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id)) {
+                this.vtable.add(new Pair<>(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id));
+            }
+            ptr1 = ptr1.tail;
+        }
     }
 
     public TYPE SemantMe() {
@@ -130,21 +124,22 @@ public class AST_CLASS_DEC extends AST_Node {
         // Enter the Class Type to the Symbol Table (for semantic checking inside the
         // class's scope)
         int fieldsNum = getFieldsNum();
+
         TYPE_CLASS scopeDummy = new TYPE_CLASS(base, id, new TYPE_LIST(null, null), fieldsNum);
+        createVtable();
+
         SYMBOL_TABLE.getInstance().enter(id, scopeDummy, true);
         System.out.println("\t\tline number = " + lineNum);
 
         // Semant Data Members
         TYPE_CLASS type = new TYPE_CLASS(base, id, fields.SemantMe(base.map(classType -> classType.name)), fieldsNum,
-                scopeDummy.initialValues);
-
+                scopeDummy.initialValues, this.vtable);
         // End Scope
         SYMBOL_TABLE.getInstance().endScope();
 
         // Reenter the Class Type to the Symbol Table
         SYMBOL_TABLE.getInstance().enter(id, type, true);
 
-        createVtable();
         type.methodOffsets = IntStream
                 .range(0, this.vtable.size())
                 .boxed()
