@@ -143,6 +143,7 @@ public class AST_EXP_BINOP extends AST_EXP {
 			case PLUS:
 				if (leftType.name.equals("string") && rightType.name.equals("string")) {
 					System.out.format("\t\t-- strings concatenation");
+
 					IR.getInstance().Add_IRcommand(new IRcommand_Binop_Concat_Strings(dst, t1, t2));
 				}
 				else {

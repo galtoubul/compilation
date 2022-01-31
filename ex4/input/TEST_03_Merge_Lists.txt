@@ -8,7 +8,7 @@ IntList MergeLists(IntList l1, IntList l2)
 {
     if (l1 = nil)
     {
-        return l2;
+         return l2;
     }
     if (l2 = nil)
     {
@@ -67,7 +67,7 @@ void main()
     D.tail := nil;
     
     IntList l := MergeLists(a,A);
-    
+
     while (1 - (l = nil))
     {
         PrintInt(l.head);

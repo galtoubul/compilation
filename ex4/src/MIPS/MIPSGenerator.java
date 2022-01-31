@@ -5,6 +5,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 
+import TEMP.TEMP;
 import TYPES.*;
 import labels.Labels;
 import pair.Pair;
@@ -105,10 +106,11 @@ public class MIPSGenerator {
 	public void sbFromTmpToTmp(int dst, int src, int offset) {
 		textSegment += String.format("\tsb %s, %d(%s)\n", tempString(dst), offset, tempString(src));
 	}
-
+	public void sbFromTmpToReg(String dst, String src, int offset) {
+		textSegment += String.format("\tsb %s, %d(%s)\n", src , offset, dst);
+	}
 	public void addConstIntToReg(String dst, int constInt) {
-		textSegment += String.format("\tadd%s %s, %s, %d\n", constInt >= 0 ? "u" : "i", dst,
-				dst, constInt);
+		textSegment += String.format("\taddi %s, %s, %d\n", dst, dst, constInt);
 	}
 
 	public void addConstIntToTmp(int dst, int constInt) {
@@ -133,6 +135,11 @@ public class MIPSGenerator {
 		// textSegment += String.format("\tmov %s, $zero\n", tempString(dstTmpInd));
 	}
 
+	public void initRegWithZero(String dst) {
+		moveRegisters(dst, "$zero");
+		// textSegment += String.format("\tmov %s, $zero\n", tempString(dstTmpInd));
+	}
+
 	public void malloc(int resultPtrTmp) {
 		liRegString("$v0", 9);
 		textSegment += String.format("\tsyscall\n");
@@ -148,6 +155,11 @@ public class MIPSGenerator {
 
 	public void mallocTmpSize(int resultPtrTmp, int sizeTmp) {
 		moveRegisters("$a0", tempString(sizeTmp));
+		// textSegment += String.format("\tmov $a0, %s\n", tempString(sizeTmpInd));
+		malloc(resultPtrTmp);
+	}
+	public void mallocRegSize(int resultPtrTmp, String sizeTmp) {
+		moveRegisters("$a0", sizeTmp);
 		// textSegment += String.format("\tmov $a0, %s\n", tempString(sizeTmpInd));
 		malloc(resultPtrTmp);
 	}
@@ -186,6 +198,22 @@ public class MIPSGenerator {
 	/************************************************
 	 * Arithmetics
 	 ************************************************/
+	public void checkLimits(String dst) {
+		// check top limit and fix the result if needed
+		String checkBottomLimitLabel = Labels.getAvialableLabel("check_bottom_limit");
+		textSegment += String.format("\tble %s, 32767, %s\n", dst, checkBottomLimitLabel); // 2^15 - 1 =
+		// 32767
+		textSegment += String.format("\tli %s, 32767\n", dst); // fix the result
+
+		// check bottom limit and fix the result if needed
+		label(checkBottomLimitLabel);
+		String afterLimitsChecksLabel = Labels.getAvialableLabel("after_limits_checks");
+		textSegment += String.format("\tbge %s, -32768, %s\n", dst, afterLimitsChecksLabel); // -2^15 =
+		// -32768
+		textSegment += String.format("\tli %s, -32768\n", dst); // fix the result
+
+		label(afterLimitsChecksLabel);
+	}
 
 	public void checkLimits(int dst) {
 		// check top limit and fix the result if needed
@@ -246,7 +274,21 @@ public class MIPSGenerator {
 		add(dst, oprnd1, oprnd2, true);
 	}
 
+	public void add(String dst, String oprnd1, String oprnd2) {
+		add(dst, oprnd1, oprnd2, true);
+	}
+
 	public void add(int dst, int oprnd1, int oprnd2, boolean checkOverflow) {
+		textSegment += String.format("\tadd %s\n", binopString(dst, oprnd1, oprnd2));
+
+		// we don't want to check overflow when summing len(s1) + len(s2) of strings for
+		// mallocing mem for s1s2
+		if (checkOverflow) {
+			checkLimits(dst);
+		}
+	}
+
+	public void add(String dst, String oprnd1, String oprnd2, boolean checkOverflow) {
 		textSegment += String.format("\tadd %s\n", binopString(dst, oprnd1, oprnd2));
 
 		// we don't want to check overflow when summing len(s1) + len(s2) of strings for
@@ -259,6 +301,9 @@ public class MIPSGenerator {
 	public void sub(int dst, int oprnd1, int oprnd2) {
 		textSegment += String.format("\tsub %s\n", binopString(dst, oprnd1, oprnd2));
 		checkLimits(dst);
+	}
+	public void sub(String dst, String oprnd1, String oprnd2) {
+		textSegment += String.format("\tsub %s\n", binopString(dst, oprnd1, oprnd2));
 	}
 
 	public void mul(int dst, int oprnd1, int oprnd2) {
@@ -288,6 +333,9 @@ public class MIPSGenerator {
 
 	private static String binopString(int dst, int oprnd1, int oprnd2) {
 		return String.format("%s, %s, %s", tempString(dst), tempString(oprnd1), tempString(oprnd2));
+	}
+	private static String binopString(String dst, String oprnd1, String oprnd2) {
+		return String.format("%s, %s, %s", dst, oprnd1, oprnd2);
 	}
 
 	/************************************************
@@ -425,38 +473,30 @@ public class MIPSGenerator {
 	 * String
 	 ************************************************/
 
-	public void calcStringLengthIntoTmp(int stringLenTmp, int stringTmp) {
+	public void calcStringLengthIntoTmp(String stringLenTmp, String stringTmp) {
 		// int stringByteTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
 		String loopLabel = Labels.getAvialableLabel("str_len_loop");
 		String endLabel = Labels.getAvialableLabel("str_len_end");
-
-		final String STRING_LENGTH_REG = "$s0";
-
+		final String STRING_BYTE_REG = "$s5";
+		final String STRING_REG = stringTmp;
 		// initialize stringLenTmp
-		initTmpWithZero(stringLenTmp);
-
+		initRegWithZero(stringLenTmp);
 		// str_len_loop:
 		label(loopLabel);
-
 		// load byte
 		// lbFromTmpToTmp(stringByteTemp, stringTmp, 0);
-		this.textSegment += String.format("\tlb %s, %d(%s)\n", STRING_LENGTH_REG, 0,
-				tempString(stringTmp));
-
+		this.textSegment += String.format("\tlb %s, %d(%s)\n", STRING_BYTE_REG, 0, STRING_REG);
 		// stop counting if reached the string's end
 		// beqz(stringByteTemp, endLabel);
-		this.textSegment += String.format("\tbeq %s, $zero, %s\n", STRING_LENGTH_REG, endLabel);
-
+		this.textSegment += String.format("\tbeq %s, $zero, %s\n", STRING_BYTE_REG, endLabel);
 		// increase counter by one
-		addConstIntToTmp(stringLenTmp, 1);
-
+		addConstIntToReg(stringLenTmp, 1);
 		// increase byte pointer by one
 		// addConstIntToTmp(stringByteTemp, 1);
-		this.selfBinopRegister("add", STRING_LENGTH_REG, 1);
+		addConstIntToReg(STRING_REG, 1);
 
 		// j str_len_loop
 		jump(loopLabel);
-
 		// str_len_end:
 		label(endLabel);
 	}
@@ -690,6 +730,9 @@ public class MIPSGenerator {
 	public void beqz(int oprnd1, String label) {
 		textSegment += String.format("\tbeq %s, $zero, %s\n", tempString(oprnd1), label);
 	}
+	public void beqzReg(String oprnd1, String label) {
+		textSegment += String.format("\tbeq %s, $zero, %s\n", oprnd1, label);
+	}
 
 	private void branchBinop(String command, int oprnd1, int oprnd2, String label) {
 		this.textSegment += String.format("\t%s %s, %s, %s\n", command, tempString(oprnd1), tempString(oprnd2), label);
@@ -717,12 +760,10 @@ public class MIPSGenerator {
 		// if (argsTempList.head != null) {
 		// pushTempReg(argsTempList.head);
 		// }
-
 		// return argsNum;
 		for (Integer temp : argTemps) {
 			pushTempReg(temp);
 		}
-
 		// return args.size();
 	}
 
@@ -730,10 +771,8 @@ public class MIPSGenerator {
 		// push args
 		int argsNum = argTemps.size();
 		pushArgs(argTemps);
-
 		// jal
 		textSegment += String.format("\tjal %s\n", funcName);
-
 		// restore sp
 		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
 
@@ -745,7 +784,72 @@ public class MIPSGenerator {
 		// store return value in dst
 		moveRegisters(tempString(dstTemp), "$v0");
 	}
+	public void copyString(int dstTmp) {
+		String STR_REG = "$s0";
+		String STR2_REG = "$s1";
+		String BYTE_REG = "$s5";
+		String DEST_REG = tempString(dstTmp);
+		String DEST_REG_DUP = "$s6";
 
+		String loopLabel1 = Labels.getAvialableLabel("loopLabel1");
+		String loopLabel2 = Labels.getAvialableLabel("loopLabel2");
+		String end1 = Labels.getAvialableLabel("end1");
+		String end2 = Labels.getAvialableLabel("end2");
+		moveRegisters(DEST_REG_DUP,tempString(dstTmp));
+		label(loopLabel1);
+		// byteOfString = 0(copiedString)
+		lbFromRegToReg(BYTE_REG, STR_REG,0);
+
+		beqzReg(BYTE_REG, end1);
+		// store current byte in resultStringTmp
+		sbFromTmpToReg(DEST_REG, BYTE_REG, 0);
+		// addu dstTmp, dstTmp, 1
+		addConstIntToReg(DEST_REG, 1);
+		addConstIntToReg(STR_REG, 1);
+		// addu byteOfString, byteOfString, 1
+		// j loopLabel
+		jump(loopLabel1);
+		label(end1);
+		//PrintInt(tempString(str2));
+		//moveRegisters(STR2_REG,tempString(str2));
+		// loopEnd:
+		label(loopLabel2);
+		lbFromRegToReg(BYTE_REG, STR2_REG,0);
+		beqzReg(BYTE_REG, end2);
+		// store current byte in resultStringTmp
+		sbFromTmpToReg(DEST_REG, BYTE_REG, 0);
+		// addu dstTmp, dstTmp, 1
+		addConstIntToReg(DEST_REG, 1);
+		addConstIntToReg(STR2_REG, 1);
+
+		// addu byteOfString, byteOfString, 1
+		// j loopLabel
+		jump(loopLabel2);
+		label(end2);
+		sbFromTmpToReg(DEST_REG, BYTE_REG, 0);
+		moveRegisters(tempString(dstTmp),DEST_REG_DUP);
+	}
+
+	public void concatStrings(int tempStr1, int tempStr2, int dstTemp) {
+		final String STR1 = "$s0";
+		final String STR2 = "$s1";
+
+		final String STR1LEN_REG = "$s2";
+		final String STR2LEN_REG = "$s3";
+		final String CONCLEN_REG = "$s4";
+		moveRegisters(STR1, tempString(tempStr1));
+		moveRegisters(STR2, tempString(tempStr2));
+		calcStringLengthIntoTmp(STR1LEN_REG, tempString(tempStr1));
+		calcStringLengthIntoTmp(STR2LEN_REG, tempString(tempStr2));
+		add(CONCLEN_REG, STR1LEN_REG, STR2LEN_REG, false);
+		// add 1 for null terminator
+		addConstIntToReg(CONCLEN_REG, 1);
+		// ------------ allocate space on the heap for the result ------------ //
+		mallocRegSize(dstTemp, CONCLEN_REG);
+
+		copyString(dstTemp);
+
+	}
 	public void callMethodStmt(int objectTemp, int methodOffset, Deque<Integer> argTemps) {
 		final String VTABLE_REG = "$s0";
 		final String METHOD_REG = "$s1";
@@ -882,6 +986,7 @@ public class MIPSGenerator {
 			instance.fileWriter.print("string_illegal_div_by_0: .asciiz \"Illegal Division By Zero\"\n");
 			instance.fileWriter.print("string_invalid_ptr_dref: .asciiz \"Invalid Pointer Dereference\"\n");
 			instance.fileWriter.format("%s: .asciiz \" \"\n", SPACE_LABLE);
+
 
 		}
 		return instance;
