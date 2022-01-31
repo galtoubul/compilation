@@ -98,12 +98,17 @@ public class MIPSGenerator {
 		textSegment += String.format("\tli %s, %d\n", reg, value);
 	}
 
-	public void lbFromTmpToTmp(int dst, int src, int offset) {
-		textSegment += String.format("\tlb %s, %d(%s)\n", tempString(dst), offset, tempString(src));
+	public void lbFromRegToReg(String dst, String src, int offset) {
+		textSegment += String.format("\tlb %s, %d(%s)\n", dst, offset, src);
 	}
 
 	public void sbFromTmpToTmp(int dst, int src, int offset) {
 		textSegment += String.format("\tsb %s, %d(%s)\n", tempString(dst), offset, tempString(src));
+	}
+
+	public void addConstIntToReg(String dst, int constInt) {
+		textSegment += String.format("\tadd%s %s, %s, %d\n", constInt >= 0 ? "u" : "i", dst,
+				dst, constInt);
 	}
 
 	public void addConstIntToTmp(int dst, int constInt) {
@@ -209,6 +214,32 @@ public class MIPSGenerator {
 
 	private void selfBinopRegister(String operation, String register, int constant) {
 		this.binopRegisters(operation, register, register, String.valueOf(constant));
+	}
+
+	public void checkEqStrings(int dst, int str1Temp,  int str2Temp) {
+		String labelNeq = Labels.getAvialableLabel("neq");
+		String labelStrEqLoop = Labels.getAvialableLabel("str_eq_loop");
+		String labelStrEqEnd = Labels.getAvialableLabel("str_eq_end");
+		final String STR1_REG = "$s0";
+		final String STR2_REG = "$s1";
+		final String BIT1_REG = "$s2";
+		final String BIT2_REG = "$s3";
+		moveRegisters(STR1_REG,tempString(str1Temp));
+		moveRegisters(STR2_REG,tempString(str2Temp));
+		liTemp(dst,1);
+		label(labelStrEqLoop);
+		lbFromRegToReg(BIT1_REG, STR1_REG, 0);
+		lbFromRegToReg(BIT2_REG, STR2_REG, 0);
+		this.textSegment += String.format("\tbne %s, %s, %s\n",BIT1_REG, BIT2_REG, labelNeq);
+		textSegment += String.format("\tbeq %s, $zero, %s\n", BIT1_REG, labelStrEqEnd);
+		addConstIntToReg(STR1_REG, 1);
+		addConstIntToReg(STR2_REG, 1);
+		jump(labelStrEqLoop);
+		label(labelNeq);
+		liTemp(dst,0);
+		label(labelStrEqEnd);
+
+
 	}
 
 	public void add(int dst, int oprnd1, int oprnd2) {
@@ -647,6 +678,7 @@ public class MIPSGenerator {
 		this.branchBinop("ble", oprnd1, oprnd2, label);
 	}
 
+
 	public void bne(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("bne", oprnd1, oprnd2, label);
 	}
@@ -661,6 +693,10 @@ public class MIPSGenerator {
 
 	private void branchBinop(String command, int oprnd1, int oprnd2, String label) {
 		this.textSegment += String.format("\t%s %s, %s, %s\n", command, tempString(oprnd1), tempString(oprnd2), label);
+	}
+
+	private void branchBinopReg(String command, String oprnd1, String oprnd2, String label) {
+		this.textSegment += String.format("\t%s %s, %s, %s\n", command, oprnd1, oprnd2, label);
 	}
 
 	/************************************************
@@ -721,7 +757,7 @@ public class MIPSGenerator {
 
 		// Get the method from the virtual table
 		this.textSegment += String.format("\tlw %s, 0(%s)\n", VTABLE_REG, tempString(objectTemp));
-		this.textSegment += String.format("\tlw %s, %d(%s)\n", METHOD_REG, methodOffset, VTABLE_REG);
+		this.textSegment += String.format("\tlw %s, %d(%s)\n", METHOD_REG, WORD_SIZE*(methodOffset), VTABLE_REG);
 
 		// jalr
 		this.textSegment += String.format("\tjalr %s\n", METHOD_REG);

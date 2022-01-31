@@ -52,7 +52,7 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
     public void IRme() {
         System.out.println("-- AST_STMT_ASSIGN_NEW IRme");
         TEMP src = exp.IRme();
-        IR.getInstance().Add_IRcommand(new IRcommand_Store(((AST_VAR_SIMPLE) var).name, src));
+        IR.getInstance().Add_IRcommand(new IRcommand_Store(var.getSimple().name, src));
 
         throw new UnsupportedOperationException();
     }

@@ -25,6 +25,7 @@ public class TYPE_CLASS extends TYPE {
 	 * `String`).
 	 */
 	public ArrayList<Pair<String, Optional<Object>>> initialValues; // Very disgusting
+	public ArrayList<Pair<String, String>> vtable = new ArrayList<>();
 
 	public Map<String, Integer> methodOffsets;
 
@@ -40,12 +41,20 @@ public class TYPE_CLASS extends TYPE {
 
 	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum,
 			ArrayList<Pair<String, Optional<Object>>> initialValues) {
+		this(father, name, data_members, fieldsNum,initialValues, new ArrayList<>());
+	}
+
+	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum,
+					  ArrayList<Pair<String, Optional<Object>>> initialValues,
+					  ArrayList<Pair<String, String>> vtable) {
 		this.name = name;
 		this.father = father;
 		this.data_members = data_members;
 		this.fieldsNum = fieldsNum;
 		this.initialValues = initialValues;
+		this.vtable = vtable;
 	}
+
 
 	/**
 	 * Check if the class `other` inherits from this class (directly or indirectly).
