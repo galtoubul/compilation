@@ -106,9 +106,11 @@ public class MIPSGenerator {
 	public void sbFromTmpToTmp(int dst, int src, int offset) {
 		textSegment += String.format("\tsb %s, %d(%s)\n", tempString(dst), offset, tempString(src));
 	}
+
 	public void sbFromTmpToReg(String dst, String src, int offset) {
-		textSegment += String.format("\tsb %s, %d(%s)\n", src , offset, dst);
+		textSegment += String.format("\tsb %s, %d(%s)\n", src, offset, dst);
 	}
+
 	public void addConstIntToReg(String dst, int constInt) {
 		textSegment += String.format("\taddi %s, %s, %d\n", dst, dst, constInt);
 	}
@@ -158,6 +160,7 @@ public class MIPSGenerator {
 		// textSegment += String.format("\tmov $a0, %s\n", tempString(sizeTmpInd));
 		malloc(resultPtrTmp);
 	}
+
 	public void mallocRegSize(int resultPtrTmp, String sizeTmp) {
 		moveRegisters("$a0", sizeTmp);
 		// textSegment += String.format("\tmov $a0, %s\n", tempString(sizeTmpInd));
@@ -244,7 +247,7 @@ public class MIPSGenerator {
 		this.binopRegisters(operation, register, register, String.valueOf(constant));
 	}
 
-	public void checkEqStrings(int dst, int str1Temp,  int str2Temp) {
+	public void checkEqStrings(int dst, int str1Temp, int str2Temp) {
 		String labelNeq = Labels.getAvialableLabel("neq");
 		String labelStrEqLoop = Labels.getAvialableLabel("str_eq_loop");
 		String labelStrEqEnd = Labels.getAvialableLabel("str_eq_end");
@@ -252,21 +255,20 @@ public class MIPSGenerator {
 		final String STR2_REG = "$s1";
 		final String BIT1_REG = "$s2";
 		final String BIT2_REG = "$s3";
-		moveRegisters(STR1_REG,tempString(str1Temp));
-		moveRegisters(STR2_REG,tempString(str2Temp));
-		liTemp(dst,1);
+		moveRegisters(STR1_REG, tempString(str1Temp));
+		moveRegisters(STR2_REG, tempString(str2Temp));
+		liTemp(dst, 1);
 		label(labelStrEqLoop);
 		lbFromRegToReg(BIT1_REG, STR1_REG, 0);
 		lbFromRegToReg(BIT2_REG, STR2_REG, 0);
-		this.textSegment += String.format("\tbne %s, %s, %s\n",BIT1_REG, BIT2_REG, labelNeq);
+		this.textSegment += String.format("\tbne %s, %s, %s\n", BIT1_REG, BIT2_REG, labelNeq);
 		textSegment += String.format("\tbeq %s, $zero, %s\n", BIT1_REG, labelStrEqEnd);
 		addConstIntToReg(STR1_REG, 1);
 		addConstIntToReg(STR2_REG, 1);
 		jump(labelStrEqLoop);
 		label(labelNeq);
-		liTemp(dst,0);
+		liTemp(dst, 0);
 		label(labelStrEqEnd);
-
 
 	}
 
@@ -302,6 +304,7 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsub %s\n", binopString(dst, oprnd1, oprnd2));
 		checkLimits(dst);
 	}
+
 	public void sub(String dst, String oprnd1, String oprnd2) {
 		textSegment += String.format("\tsub %s\n", binopString(dst, oprnd1, oprnd2));
 	}
@@ -334,6 +337,7 @@ public class MIPSGenerator {
 	private static String binopString(int dst, int oprnd1, int oprnd2) {
 		return String.format("%s, %s, %s", tempString(dst), tempString(oprnd1), tempString(oprnd2));
 	}
+
 	private static String binopString(String dst, String oprnd1, String oprnd2) {
 		return String.format("%s, %s, %s", dst, oprnd1, oprnd2);
 	}
@@ -718,7 +722,6 @@ public class MIPSGenerator {
 		this.branchBinop("ble", oprnd1, oprnd2, label);
 	}
 
-
 	public void bne(int oprnd1, int oprnd2, String label) {
 		this.branchBinop("bne", oprnd1, oprnd2, label);
 	}
@@ -730,6 +733,7 @@ public class MIPSGenerator {
 	public void beqz(int oprnd1, String label) {
 		textSegment += String.format("\tbeq %s, $zero, %s\n", tempString(oprnd1), label);
 	}
+
 	public void beqzReg(String oprnd1, String label) {
 		textSegment += String.format("\tbeq %s, $zero, %s\n", oprnd1, label);
 	}
@@ -784,6 +788,7 @@ public class MIPSGenerator {
 		// store return value in dst
 		moveRegisters(tempString(dstTemp), "$v0");
 	}
+
 	public void copyString(int dstTmp) {
 		String STR_REG = "$s0";
 		String STR2_REG = "$s1";
@@ -795,10 +800,10 @@ public class MIPSGenerator {
 		String loopLabel2 = Labels.getAvialableLabel("loopLabel2");
 		String end1 = Labels.getAvialableLabel("end1");
 		String end2 = Labels.getAvialableLabel("end2");
-		moveRegisters(DEST_REG_DUP,tempString(dstTmp));
+		moveRegisters(DEST_REG_DUP, tempString(dstTmp));
 		label(loopLabel1);
 		// byteOfString = 0(copiedString)
-		lbFromRegToReg(BYTE_REG, STR_REG,0);
+		lbFromRegToReg(BYTE_REG, STR_REG, 0);
 
 		beqzReg(BYTE_REG, end1);
 		// store current byte in resultStringTmp
@@ -810,11 +815,11 @@ public class MIPSGenerator {
 		// j loopLabel
 		jump(loopLabel1);
 		label(end1);
-		//PrintInt(tempString(str2));
-		//moveRegisters(STR2_REG,tempString(str2));
+		// PrintInt(tempString(str2));
+		// moveRegisters(STR2_REG,tempString(str2));
 		// loopEnd:
 		label(loopLabel2);
-		lbFromRegToReg(BYTE_REG, STR2_REG,0);
+		lbFromRegToReg(BYTE_REG, STR2_REG, 0);
 		beqzReg(BYTE_REG, end2);
 		// store current byte in resultStringTmp
 		sbFromTmpToReg(DEST_REG, BYTE_REG, 0);
@@ -827,7 +832,7 @@ public class MIPSGenerator {
 		jump(loopLabel2);
 		label(end2);
 		sbFromTmpToReg(DEST_REG, BYTE_REG, 0);
-		moveRegisters(tempString(dstTmp),DEST_REG_DUP);
+		moveRegisters(tempString(dstTmp), DEST_REG_DUP);
 	}
 
 	public void concatStrings(int tempStr1, int tempStr2, int dstTemp) {
@@ -850,6 +855,7 @@ public class MIPSGenerator {
 		copyString(dstTemp);
 
 	}
+
 	public void callMethodStmt(int objectTemp, int methodOffset, Deque<Integer> argTemps) {
 		final String VTABLE_REG = "$s0";
 		final String METHOD_REG = "$s1";
@@ -861,7 +867,7 @@ public class MIPSGenerator {
 
 		// Get the method from the virtual table
 		this.textSegment += String.format("\tlw %s, 0(%s)\n", VTABLE_REG, tempString(objectTemp));
-		this.textSegment += String.format("\tlw %s, %d(%s)\n", METHOD_REG, WORD_SIZE*(methodOffset), VTABLE_REG);
+		this.textSegment += String.format("\tlw %s, %d(%s)\n", METHOD_REG, WORD_SIZE * (methodOffset), VTABLE_REG);
 
 		// jalr
 		this.textSegment += String.format("\tjalr %s\n", METHOD_REG);
@@ -923,8 +929,10 @@ public class MIPSGenerator {
 		textSegment += String.format("\tjr $ra\n");
 	}
 
-	public void doReturn(int expRetReg, String funcName) {
-		moveRegisters("$v0", tempString(expRetReg));
+	public void doReturn(Optional<Integer> expRetReg, String funcName) {
+		if (expRetReg.isPresent()) {
+			moveRegisters("$v0", tempString(expRetReg.get()));
+		}
 		jump(funcName + "_epilogue");
 		// textSegment += String.format("\tmove $v0, %s\n", tempString(expRetRegIdx));
 	}
@@ -986,7 +994,6 @@ public class MIPSGenerator {
 			instance.fileWriter.print("string_illegal_div_by_0: .asciiz \"Illegal Division By Zero\"\n");
 			instance.fileWriter.print("string_invalid_ptr_dref: .asciiz \"Invalid Pointer Dereference\"\n");
 			instance.fileWriter.format("%s: .asciiz \" \"\n", SPACE_LABLE);
-
 
 		}
 		return instance;

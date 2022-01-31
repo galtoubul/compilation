@@ -4,15 +4,16 @@ import TEMP.*;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import MIPS.*;
 
 public class IRcommand_Return implements IRcommand {
-	TEMP expRetReg;
+	Optional<TEMP> expRetReg;
 	String funcName;
 
-	public IRcommand_Return(TEMP expRetReg, String funcName) {
+	public IRcommand_Return(Optional<TEMP> expRetReg, String funcName) {
 		this.expRetReg = expRetReg;
 		this.funcName = funcName;
 	}
@@ -22,18 +23,20 @@ public class IRcommand_Return implements IRcommand {
 	/***************/
 	public void MIPSme(Map<TEMP, Integer> tempMap) {
 		System.out.println("-- IRcommand_Return MIPSme");
-		MIPSGenerator.getInstance().doReturn(tempMap.get(expRetReg), funcName);
+		MIPSGenerator.getInstance().doReturn(this.expRetReg.map(temp -> tempMap.get(temp)), this.funcName);
 	}
 
 	@Override
 	public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
 		HashSet<TEMP> in = new HashSet<>(liveTemps);
-		in.add(this.expRetReg);
+		if (this.expRetReg.isPresent()) {
+			in.add(this.expRetReg.get());
+		}
 		return in;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("return %s", this.expRetReg);
+		return this.expRetReg.isPresent() ? String.format("return %s", this.expRetReg) : "return";
 	}
 }
