@@ -12,7 +12,6 @@ public class IRcommand_Initialize_Temp_With_Object_Field implements IRcommand {
     public TEMP dst;
     public int fieldOffset;
 
-
     public IRcommand_Initialize_Temp_With_Object_Field(TEMP dst, TEMP objectTmp, int fieldOffset) {
         this.objectTmp = objectTmp;
         this.fieldOffset = fieldOffset;
@@ -30,6 +29,7 @@ public class IRcommand_Initialize_Temp_With_Object_Field implements IRcommand {
     @Override
     public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
         HashSet<TEMP> in = new HashSet<>(liveTemps);
+        in.remove(this.dst);
         in.add(this.objectTmp);
         return in;
     }
