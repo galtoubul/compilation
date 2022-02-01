@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import IR.IR;
 import IR.IRcommand_Call_Method_Exp;
-import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TEMP.*;
 import TYPES.TYPE_CLASS;
@@ -28,9 +27,8 @@ public class AST_EXP_METHOD extends AST_EXP {
         }
     }
 
-    private Pair<TYPE_CLASS, TYPE_FUNCTION> getMethodTypes() {
-        // Search the function in the symbol table or class scopes
-        TYPE_CLASS methodClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(var.getSimple().name);
+    private Pair<TYPE_CLASS, TYPE_FUNCTION> getMethodTypes(TYPE_CLASS methodClass) {
+        // Search the method in the class scopes
         TYPE_CLASS classToSearch = methodClass;
         while (classToSearch != null) {
             for (TYPE member : classToSearch.data_members) {
@@ -60,7 +58,6 @@ public class AST_EXP_METHOD extends AST_EXP {
 
         // Match the types of each argument to that of a parameter
         while (argsTypes != null && argsTypes.head != null) {
-
             if (!TYPE.isSubtype(argsTypes.head, paramsTypes.head)) {
                 System.out.format(">> ERROR [" + lineNum + "] type(arg) = %s != %s = type(param)\n",
                         argsTypes.head.name,
@@ -79,12 +76,12 @@ public class AST_EXP_METHOD extends AST_EXP {
     public TYPE SemantMe(Optional<String> fatherClassId) {
         System.out.println("-- AST_EXP_METHOD SemantMe");
 
-        var.SemantMe(fatherClassId);
+        TYPE_CLASS classType = (TYPE_CLASS) var.SemantMe(fatherClassId);
 
         System.out.println("-- AST_EXP_METHOD SemantMe\n\n\tline number = " + lineNum);
-        Pair<TYPE_CLASS, TYPE_FUNCTION> types = getMethodTypes();
+        Pair<TYPE_CLASS, TYPE_FUNCTION> types = getMethodTypes(classType);
         TYPE_FUNCTION funcType = types.getValue();
-        System.out.println("-- AST_STMT_METHOD\n\t\tfuncType.name = " + funcType.name);
+        System.out.println("-- AST_EXP_METHOD\n\t\tfuncType.name = " + funcType.name);
 
         TYPE_LIST paramsTypes = funcType.params;
         // checkForEmptyLists(paramsTypes);
@@ -98,11 +95,12 @@ public class AST_EXP_METHOD extends AST_EXP {
         }
 
         this.offset = types.getKey().methodOffsets.get(this.id);
+        System.out.println(types.getKey().name);
         return funcType.returnType;
     }
 
     public TEMP IRme() {
-        System.out.println("-- AST_STMT_METHOD IRme");
+        System.out.println("-- AST_EXP_METHOD IRme");
 
         TEMP_LIST argsTempList = null;
         if (argsList != null) {
@@ -110,8 +108,9 @@ public class AST_EXP_METHOD extends AST_EXP {
         }
 
         TEMP funcRetValTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
-        IR.getInstance().Add_IRcommand(new IRcommand_Call_Method_Exp(funcRetValTemp, var.IRme(), this.offset,
-                argsTempList));
+        IR.getInstance()
+                .Add_IRcommand(new IRcommand_Call_Method_Exp(funcRetValTemp, var.IRme(), this.offset,
+                        argsTempList));
 
         return funcRetValTemp;
     }

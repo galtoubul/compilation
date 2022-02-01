@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import IR.IR;
 import IR.IRcommand_Call_Method_Stmt;
-import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TEMP.*;
 import TYPES.TYPE_CLASS;
@@ -28,9 +27,8 @@ public class AST_STMT_METHOD extends AST_STMT {
         }
     }
 
-    private Pair<TYPE_CLASS, TYPE_FUNCTION> getMethodTypes() {
-        // Search the function in the symbol table or class scopes
-        TYPE_CLASS methodClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(var.getSimple().name);
+    private Pair<TYPE_CLASS, TYPE_FUNCTION> getMethodTypes(TYPE_CLASS methodClass) {
+        // Search the method in the class scopes
         TYPE_CLASS classToSearch = methodClass;
         while (classToSearch != null) {
             for (TYPE member : classToSearch.data_members) {
@@ -79,10 +77,10 @@ public class AST_STMT_METHOD extends AST_STMT {
     public TYPE SemantMe(Optional<String> fatherClassId, int localVarIndex) {
         System.out.println("-- AST_STMT_METHOD SemantMe");
 
-        var.SemantMe(fatherClassId);
+        TYPE_CLASS methodClass = (TYPE_CLASS) var.SemantMe(fatherClassId);
 
         System.out.println("-- AST_STMT_METHOD SemantMe\n\n\tline number = " + lineNum);
-        Pair<TYPE_CLASS, TYPE_FUNCTION> types = getMethodTypes();
+        Pair<TYPE_CLASS, TYPE_FUNCTION> types = getMethodTypes(methodClass);
         TYPE_FUNCTION funcType = types.getValue();
         System.out.println("-- AST_STMT_METHOD\n\t\tfuncType.name = " + funcType.name);
 
