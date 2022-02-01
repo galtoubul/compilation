@@ -128,6 +128,8 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
             int ind = localVarInd.orElse(-1);
             System.out.format("\t\t%s is a local variable | its index = %s\n", id, ind);
         }
+        // No need to check for fields, as the cannot be initialized with non-constant
+        // values
     }
 
     @Override
@@ -149,5 +151,8 @@ public class AST_VAR_NEW extends AST_VAR_DEC {
             int localVarInd = astAnnotation.ind.orElse(-1);
             IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
         }
+
+        // No need to check for fields, as the cannot be initialized with non-constant
+        // values
     }
 }

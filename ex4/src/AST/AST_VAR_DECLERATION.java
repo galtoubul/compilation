@@ -109,6 +109,10 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         if (scopeType == ScopeType.Global) {
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, localVarInd);
             System.out.format("\t\t%s is a global variable\n", id);
+        } else if (scopeType == ScopeType.Class) {
+            astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD, localVarInd);
+            int ind = localVarInd.orElse(-1);
+            System.out.format("\t\t%s is a class field | its index = %s\n", id, ind);
         } else { // local
             astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, localVarInd);
             int ind = localVarInd.orElse(-1);
@@ -124,8 +128,12 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
             System.out.println("\t\tglobal variable");
             String globalVarLabel = GlobalVariables.insertGlobal(this.id, this.varType);
             IR.getInstance().Add_IRcommand(new IRcommand_Create_Global_Var(globalVarLabel, varType));
-        } else { // local variable
+        } else if (astAnnotation.type == AstAnnotation.TYPE.LOCAL_VAR) {
+            // local variable
             System.out.println("\t\tlocal variable");
+        } else {
+            // Class field
+            System.out.println("\t\tclass field");
         }
     }
 
