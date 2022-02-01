@@ -437,9 +437,14 @@ public class MIPSGenerator {
 	 * Parameters
 	 ************************************************/
 
-	public void loadFromParameters(int tmp, int ParamInd) {
-		int offset = ParamInd * WORD_SIZE + 4; // first parameter is at 8($fp), since: prev fp = 0($fp), ra = 4($fp)
+	public void loadFromParameters(int tmp, int paramInd) {
+		int offset = paramInd * WORD_SIZE + 4; // first parameter is at 8($fp), since: prev fp = 0($fp), ra = 4($fp)
 		textSegment += String.format("\tlw %s, %d($fp)\n", tempString(tmp), offset);
+	}
+
+	public void parameterAssignment(int paramInd, int tmpRvalue) {
+		int offset = paramInd * WORD_SIZE + 4; // first parameter is at 8($fp), since: prev fp = 0($fp), ra = 4($fp)
+		textSegment += String.format("\tsw %s, %d($fp)\n", tempString(tmpRvalue), offset);
 	}
 
 	/************************************************

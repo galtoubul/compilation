@@ -123,34 +123,38 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		System.out.println("-- AST_STMT_ASSIGN IRme");
 
 		TEMP rValueTmp = exp.IRme();
-		if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
-			System.out.format("\t\t%s is a global variable\n", varName);
 
-			String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
+		int localVarInd = astAnnotation.ind.orElse(-1);
+		if (var instanceof AST.AST_VAR_SUBSCRIPT) {
+			TEMP arrayTmp = ((AST_VAR_SUBSCRIPT) var).var.IRme();
+			AST_EXP subscript = ((AST_VAR_SUBSCRIPT) var).subscript;
+			TEMP offsetTmp = subscript.IRme();
+			IR.getInstance()
+					.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
+		} else if (var instanceof AST.AST_VAR_FIELD) {
+			TEMP varOfTmp = ((AST_VAR_FIELD) var).var.IRme();
+			int fieldInd = ((AST_VAR_FIELD) var).astAnnotation.ind.orElse(-1);
+			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Field(varOfTmp, fieldInd, rValueTmp));
 
-			IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, rValueTmp));
 		} else {
-			// local variable
-			System.out.format("\t\t%s is a local variable\n", varName);
+			// instanceof AST.AST_VAR_SIMPLE
 
-			int localVarInd = astAnnotation.ind.orElse(-1);
-			if (var instanceof AST.AST_VAR_SUBSCRIPT) {
-				TEMP arrayTmp = ((AST_VAR_SUBSCRIPT) var).var.IRme();
-				AST_EXP subscript = ((AST_VAR_SUBSCRIPT) var).subscript;
-				// IR.getInstance().Add_IRcommand(new
-				// IRcommand_Initialize_Tmp_With_Local_Var(arrayTmp, localVarInd));
-				TEMP offsetTmp = subscript.IRme();
-				IR.getInstance()
-						.Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
-			} else if (var instanceof AST.AST_VAR_FIELD) {
-				TEMP varOfTmp = ((AST_VAR_FIELD) var).var.IRme();
-				int fieldInd = ((AST_VAR_FIELD) var).astAnnotation.ind.orElse(-1);
-				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Field(varOfTmp, fieldInd, rValueTmp));
+			if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
+				System.out.format("\t\t%s is a global variable\n", varName);
+				String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
+				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, rValueTmp));
+			} else if (astAnnotation.type == AstAnnotation.TYPE.PARAMETER) {
+				System.out.format("\t\t%s is a parameter\n", varName);
+				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Parameter(localVarInd, rValueTmp));
+			}
 
-			} else {
-				// instanceof AST.AST_VAR_SIMPLE
+			else {
+				// local variable
+				System.out.format("\t\t%s is a local variable\n", varName);
 				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
 			}
+
 		}
+
 	}
 }
