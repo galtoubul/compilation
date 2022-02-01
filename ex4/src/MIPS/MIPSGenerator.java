@@ -17,6 +17,7 @@ public class MIPSGenerator {
 	private static final int TMPS_BACKUP_SPACE = WORD_SIZE * MAX_TEMPS; // $t0 - $t9 backup
 	private static final String ABORT_LABEL = "abort_label";
 	private static final String SPACE_LABLE = "WS";
+	private static final String FUNCTION_PREFIX = "function";
 	private boolean add_abort_flag = false;
 	private PrintWriter fileWriter;
 	private String dataSegment = "";
@@ -83,7 +84,8 @@ public class MIPSGenerator {
 	}
 
 	public void label(String inlabel) {
-		if (inlabel.equals("main")) {
+		if (inlabel.equals(FUNCTION_PREFIX + "_main")) {
+			// TODO: might not be necessary anymore since the functions now have prefix
 			textSegment += String.format("user_main:\n"); // _ isn't allowed in an identifier name -> user_name is a
 															// unique label
 		} else {
@@ -785,7 +787,7 @@ public class MIPSGenerator {
 		int argsNum = argTemps.size();
 		pushArgs(argTemps);
 		// jal
-		textSegment += String.format("\tjal %s\n", funcName);
+		textSegment += String.format("\tjal %s_%s\n", FUNCTION_PREFIX, funcName);
 		// restore sp
 		textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
 
@@ -947,7 +949,7 @@ public class MIPSGenerator {
 	}
 
 	public void addMethodToVtable(String className, String methodName) {
-		dataSegment += String.format(".word %s_%s\n", methodName, className);
+		dataSegment += String.format(".word %s_%s_%s\n", FUNCTION_PREFIX, methodName, className);
 	}
 
 	public void addVtable(List<Pair<String, String>> vtable, String className) {

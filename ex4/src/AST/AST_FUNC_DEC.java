@@ -145,8 +145,8 @@ public class AST_FUNC_DEC extends AST_Node {
     // TODO
     public void IRme() {
         System.out.println("-- AST_FUNC_DEC IRme");
-        id = this.methodClass != null && this.methodClass.isPresent() ? id + "_" + this.methodClass.get() : id;
-        IR.getInstance().Add_IRcommand(new IRcommand_Label(id));
+        id = this.methodClass.isPresent() ? id + "_" + this.methodClass.get() : id;
+        IR.getInstance().Add_IRcommand(new IRcommand_Label("function_" + id)); // Avoid labels with reserved names
         IR.getInstance().Add_IRcommand(new IRcommand_Func_Prologue(id, localVarsNum));
         IR.getInstance().Add_IRcommand(new IRcommand_Label(id + "_after_prologue"));
 
