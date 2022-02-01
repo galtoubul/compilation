@@ -116,16 +116,6 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, offset);
 			System.out.format("\t\t%s is a local variable | its index = %s\n", varName, offset);
 		}
-
-		// if (scopeType == ScopeType.Global) {
-		// astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, offset);
-		// System.out.format("\t\t%s is a global variable\n", varName);
-		// } else { // local
-		// astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, offset);
-		// int ind = offset.orElse(-1);
-		// System.out.format("\t\t%s is a local variable | its index = %s\n", varName,
-		// ind);
-		// }
 	}
 
 	@Override

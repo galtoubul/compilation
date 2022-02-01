@@ -2,7 +2,6 @@ package AST;
 
 import java.util.Optional;
 
-import MIPS.MIPSGenerator;
 import TYPES.*;
 import TEMP.*;
 import IR.IRcommand_Binop_Add_Integers;
