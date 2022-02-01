@@ -6,10 +6,8 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.SymbolTableEntry;
 import TYPES.TYPE;
 
-public class AST_TYPE extends AST_Node {
-    public String name() {
-        return null;
-    }
+public abstract class AST_TYPE extends AST_Node {
+    public abstract String name();
 
     public TYPE getTYPE(int lineNum) {
         Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(this.name());
