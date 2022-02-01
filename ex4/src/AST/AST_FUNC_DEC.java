@@ -113,11 +113,9 @@ public class AST_FUNC_DEC extends AST_Node {
         SYMBOL_TABLE.getInstance().beginScope(ScopeType.Function, id);
         System.out.println("\t\tStart of a new scope for function/method " + this.id);
 
-        // Semant Input Params
-        TYPE_LIST paramsTypesList = null;
-        if (params.isPresent()) {
-            paramsTypesList = params.get().SemantMe(0);
-        }
+        int initialParamOffset = this.methodClass.isPresent() ? 1 : 0;
+        TYPE_LIST paramsTypesList = params.map(paramsList -> paramsList.SemantMe(initialParamOffset))
+                .orElse(new TYPE_LIST(null, null));
 
         // Enter the function/method Type to the Symbol Table
         System.out.println("\t\tlocalVarsNum = " + localVarsNum);

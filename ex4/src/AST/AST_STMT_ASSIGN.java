@@ -1,11 +1,14 @@
 package AST;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import TYPES.TYPE;
+import TYPES.TYPE_CLASS;
 import ast_annotation.AstAnnotation;
 import ast_notation_type.AstNotationType;
 import global_variables.GlobalVariables;
+import pair.Pair;
 import TEMP.*;
 import IR.*;
 import SYMBOL_TABLE.*;
@@ -106,16 +109,50 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 
 		System.out.println("\t\tvariable scope type = " + scopeType);
 
-		if (scopeType == ScopeType.Global) {
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, Optional.empty());
-			System.out.format("\t\t%s is a global variable\n", varName);
-		} else if (astNotationType == AstNotationType.parameter) {
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.PARAMETER, offset);
-			System.out.format("\t\t%s is a parameter | its index = %s\n", varName, offset);
-		} else { // local
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, offset);
-			System.out.format("\t\t%s is a local variable | its index = %s\n", varName, offset);
+		switch (scopeType) {
+			case Global:
+				astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, Optional.empty());
+				System.out.format("\t\t%s is a global variable\n", varName);
+				break;
+			case Class:
+				ScopeEntry entry = SYMBOL_TABLE.getInstance().findScopeType(scopeType).get();
+				this.setFieldNotation((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(entry.scopeName.get()));
+				break;
+			default:
+				if (astNotationType == AstNotationType.parameter) {
+					astAnnotation = new AstAnnotation(AstAnnotation.TYPE.PARAMETER, offset);
+					System.out.format("\t\t%s is a parameter | its index = %s\n", varName, offset);
+				} else {
+					// local
+					astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, offset);
+					System.out.format("\t\t%s is a local variable | its index = %s\n", varName, offset);
+				}
+				break;
 		}
+	}
+
+	private void setFieldNotation(TYPE_CLASS classToSearch) {
+		int ind = 0;
+		ArrayList<Pair<String, Optional<Object>>> fields = classToSearch.initialValues;
+		boolean filedFound = false;
+		while (classToSearch != null) {
+			for (Pair<String, Optional<Object>> initializations : fields) {
+				if (!initializations.getKey().equals(this.varName)) {
+					ind++;
+				} else {
+					filedFound = true;
+					break;
+				}
+			}
+			if (filedFound) {
+				break;
+			}
+			classToSearch = classToSearch.father.orElse(null);
+			if (classToSearch != null)
+				fields = classToSearch.initialValues;
+		}
+		astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD,
+				Optional.of(ind));
 	}
 
 	@Override
@@ -139,19 +176,29 @@ public class AST_STMT_ASSIGN extends AST_STMT {
 		} else {
 			// instanceof AST.AST_VAR_SIMPLE
 
-			if (astAnnotation.type == AstAnnotation.TYPE.GLOBAL_VAR) {
-				System.out.format("\t\t%s is a global variable\n", varName);
-				String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
-				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, rValueTmp));
-			} else if (astAnnotation.type == AstAnnotation.TYPE.PARAMETER) {
-				System.out.format("\t\t%s is a parameter\n", varName);
-				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Parameter(localVarInd, rValueTmp));
-			}
+			switch (astAnnotation.type) {
+				case GLOBAL_VAR:
+					System.out.format("\t\t%s is a global variable\n", varName);
+					String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
+					IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, rValueTmp));
+					break;
+				case PARAMETER:
+					System.out.format("\t\t%s is a parameter\n", varName);
+					IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Parameter(localVarInd, rValueTmp));
+					break;
+				case FIELD:
+					System.out.format("\t\t%s is a class field\n", varName);
 
-			else {
-				// local variable
-				System.out.format("\t\t%s is a local variable\n", varName);
-				IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
+					// The object is the first parameter of the method
+					TEMP objectTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+					IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Parameter(objectTemp, 1));
+					IR.getInstance().Add_IRcommand(
+							new IRcommand_Assign_To_Field(objectTemp, astAnnotation.ind.get(), rValueTmp));
+					break;
+				case LOCAL_VAR:
+					System.out.format("\t\t%s is a local variable\n", varName);
+					IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
+					break;
 			}
 
 		}
