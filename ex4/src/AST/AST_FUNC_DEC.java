@@ -138,6 +138,11 @@ public class AST_FUNC_DEC extends AST_Node {
         funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList, localVarsNum);
         SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
+        if (this.methodClass.isPresent()) {
+            TYPE_CLASS classType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.methodClass.get());
+            classType.data_members.add(funcType);
+        }
+
         return funcType;
     }
 

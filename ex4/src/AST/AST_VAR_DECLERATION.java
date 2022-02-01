@@ -79,10 +79,12 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
         }
 
         // Done with all checks -> insert the variable to the Symbol Table
+        TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
 
         if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class) {
             TYPE_CLASS currentClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance()
                     .find(SYMBOL_TABLE.getInstance().currentScope().scopeName.get());
+            currentClass.data_members.add(var);
             currentClass.initialValues.add(new Pair<String, Optional<Object>>(id, Optional.empty()));
         }
 
@@ -94,7 +96,6 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
 
         SYMBOL_TABLE.getInstance().enter(id, t, false, localVarInd, astNotationTypeOpt);
 
-        TYPE_CLASS_VAR_DEC var = new TYPE_CLASS_VAR_DEC(t, id);
         System.out.format("\t\tinserted variable %s of type %s to the symbol table\n", var.name,
                 var.type.name);
         this.varType = var.type.name;

@@ -131,9 +131,7 @@ public class AST_CLASS_DEC extends AST_Node {
         System.out.println("\t\tline number = " + lineNum);
 
         // Semant Data Members
-        TYPE_LIST membersType = fields.SemantMe(base.map(classType -> classType.name));
-        type.data_members = membersType.stream().collect(Collectors.toList());
-        type.initialValues = type.initialValues;
+        fields.SemantMe(base.map(classType -> classType.name));
         type.vtable = this.vtable;
         // End Scope
         SYMBOL_TABLE.getInstance().endScope();

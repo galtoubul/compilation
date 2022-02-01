@@ -82,9 +82,12 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
             throw new SemanticErrorException("" + lineNum);
         }
 
+        TYPE_CLASS_VAR_DEC typeClassVarDec = new TYPE_CLASS_VAR_DEC(t, id);
+
         if (SYMBOL_TABLE.getInstance().currentScopeType() == ScopeType.Class) {
             TYPE_CLASS currentClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance()
                     .find(SYMBOL_TABLE.getInstance().currentScope().scopeName.get());
+            currentClass.data_members.add(typeClassVarDec);
             if (initialValue instanceof AST_EXP_INT) {
                 currentClass.initialValues
                         .add(new Pair<String, Optional<Object>>(id, Optional.of(((AST_EXP_INT) initialValue).value)));
@@ -103,7 +106,6 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
         AstNotationType astNotationType = AstNotationType.getAstNotationType(callerClassName);
         Optional<AstNotationType> astNotationTypeOpt = Optional.of(astNotationType);
 
-        TYPE_CLASS_VAR_DEC typeClassVarDec = new TYPE_CLASS_VAR_DEC(t, id);
         SYMBOL_TABLE.getInstance().enter(id, t, false, localVarIndexOpt, astNotationTypeOpt);
         this.varType = typeClassVarDec.type.name;
         setNotation(localVarIndexOpt);
