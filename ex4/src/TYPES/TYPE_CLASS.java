@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import SYMBOL_TABLE.SYMBOL_TABLE;
-
 public class TYPE_CLASS extends TYPE {
 	/*********************************************************************/
 	/* If this class does not extend a father class this should be null */
@@ -70,9 +68,6 @@ public class TYPE_CLASS extends TYPE {
 	// look for a member (field or method) name in the given TYPE_CLASS
 	// if found -> returns null. OW, returns null
 	private Optional<TYPE> lookupMember(String memberName) {
-		System.out.println(SYMBOL_TABLE.getInstance().findAll(this.name));
-		System.out.println(this);
-
 		for (TYPE member : this.data_members) {
 			System.out.println("-- lookupMember\n\t\tdata member name = " + member.name);
 			System.out.println("-- lookupMember\n\t\tfieldName = " + memberName);
