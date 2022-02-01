@@ -33,12 +33,10 @@ public class AST_STMT_METHOD extends AST_STMT {
         TYPE_CLASS methodClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(var.getSimple().name);
         TYPE_CLASS classToSearch = methodClass;
         while (classToSearch != null) {
-            TYPE_LIST members = (classToSearch).data_members;
-            while (members != null && members.head != null) {
-                if (members.head instanceof TYPE_FUNCTION && members.head.name.equals(id)) {
-                    return new Pair<>(classToSearch, (TYPE_FUNCTION) members.head);
+            for (TYPE member : classToSearch.data_members) {
+                if (member instanceof TYPE_FUNCTION && member.name.equals(id)) {
+                    return new Pair<>(classToSearch, (TYPE_FUNCTION) member);
                 }
-                members = members.tail;
             }
             classToSearch = classToSearch.father.orElse(null);
         }

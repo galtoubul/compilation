@@ -1,6 +1,8 @@
 package TYPES;
 
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 import java.util.Iterator;
 
 public class TYPE_LIST implements Iterable<TYPE> {
@@ -50,5 +52,9 @@ public class TYPE_LIST implements Iterable<TYPE> {
 	@Override
 	public Iterator<TYPE> iterator() {
 		return new TypeListIterator(this);
+	}
+
+	public Stream<TYPE> stream() {
+		return StreamSupport.stream(this.spliterator(), true);
 	}
 }

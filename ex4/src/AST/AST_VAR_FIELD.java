@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import IR.*;
-import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
 import TYPES.TYPE_CLASS_VAR_DEC;
-import TYPES.TYPE_LIST;
 import TEMP.*;
 import ast_annotation.AstAnnotation;
 import pair.Pair;
@@ -53,15 +51,15 @@ public class AST_VAR_FIELD extends AST_VAR {
 	// look for the field name in the given TYPE_CLASS
 	// if found -> returns null. OW, returns null
 	public TYPE lookForFieldNameInClassDataMembers(TYPE_CLASS varTypeClass) {
-		for (TYPE_LIST dataMembersList = varTypeClass.data_members; dataMembersList != null; dataMembersList = dataMembersList.tail) {
-			System.out.println("-- AST_VAR_FIELD\n\t\tdata member name = " + dataMembersList.head.name);
+		for (TYPE member : varTypeClass.data_members) {
+			System.out.println("-- AST_VAR_FIELD\n\t\tdata member name = " + member.name);
 			System.out.println("-- AST_VAR_FIELD\n\t\tfieldName = " + fieldName);
 
-			if (dataMembersList.head.name.equals(fieldName)) {
-				if (dataMembersList.head instanceof TYPE_CLASS_VAR_DEC) {
-					return ((TYPE_CLASS_VAR_DEC) dataMembersList.head).type;
+			if (member.name.equals(fieldName)) {
+				if (member instanceof TYPE_CLASS_VAR_DEC) {
+					return ((TYPE_CLASS_VAR_DEC) member).type;
 				}
-				return dataMembersList.head;
+				return member;
 			}
 		}
 		return null;
@@ -84,11 +82,11 @@ public class AST_VAR_FIELD extends AST_VAR {
 			System.out.format(">> ERROR [" + lineNum + "] access %s field of a non-class variable\n", fieldName);
 			throw new SemanticErrorException("" + lineNum);
 		}
-		this.setNotation(varType);
 
-		Optional<TYPE> field = ((TYPE_CLASS) varType).lookupMemberInAncestors(this.fieldName);
+		Optional<TYPE> field = varType.lookupMemberInAncestors(this.fieldName);
 		if (field.isPresent()) {
 			if (field.get() instanceof TYPE_CLASS_VAR_DEC) {
+				this.setNotation(varType);
 				return ((TYPE_CLASS_VAR_DEC) field.get()).type;
 			}
 			System.out.format(">> ERROR [" + lineNum + "] '%s' is a method, not a field variable\n", fieldName);
@@ -122,9 +120,6 @@ public class AST_VAR_FIELD extends AST_VAR {
 			classToSearch = classToSearch.father.orElse(null);
 			if (classToSearch != null)
 				fields = classToSearch.initialValues;
-		}
-		if (!filedFound) {
-			throw new UnsupportedOperationException(fieldName + " is not field of " + varClass.name);
 		}
 		astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD, Optional.of(ind));
 	}

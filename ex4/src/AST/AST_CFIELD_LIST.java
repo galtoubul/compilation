@@ -47,8 +47,9 @@ public class AST_CFIELD_LIST extends AST_Node {
 		TYPE headType = null;
 		if (head != null) {
 			// head can be a field or a method
-			headType = head instanceof AST.AST_CFIELD_VAR_DEC ?
-					head.SemantMe(classId, Optional.of(fieldIndex + 1)) : head.SemantMe(classId, Optional.empty());
+			headType = head instanceof AST.AST_CFIELD_VAR_DEC ? head.SemantMe(classId,
+					Optional.of(fieldIndex + 1))
+					: head.SemantMe(classId, Optional.empty());
 		}
 
 		TYPE_LIST tailType = null;

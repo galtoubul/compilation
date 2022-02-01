@@ -54,28 +54,26 @@ public class AST_FUNC_DEC extends AST_Node {
         TYPE_CLASS fatherType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(fatherClassId.get());
         System.out.println("-- AST_FUNC_DEC\n\t\t the method is part of a class that extends class " + fatherType.name);
 
-        TYPE_LIST dataMembers = fatherType.data_members;
+        for (TYPE member : fatherType.data_members) {
+            System.out.println("-- AST_FUNC_DEC SemantMe\n\t\twhile (fatherType.data_members nonempty)");
+            if (member instanceof TYPE_FUNCTION ||
+                    member instanceof TYPE_VOID ||
+                    member instanceof TYPE_CLASS_VAR_DEC) {
 
-        while (dataMembers != null && dataMembers.head != null) {
-            System.out.println("-- AST_FUNC_DEC SemantMe\n\t\twhile (dataMembers.head != null)");
-            if (dataMembers.head instanceof TYPE_FUNCTION ||
-                    dataMembers.head instanceof TYPE_VOID ||
-                    dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
-
-                TYPE dm = dataMembers.head;
+                TYPE dm = member;
                 System.out.format("-- AST_FUNC_DEC SemantMe\n\t\t%s is a method/field\n", dm.name);
 
                 if (dm.name.equals(id)) {
                     System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tdata member name = %s == %s = method name\n",
                             dm.name, id);
-                    if (dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
+                    if (member instanceof TYPE_CLASS_VAR_DEC) {
                         System.out.println(">> ERROR [line] overloading field and method names isn't allowed");
                         throw new SemanticErrorException("" + lineNum);
-                    } else if (dataMembers.head instanceof TYPE_VOID
+                    } else if (member instanceof TYPE_VOID
                             && !this.returnTypeName.name().equals("void")) {
                         System.out.println(">> ERROR [line] overloading methods isn't allowed");
                         throw new SemanticErrorException("" + lineNum);
-                    } else if (dataMembers.head instanceof TYPE_FUNCTION &&
+                    } else if (member instanceof TYPE_FUNCTION &&
                             !((TYPE_FUNCTION) dm).returnType.name.equals(this.returnTypeName.name())) {
                         System.out.format("-- AST_FUNC_DEC SemantMe\n\t\tthis.returnTypeName.name() = %s\n",
                                 this.returnTypeName.name());
@@ -86,7 +84,6 @@ public class AST_FUNC_DEC extends AST_Node {
                     }
                 }
             }
-            dataMembers = dataMembers.tail;
         }
     }
 

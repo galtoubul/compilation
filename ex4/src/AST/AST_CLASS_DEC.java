@@ -1,6 +1,5 @@
 package AST;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
@@ -13,10 +12,8 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
-import TYPES.TYPE_FUNCTION;
 import TYPES.TYPE_LIST;
 import pair.Pair;
-import TEMP.*;
 
 public class AST_CLASS_DEC extends AST_Node {
     public String id;
@@ -66,7 +63,8 @@ public class AST_CLASS_DEC extends AST_Node {
         AST_CFIELD_LIST ptr1 = this.fields;
 
         while (ptr1 != null && ptr1.head != null) {
-            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC && funcName.equals(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id)) {
+            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC
+                    && funcName.equals(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id)) {
                 return true;
             }
             ptr1 = ptr1.tail;
@@ -79,7 +77,7 @@ public class AST_CLASS_DEC extends AST_Node {
         if (father.isPresent()) {
             TYPE_CLASS fatherClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.father.get());
             this.vtable = new ArrayList<>(fatherClass.vtable);
-            for (int i = 0; i<this.vtable.size(); i++) {
+            for (int i = 0; i < this.vtable.size(); i++) {
                 if (this.isOverridesFunc(this.vtable.get(i).getValue())) {
                     vtableMethods.add(this.vtable.get(i).getValue());
                     this.vtable.set(i, new Pair<>(id, this.vtable.get(i).getValue()));
@@ -89,7 +87,8 @@ public class AST_CLASS_DEC extends AST_Node {
         AST_CFIELD_LIST ptr1 = this.fields;
 
         while (ptr1 != null && ptr1.head != null) {
-            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC && !vtableMethods.contains(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id)) {
+            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC
+                    && !vtableMethods.contains(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id)) {
                 this.vtable.add(new Pair<>(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id));
             }
             ptr1 = ptr1.tail;
@@ -125,20 +124,23 @@ public class AST_CLASS_DEC extends AST_Node {
         // class's scope)
         int fieldsNum = getFieldsNum();
 
-        TYPE_CLASS scopeDummy = new TYPE_CLASS(base, id, new TYPE_LIST(null, null), fieldsNum);
+        TYPE_CLASS type = new TYPE_CLASS(base, id, new ArrayList<>(), fieldsNum);
         createVtable();
 
-        SYMBOL_TABLE.getInstance().enter(id, scopeDummy, true);
+        SYMBOL_TABLE.getInstance().enter(id, type, true);
         System.out.println("\t\tline number = " + lineNum);
 
         // Semant Data Members
-        TYPE_CLASS type = new TYPE_CLASS(base, id, fields.SemantMe(base.map(classType -> classType.name)), fieldsNum,
-                scopeDummy.initialValues, this.vtable);
+        TYPE_LIST membersType = fields.SemantMe(base.map(classType -> classType.name));
+        type.data_members = membersType.stream().collect(Collectors.toList());
+        type.initialValues = type.initialValues;
+        type.vtable = this.vtable;
         // End Scope
         SYMBOL_TABLE.getInstance().endScope();
 
         // Reenter the Class Type to the Symbol Table
         SYMBOL_TABLE.getInstance().enter(id, type, true);
+        // Re-semant to update the class members with the updated class type
 
         type.methodOffsets = IntStream
                 .range(0, this.vtable.size())

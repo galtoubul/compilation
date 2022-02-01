@@ -38,18 +38,19 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
             System.out.println(
                     "\t\tthe variable is declared as part of the scope of class that extends class "
                             + fatherType.name);
-            TYPE_LIST dataMembers = fatherType.data_members;
+            // List<TYPE> dataMembers = fatherType.data_members;
 
             // Check that the variable doesn't shadow a variable/method in a derrived class
             // TODO: continue this check to ancient ancestors
-            while (dataMembers != null && dataMembers.head != null) {
+            for (TYPE member : fatherType.data_members) {
                 System.out.println("\t\twhile (dataMembers.head != null)");
-                if (dataMembers.head instanceof TYPE_FUNCTION ||
-                        dataMembers.head instanceof TYPE_VOID ||
-                        dataMembers.head instanceof TYPE_CLASS_VAR_DEC) {
+                if (member instanceof TYPE_FUNCTION ||
+                        member instanceof TYPE_VOID ||
+                        member instanceof TYPE_CLASS_VAR_DEC) {
 
-                    System.out.println("-- AST_FUNC_DEC SemantMe\n\t\tdataMembers.head is instance of method/field...");
-                    TYPE dm = dataMembers.head;
+                    System.out.println(
+                            "-- AST_FUNC_DEC SemantMe\n\t\tdataMembers.head is instance of method/field...");
+                    TYPE dm = member;
 
                     if (dm.name.equals(id)) {
                         System.out.format("\t\tid = %s\n", id);
@@ -58,7 +59,6 @@ public class AST_VAR_DECLERATION extends AST_VAR_DEC {
                         throw new SemanticErrorException("" + lineNum);
                     }
                 }
-                dataMembers = dataMembers.tail;
             }
         }
 

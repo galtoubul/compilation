@@ -3,8 +3,11 @@ package TYPES;
 import pair.Pair;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import SYMBOL_TABLE.SYMBOL_TABLE;
 
 public class TYPE_CLASS extends TYPE {
 	/*********************************************************************/
@@ -17,7 +20,8 @@ public class TYPE_CLASS extends TYPE {
 	/* Note that data members coming from the AST are */
 	/* packed together with the class methods */
 	/**************************************************/
-	public TYPE_LIST data_members;
+	// public TYPE_LIST data_members;
+	public List<TYPE> data_members;
 
 	/**
 	 * A list of the initial values that data members (variables) may have.
@@ -34,19 +38,15 @@ public class TYPE_CLASS extends TYPE {
 	/****************/
 	/* CTROR(S) ... */
 	/****************/
-	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum) {
+	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, List<TYPE> data_members, int fieldsNum) {
 		this(father, name, data_members, fieldsNum,
-				father.isPresent() ? new ArrayList<>(father.get().initialValues) : new ArrayList<>());
+				father.isPresent() ? new ArrayList<>(father.get().initialValues) : new ArrayList<>(),
+				new ArrayList<>());
 	}
 
-	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum,
-			ArrayList<Pair<String, Optional<Object>>> initialValues) {
-		this(father, name, data_members, fieldsNum,initialValues, new ArrayList<>());
-	}
-
-	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, TYPE_LIST data_members, int fieldsNum,
-					  ArrayList<Pair<String, Optional<Object>>> initialValues,
-					  ArrayList<Pair<String, String>> vtable) {
+	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, List<TYPE> data_members, int fieldsNum,
+			ArrayList<Pair<String, Optional<Object>>> initialValues,
+			ArrayList<Pair<String, String>> vtable) {
 		this.name = name;
 		this.father = father;
 		this.data_members = data_members;
@@ -54,7 +54,6 @@ public class TYPE_CLASS extends TYPE {
 		this.initialValues = initialValues;
 		this.vtable = vtable;
 	}
-
 
 	/**
 	 * Check if the class `other` inherits from this class (directly or indirectly).
@@ -71,11 +70,15 @@ public class TYPE_CLASS extends TYPE {
 	// look for a member (field or method) name in the given TYPE_CLASS
 	// if found -> returns null. OW, returns null
 	private Optional<TYPE> lookupMember(String memberName) {
+		System.out.println(SYMBOL_TABLE.getInstance().findAll(this.name));
+		System.out.println(this);
+
 		for (TYPE member : this.data_members) {
 			System.out.println("-- lookupMember\n\t\tdata member name = " + member.name);
 			System.out.println("-- lookupMember\n\t\tfieldName = " + memberName);
 
 			if (member.name.equals(memberName)) {
+				System.out.println(Optional.of(member));
 				return Optional.of(member);
 			}
 		}
@@ -86,10 +89,13 @@ public class TYPE_CLASS extends TYPE {
 	public Optional<TYPE> lookupMemberInAncestors(String memberName) {
 		Optional<TYPE_CLASS> varTypeClass = Optional.of(this);
 		System.out.println("lookupMemberInAncestors varTypeClass.name = " + varTypeClass.get().name);
+		System.out.println("memberName = " + memberName);
 
 		while (varTypeClass.isPresent()) {
 			Optional<TYPE> memberType = varTypeClass.get().lookupMember(memberName);
+			System.out.println(memberType);
 			if (memberType.isPresent()) {
+				System.out.println("here!");
 				return memberType;
 			}
 
