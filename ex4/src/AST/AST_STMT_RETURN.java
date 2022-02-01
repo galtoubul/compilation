@@ -2,14 +2,14 @@ package AST;
 
 import java.util.Optional;
 
+import IR.IR;
+import IR.IRcommand_Return;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeEntry;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_FUNCTION;
 import TYPES.TYPE_VOID;
-import TEMP.*;
-import IR.*;
 
 public class AST_STMT_RETURN extends AST_STMT {
     public Optional<AST_EXP> exp;
