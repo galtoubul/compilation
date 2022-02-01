@@ -129,18 +129,20 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
     public void IRme() {
         System.out.println("-- AST_STMT_ASSIGN_NEW IRme");
 
-        TEMP rValueTmp = exp.IRme();
+        TEMP rValueTmp;
 
         int localVarInd = astAnnotation.ind.orElse(-1);
         if (var instanceof AST.AST_VAR_SUBSCRIPT) {
             TEMP arrayTmp = ((AST_VAR_SUBSCRIPT) var).var.IRme();
             AST_EXP subscript = ((AST_VAR_SUBSCRIPT) var).subscript;
             TEMP offsetTmp = subscript.IRme();
+            rValueTmp = exp.IRme();
             IR.getInstance()
                     .Add_IRcommand(new IRcommand_Assign_To_Local_Array_Element(arrayTmp, offsetTmp, rValueTmp));
         } else if (var instanceof AST.AST_VAR_FIELD) {
             TEMP varOfTmp = ((AST_VAR_FIELD) var).var.IRme();
             int fieldInd = ((AST_VAR_FIELD) var).astAnnotation.ind.orElse(-1);
+            rValueTmp = exp.IRme();
             IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Field(varOfTmp, fieldInd, rValueTmp));
 
         } else {
@@ -150,10 +152,12 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
                 case GLOBAL_VAR:
                     System.out.format("\t\t%s is a global variable\n", varName);
                     String globalVarLabel = GlobalVariables.getGlobalVarLabel(varName);
+                    rValueTmp = exp.IRme();
                     IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Global_Var(globalVarLabel, rValueTmp));
                     break;
                 case PARAMETER:
                     System.out.format("\t\t%s is a parameter\n", varName);
+                    rValueTmp = exp.IRme();
                     IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Parameter(localVarInd, rValueTmp));
                     break;
                 case FIELD:
@@ -162,11 +166,13 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
                     // The object is the first parameter of the method
                     TEMP objectTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
                     IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Parameter(objectTemp, 1));
+                    rValueTmp = exp.IRme();
                     IR.getInstance().Add_IRcommand(
                             new IRcommand_Assign_To_Field(objectTemp, astAnnotation.ind.get(), rValueTmp));
                     break;
                 case LOCAL_VAR:
                     System.out.format("\t\t%s is a local variable\n", varName);
+                    rValueTmp = exp.IRme();
                     IR.getInstance().Add_IRcommand(new IRcommand_Assign_To_Local_Var(localVarInd, rValueTmp));
                     break;
             }
