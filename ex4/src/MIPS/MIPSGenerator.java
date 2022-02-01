@@ -535,8 +535,8 @@ public class MIPSGenerator {
 		this.textSegment += String.format("\tla %s, %s\n", UTILITY_REG, vtableLabel(objectType.name));
 		this.textSegment += String.format("\tsw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg));
 		System.out.format("Size: %d\n", objectType.initialValues.size());
-		for (Pair<String, Optional<Object>> initialization : objectType.initialValues) {
-			Optional<Object> initialValue = initialization.getValue();
+		for (int offset = 0; offset < objectType.initialValues.size(); offset++) {
+			Optional<Object> initialValue = objectType.initialValues.get(offset).getValue();
 			if (initialValue.isPresent()) {
 				if (initialValue.get() instanceof Integer) {
 					this.textSegment += String.format("\tli %s, %s\n", UTILITY_REG, (Integer) initialValue.get());
@@ -547,9 +547,10 @@ public class MIPSGenerator {
 					this.initializeGlobalVar(stringConstLabel, value);
 					this.loadAddressReg(UTILITY_REG, stringConstLabel);
 				}
-				this.textSegment += String.format("\tsw %s, 4(%s)\n", UTILITY_REG,
-						tempString(dstTempReg));
+				this.textSegment += String.format("\tsw %s, %d(%s)\n", UTILITY_REG,
+						(offset + 1) * WORD_SIZE, tempString(dstTempReg));
 			}
+
 		}
 	}
 
