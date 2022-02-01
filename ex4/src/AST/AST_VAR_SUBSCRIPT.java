@@ -105,12 +105,16 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 		TEMP arrayTmp = var.IRme();
 		TEMP subscriptTmp = subscript.IRme();
 
-		if (callerClassName == "AST.AST_STMT_ASSIGN") {
-			IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Temp_With_Offset(tmp, arrayTmp, subscriptTmp));
-		} else {
-			IR.getInstance()
-					.Add_IRcommand(new IRcommand_Initialize_Temp_With_Array_Element(tmp, arrayTmp, subscriptTmp));
-		}
+//		if (callerClassName == "AST.AST_STMT_ASSIGN") {
+//			IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Temp_With_Offset(tmp, arrayTmp, subscriptTmp));
+//		} else {
+//			IR.getInstance()
+//					.Add_IRcommand(new IRcommand_Initialize_Temp_With_Array_Element(tmp, arrayTmp, subscriptTmp));
+//		}
+
+		IR.getInstance()
+				.Add_IRcommand(new IRcommand_Initialize_Temp_With_Array_Element(tmp, arrayTmp, subscriptTmp));
+
 
 		return tmp;
 	}
