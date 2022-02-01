@@ -5,8 +5,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 
-import TEMP.TEMP;
 import TYPES.*;
+import global_variables.GlobalVariables;
 import labels.Labels;
 import pair.Pair;
 
@@ -74,8 +74,12 @@ public class MIPSGenerator {
 		textSegment += String.format("\tsw %s, global_%s\n", tempString(src), var_name);
 	}
 
-	public void loadAddress(int dstReg, String label) {
-		textSegment += String.format("\tla %s, %s\n", tempString(dstReg), label);
+	public void loadAddressTemp(int dstTemp, String label) {
+		this.loadAddressReg(tempString(dstTemp), label);
+	}
+
+	public void loadAddressReg(String dstReg, String label) {
+		textSegment += String.format("\tla %s, %s\n", dstReg, label);
 	}
 
 	public void label(String inlabel) {
@@ -531,13 +535,17 @@ public class MIPSGenerator {
 		this.textSegment += String.format("\tla %s, %s\n", UTILITY_REG, vtableLabel(objectType.name));
 		this.textSegment += String.format("\tsw %s, 0(%s)\n", UTILITY_REG, tempString(dstTempReg));
 		System.out.format("Size: %d\n", objectType.initialValues.size());
-		for (Pair<String, Optional<Object>> p : objectType.initialValues) {
-			Optional<Object> o = p.getValue();
-			if (o.isPresent()) {
-				if (o.get() instanceof Integer) {
-					this.textSegment += String.format("\tli %s, %s\n", UTILITY_REG, (Integer) o.get());
+		for (Pair<String, Optional<Object>> initialization : objectType.initialValues) {
+			Optional<Object> initialValue = initialization.getValue();
+			if (initialValue.isPresent()) {
+				if (initialValue.get() instanceof Integer) {
+					this.textSegment += String.format("\tli %s, %s\n", UTILITY_REG, (Integer) initialValue.get());
 				} else {
-					this.textSegment += String.format("\tli %s, %s\n", UTILITY_REG, (String) o.get());
+					// Initialize with const string
+					String value = (String) initialValue.get();
+					String stringConstLabel = GlobalVariables.getStringConstLabel();
+					this.initializeGlobalVar(stringConstLabel, value);
+					this.loadAddressReg(UTILITY_REG, stringConstLabel);
 				}
 				this.textSegment += String.format("\tsw %s, 4(%s)\n", UTILITY_REG,
 						tempString(dstTempReg));

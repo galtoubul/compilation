@@ -21,7 +21,7 @@ public class IRcommand_Initialize_Temp_With_String_Const extends IRcommand_Initi
 		System.out.println("-- IRcommand_Initialize_Temp_With_String_Const MIPSme");
 		String stringConstLabel = GlobalVariables.getStringConstLabel();
 		MIPSGenerator.getInstance().initializeGlobalVar(stringConstLabel, stringConst);
-		MIPSGenerator.getInstance().loadAddress(tempMap.get(dst), stringConstLabel);
+		MIPSGenerator.getInstance().loadAddressTemp(tempMap.get(dst), stringConstLabel);
 	}
 
 	@Override
