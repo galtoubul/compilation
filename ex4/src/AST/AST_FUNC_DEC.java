@@ -20,6 +20,7 @@ public class AST_FUNC_DEC extends AST_Node {
         this.id = id;
         this.body = body;
         this.params = params;
+        this.methodClass = Optional.empty();
     }
 
     public void PrintMe() {
