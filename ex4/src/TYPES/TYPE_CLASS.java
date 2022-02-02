@@ -42,7 +42,7 @@ public class TYPE_CLASS extends TYPE {
 				new ArrayList<>());
 	}
 
-	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, List<TYPE> data_members, int fieldsNum,
+	private TYPE_CLASS(Optional<TYPE_CLASS> father, String name, List<TYPE> data_members, int fieldsNum,
 			ArrayList<Pair<String, Optional<Object>>> initialValues,
 			ArrayList<Pair<String, String>> vtable) {
 		this.name = name;
