@@ -3,6 +3,8 @@ package AST;
 import java.util.Optional;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.ScopeEntry;
+import SYMBOL_TABLE.ScopeType;
 import TYPES.*;
 import TEMP.*;
 import IR.*;
@@ -10,6 +12,7 @@ import IR.*;
 public class AST_EXP_FUNC extends AST_EXP {
     public String id;
     public AST_EXP_LIST argsList;
+    private Optional<Integer> offset = Optional.empty();
 
     public AST_EXP_FUNC(String id, AST_EXP_LIST argsList) {
         SerialNumber = AST_Node_Serial_Number.getFresh();
@@ -110,7 +113,20 @@ public class AST_EXP_FUNC extends AST_EXP {
         TYPE_LIST argsTypes = this.argsList.SemantMe(fatherClassId);
         checkMatchingParamsArgs(argsTypes, paramsTypes);
 
+        // Update annotation (potential method offset in class)
+        this.setAstAnnotation();
+
         return funcType.returnType;
+    }
+
+    private void setAstAnnotation() {
+        ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(this.id).get();
+        if (scopeType == ScopeType.Class) {
+            ScopeEntry entry = SYMBOL_TABLE.getInstance().findScopeType(scopeType).get();
+            this.offset = Optional
+                    .ofNullable(((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(entry.scopeName.get())).methodOffsets
+                            .get(this.id));
+        }
     }
 
     public TEMP IRme() {
@@ -122,7 +138,16 @@ public class AST_EXP_FUNC extends AST_EXP {
         }
 
         TEMP funcRetValTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
-        IR.getInstance().Add_IRcommand(new IRcommand_Call_Func_Exp(funcRetValTemp, id, argsTempList));
+
+        if (offset.isPresent()) {
+            // The object is the first parameter of the method this call is in
+            TEMP objectTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+            IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Parameter(objectTemp, 1));
+            IR.getInstance().Add_IRcommand(new IRcommand_Call_Method_Exp(funcRetValTemp, objectTemp,
+                    this.offset.get(), argsTempList));
+        } else {
+            IR.getInstance().Add_IRcommand(new IRcommand_Call_Func_Exp(funcRetValTemp, id, argsTempList));
+        }
 
         return funcRetValTemp;
     }

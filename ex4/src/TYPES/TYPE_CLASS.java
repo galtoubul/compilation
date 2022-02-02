@@ -3,8 +3,8 @@ package TYPES;
 import pair.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class TYPE_CLASS extends TYPE {
@@ -29,7 +29,7 @@ public class TYPE_CLASS extends TYPE {
 	public ArrayList<Pair<String, Optional<Object>>> initialValues; // Very disgusting
 	public ArrayList<Pair<String, String>> vtable = new ArrayList<>();
 
-	public Map<String, Integer> methodOffsets;
+	public HashMap<String, Integer> methodOffsets = new HashMap<>();
 
 	public int fieldsNum = 0;
 
@@ -39,18 +39,20 @@ public class TYPE_CLASS extends TYPE {
 	public TYPE_CLASS(Optional<TYPE_CLASS> father, String name, List<TYPE> data_members, int fieldsNum) {
 		this(father, name, data_members, fieldsNum,
 				father.isPresent() ? new ArrayList<>(father.get().initialValues) : new ArrayList<>(),
-				new ArrayList<>());
+				father.isPresent() ? new ArrayList<>(father.get().vtable) : new ArrayList<>(),
+				father.isPresent() ? new HashMap<>(father.get().methodOffsets) : new HashMap<>());
 	}
 
 	private TYPE_CLASS(Optional<TYPE_CLASS> father, String name, List<TYPE> data_members, int fieldsNum,
 			ArrayList<Pair<String, Optional<Object>>> initialValues,
-			ArrayList<Pair<String, String>> vtable) {
+			ArrayList<Pair<String, String>> vtable, HashMap<String, Integer> methodOffsets) {
 		this.name = name;
 		this.father = father;
 		this.data_members = data_members;
 		this.fieldsNum = fieldsNum;
 		this.initialValues = initialValues;
 		this.vtable = vtable;
+		this.methodOffsets = methodOffsets;
 	}
 
 	/**

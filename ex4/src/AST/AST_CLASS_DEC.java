@@ -3,8 +3,6 @@ package AST;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import IR.IR;
 import IR.IRcommand_ClassDec;
@@ -58,42 +56,6 @@ public class AST_CLASS_DEC extends AST_Node {
         return fieldsNum;
     }
 
-    private boolean isOverridesFunc(String funcName) {
-        AST_CFIELD_LIST ptr1 = this.fields;
-
-        while (ptr1 != null && ptr1.head != null) {
-            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC
-                    && funcName.equals(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id)) {
-                return true;
-            }
-            ptr1 = ptr1.tail;
-        }
-        return false;
-    }
-
-    private void createVtable() {
-        this.vtableMethods = new HashSet<>();
-        if (father.isPresent()) {
-            TYPE_CLASS fatherClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.father.get());
-            this.vtable = new ArrayList<>(fatherClass.vtable);
-            for (int i = 0; i < this.vtable.size(); i++) {
-                if (this.isOverridesFunc(this.vtable.get(i).getValue())) {
-                    vtableMethods.add(this.vtable.get(i).getValue());
-                    this.vtable.set(i, new Pair<>(id, this.vtable.get(i).getValue()));
-                }
-            }
-        }
-        AST_CFIELD_LIST ptr1 = this.fields;
-
-        while (ptr1 != null && ptr1.head != null) {
-            if (ptr1.head instanceof AST.AST_CFIELD_FUNC_DEC
-                    && !vtableMethods.contains(((AST_CFIELD_FUNC_DEC) ptr1.head).func.id)) {
-                this.vtable.add(new Pair<>(id, ((AST_CFIELD_FUNC_DEC) ptr1.head).func.id));
-            }
-            ptr1 = ptr1.tail;
-        }
-    }
-
     public TYPE SemantMe() {
         System.out.println("-- AST_CLASS_DEC SemantMe");
         Optional<TYPE_CLASS> base = Optional.empty();
@@ -124,25 +86,20 @@ public class AST_CLASS_DEC extends AST_Node {
         int fieldsNum = getFieldsNum();
 
         TYPE_CLASS type = new TYPE_CLASS(base, id, new ArrayList<>(), fieldsNum);
-        createVtable();
 
         SYMBOL_TABLE.getInstance().enter(id, type, true);
         System.out.println("\t\tline number = " + lineNum);
 
         // Semant Data Members
         fields.SemantMe(base.map(classType -> classType.name));
-        type.vtable = this.vtable;
         // End Scope
         SYMBOL_TABLE.getInstance().endScope();
 
         // Reenter the Class Type to the Symbol Table
         SYMBOL_TABLE.getInstance().enter(id, type, true);
-        // Re-semant to update the class members with the updated class type
 
-        type.methodOffsets = IntStream
-                .range(0, this.vtable.size())
-                .boxed()
-                .collect(Collectors.toMap(index -> this.vtable.get(index).getValue(), index -> index));
+        // Set AST annotation - the vtable
+        this.vtable = type.vtable;
 
         // Return value is irrelevant for class declarations
         return null;

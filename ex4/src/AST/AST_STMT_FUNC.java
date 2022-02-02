@@ -1,6 +1,8 @@
 package AST;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
+import SYMBOL_TABLE.ScopeEntry;
+import SYMBOL_TABLE.ScopeType;
 import TYPES.*;
 import TEMP.*;
 import IR.*;
@@ -10,6 +12,7 @@ import java.util.Optional;
 public class AST_STMT_FUNC extends AST_STMT {
     public String id;
     public AST_EXP_LIST argsList;
+    private Optional<Integer> offset = Optional.empty();
 
     public AST_STMT_FUNC(String id, AST_EXP_LIST argsList) {
         this.id = id;
@@ -53,7 +56,6 @@ public class AST_STMT_FUNC extends AST_STMT {
 
         // Match the types of each argument to that of a parameter
         while (argsTypes != null && argsTypes.head != null) {
-
             if (!TYPE.isSubtype(argsTypes.head, paramsTypes.head)) {
                 System.out.format(">> ERROR [" + lineNum + "] type(arg) = %s != %s = type(param)\n",
                         argsTypes.head.name,
@@ -86,7 +88,20 @@ public class AST_STMT_FUNC extends AST_STMT {
         TYPE_LIST argsTypes = this.argsList.SemantMe(fatherClassId);
         checkMatchingParamsArgs(argsTypes, paramsTypes);
 
+        // Update annotation (potential method offset in class)
+        this.setAstAnnotation();
+
         return funcType.returnType;
+    }
+
+    private void setAstAnnotation() {
+        ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(this.id).get();
+        if (scopeType == ScopeType.Class) {
+            ScopeEntry entry = SYMBOL_TABLE.getInstance().findScopeType(scopeType).get();
+            this.offset = Optional
+                    .ofNullable(((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(entry.scopeName.get())).methodOffsets
+                            .get(this.id));
+        }
     }
 
     @Override
@@ -101,6 +116,12 @@ public class AST_STMT_FUNC extends AST_STMT {
             IR.getInstance().Add_IRcommand(new IRcommand_Call_PrintInt(argsTempList));
         } else if (id.equals("PrintString")) {
             IR.getInstance().Add_IRcommand(new IRcommand_Call_PrintString(argsTempList));
+        } else if (offset.isPresent()) {
+            // The object is the first parameter of the method this call is in
+            TEMP objectTemp = TEMP_FACTORY.getInstance().getFreshTEMP();
+            IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Tmp_With_Parameter(objectTemp, 1));
+            IR.getInstance().Add_IRcommand(new IRcommand_Call_Method_Stmt(objectTemp, this.offset.get(),
+                    argsTempList));
         } else {
             IR.getInstance().Add_IRcommand(new IRcommand_Call_Func_Stmt(id, argsTempList));
         }

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import SYMBOL_TABLE.*;
 import TYPES.*;
+import pair.Pair;
 import IR.*;
 
 public class AST_FUNC_DEC extends AST_Node {
@@ -138,9 +139,22 @@ public class AST_FUNC_DEC extends AST_Node {
         funcType = new TYPE_FUNCTION(returnType, id, paramsTypesList, localVarsNum);
         SYMBOL_TABLE.getInstance().enter(id, funcType, false);
 
+        // If the function is a method, update the class members and vtable
         if (this.methodClass.isPresent()) {
             TYPE_CLASS classType = (TYPE_CLASS) SYMBOL_TABLE.getInstance().find(this.methodClass.get());
             classType.data_members.add(funcType);
+
+            // Update the vtable - if the class is derived from a base class, it contains
+            // its vtable
+            if (classType.methodOffsets.containsKey(this.id)) {
+                // Method overrides, update the vtable in the correct entry
+                classType.vtable.set(classType.methodOffsets.get(this.id), new Pair<>(classType.name, this.id));
+            } else {
+                // This is a new method, add a new entry to the vtable and update the method
+                // offsets
+                classType.methodOffsets.put(this.id, classType.vtable.size());
+                classType.vtable.add(new Pair<>(classType.name, this.id));
+            }
         }
 
         return funcType;
