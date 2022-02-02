@@ -12,7 +12,6 @@ import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeType;
 import TYPES.TYPE;
 import TYPES.TYPE_CLASS;
-import TYPES.TYPE_LIST;
 import pair.Pair;
 
 public class AST_CLASS_DEC extends AST_Node {

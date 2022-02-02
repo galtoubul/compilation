@@ -8,8 +8,6 @@ import TYPES.TYPE_INT;
 import TEMP.*;
 import IR.*;
 import ast_annotation.*;
-import ast_notation_type.AstNotationType;
-import SYMBOL_TABLE.*;
 
 public class AST_VAR_SUBSCRIPT extends AST_VAR {
 	public AST_VAR var;
