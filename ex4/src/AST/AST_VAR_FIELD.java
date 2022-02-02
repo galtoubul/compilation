@@ -1,7 +1,7 @@
 package AST;
 
-import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import IR.*;
 import TYPES.TYPE;
@@ -9,7 +9,6 @@ import TYPES.TYPE_CLASS;
 import TYPES.TYPE_CLASS_VAR_DEC;
 import TEMP.*;
 import ast_annotation.AstAnnotation;
-import pair.Pair;
 
 public class AST_VAR_FIELD extends AST_VAR {
 	public AST_VAR var;
@@ -86,7 +85,7 @@ public class AST_VAR_FIELD extends AST_VAR {
 		Optional<TYPE> field = varType.lookupMemberInAncestors(this.fieldName);
 		if (field.isPresent()) {
 			if (field.get() instanceof TYPE_CLASS_VAR_DEC) {
-				this.setNotation(varType);
+				this.astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD, this.fieldOffset(varType));
 				return ((TYPE_CLASS_VAR_DEC) field.get()).type;
 			}
 			System.out.format(">> ERROR [" + lineNum + "] '%s' is a method, not a field variable\n", fieldName);
@@ -100,28 +99,11 @@ public class AST_VAR_FIELD extends AST_VAR {
 		throw new SemanticErrorException("" + lineNum);
 	}
 
-	private void setNotation(TYPE_CLASS varClass) {
-		TYPE_CLASS classToSearch = varClass;
-		int ind = 0;
-		ArrayList<Pair<String, Optional<Object>>> fields = classToSearch.initialValues;
-		boolean filedFound = false;
-		while (classToSearch != null) {
-			for (Pair<String, Optional<Object>> p : fields) {
-				if (!p.getKey().equals(fieldName)) {
-					ind++;
-				} else {
-					filedFound = true;
-					break;
-				}
-			}
-			if (filedFound) {
-				break;
-			}
-			classToSearch = classToSearch.father.orElse(null);
-			if (classToSearch != null)
-				fields = classToSearch.initialValues;
-		}
-		astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD, Optional.of(ind));
+	private Optional<Integer> fieldOffset(TYPE_CLASS classToSearch) {
+		return IntStream.range(0, classToSearch.initialValues.size())
+				.boxed()
+				.filter(index -> classToSearch.initialValues.get(index).getKey().equals(this.fieldName))
+				.findFirst();
 	}
 
 	// TODO

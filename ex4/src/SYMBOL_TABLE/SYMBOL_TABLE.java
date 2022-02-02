@@ -185,12 +185,23 @@ public class SYMBOL_TABLE {
 	}
 
 	/**
-	 * Find the scope type of the closest scope with the variable `varName`.
+	 * Find the scope type of the closest scope with the variable named `name`, if
+	 * any.
+	 * 
+	 * If the variable is not in the symbol table, but it was defined in a class
+	 * that is currently in the table, return `ScopeType.Class`.
 	 */
-	public ScopeType getScopeTypeByEntryName(String name) {
-		SymbolTableEntry entry = findEntry(name).get();
-		ScopeType scopeType = getScopeTypeByIndex(entry.index);
-		System.out.format("\t\t%s's entry index = %d | scope type = %s\n", name, entry.index, scopeType);
+	public Optional<ScopeType> getScopeTypeByEntryName(String name) {
+		System.out.println(this.scopes);
+		Optional<SymbolTableEntry> entry = this.findEntry(name);
+		Optional<ScopeType> scopeType = entry.map(e -> getScopeTypeByIndex(e.index));
+		if (!scopeType.isPresent() && this.findPotentialMember(name).isPresent()) {
+			scopeType = Optional.of(ScopeType.Class);
+		}
+		if (entry.isPresent()) {
+			System.out.format("\t\t%s's entry index = %d | scope type = %s\n", name, entry.get().index,
+					scopeType.get());
+		}
 		return scopeType;
 	}
 

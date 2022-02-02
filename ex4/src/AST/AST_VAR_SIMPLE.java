@@ -1,7 +1,7 @@
 package AST;
 
-import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import TYPES.TYPE;
@@ -11,7 +11,6 @@ import IR.*;
 import ast_annotation.AstAnnotation;
 import SYMBOL_TABLE.*;
 import global_variables.GlobalVariables;
-import pair.Pair;
 import ast_notation_type.AstNotationType;
 
 public class AST_VAR_SIMPLE extends AST_VAR {
@@ -59,25 +58,26 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 	private void setNotation() {
 		System.out.println("-- AST_VAR_SIMPLE setNotation");
 
-		ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(name);
-		System.out.println("\t\tvariable scope type = " + scopeType);
-		int varInd = SYMBOL_TABLE.getInstance().findEntry(name).get().position;
-		AstNotationType astNotationType = SYMBOL_TABLE.getInstance().findEntry(name).get().astNotationType;
+		ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(name).get();
 
-		System.out.println("\t\tvariable scope type = " + scopeType);
+		// System.out.println("\t\tvariable scope type = " + scopeType);
 
 		switch (scopeType) {
 			case Global:
-				astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR,
+				this.astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR,
 						Optional.empty());
 				System.out.format("\t\t%s is a global variable\n", name);
 				break;
 			case Class:
 				ScopeEntry entry = SYMBOL_TABLE.getInstance().findScopeType(scopeType).get();
-				this.setFieldNotation((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(entry.scopeName.get()));
-				System.out.format("\t\t%s is a class field | its index = %s\n", name, varInd);
+				this.astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD,
+						this.fieldOffset((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(entry.scopeName.get())));
+				System.out.format("\t\t%s is a class field | its index = %s\n", name, astAnnotation.ind);
 				break;
 			default:
+				// Local value or parameter
+				AstNotationType astNotationType = SYMBOL_TABLE.getInstance().findEntry(name).get().astNotationType;
+				int varInd = SYMBOL_TABLE.getInstance().findEntry(name).get().position;
 				if (astNotationType == AstNotationType.parameter) {
 					astAnnotation = new AstAnnotation(AstAnnotation.TYPE.PARAMETER,
 							Optional.of(varInd));
@@ -93,28 +93,11 @@ public class AST_VAR_SIMPLE extends AST_VAR {
 		}
 	}
 
-	private void setFieldNotation(TYPE_CLASS classToSearch) {
-		int ind = 0;
-		ArrayList<Pair<String, Optional<Object>>> fields = classToSearch.initialValues;
-		boolean filedFound = false;
-		while (classToSearch != null) {
-			for (Pair<String, Optional<Object>> initializations : fields) {
-				if (!initializations.getKey().equals(this.name)) {
-					ind++;
-				} else {
-					filedFound = true;
-					break;
-				}
-			}
-			if (filedFound) {
-				break;
-			}
-			classToSearch = classToSearch.father.orElse(null);
-			if (classToSearch != null)
-				fields = classToSearch.initialValues;
-		}
-		astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD,
-				Optional.of(ind));
+	private Optional<Integer> fieldOffset(TYPE_CLASS classToSearch) {
+		return IntStream.range(0, classToSearch.initialValues.size())
+				.boxed()
+				.filter(index -> classToSearch.initialValues.get(index).getKey().equals(this.name))
+				.findFirst();
 	}
 
 	public TEMP IRme() {

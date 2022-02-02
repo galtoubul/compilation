@@ -71,28 +71,7 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 		}
 		varName = var.getSimple().name;
 
-		Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(varName);
-		setNotation(Optional.of(entry.get().position));
-
 		return ((TYPE_ARRAY) type).type;
-	}
-
-	private void setNotation(Optional<Integer> offset) {
-		System.out.println("-- AST_VAR_SUBSCRIPT setNotation");
-		ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(varName);
-		System.out.println("\t\tvariable scope type = " + scopeType);
-		AstNotationType astNotationType = SYMBOL_TABLE.getInstance().findEntry(varName).get().astNotationType;
-
-		if (scopeType == ScopeType.Global) {
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.GLOBAL_VAR, Optional.empty());
-			System.out.format("\t\t%s is a global variable\n", varName);
-		} else if (astNotationType == AstNotationType.parameter) {
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.PARAMETER, offset);
-			System.out.format("\t\t%s is a parameter | its index = %s\n", varName, offset);
-		} else { // local
-			astAnnotation = new AstAnnotation(AstAnnotation.TYPE.LOCAL_VAR, offset);
-			System.out.format("\t\t%s is a local variable | its index = %s\n", varName, offset);
-		}
 	}
 
 	public TEMP IRme() {
@@ -105,30 +84,18 @@ public class AST_VAR_SUBSCRIPT extends AST_VAR {
 		TEMP arrayTmp = var.IRme();
 		TEMP subscriptTmp = subscript.IRme();
 
-//		if (callerClassName == "AST.AST_STMT_ASSIGN") {
-//			IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Temp_With_Offset(tmp, arrayTmp, subscriptTmp));
-//		} else {
-//			IR.getInstance()
-//					.Add_IRcommand(new IRcommand_Initialize_Temp_With_Array_Element(tmp, arrayTmp, subscriptTmp));
-//		}
+		// if (callerClassName == "AST.AST_STMT_ASSIGN") {
+		// IR.getInstance().Add_IRcommand(new IRcommand_Initialize_Temp_With_Offset(tmp,
+		// arrayTmp, subscriptTmp));
+		// } else {
+		// IR.getInstance()
+		// .Add_IRcommand(new IRcommand_Initialize_Temp_With_Array_Element(tmp,
+		// arrayTmp, subscriptTmp));
+		// }
 
 		IR.getInstance()
 				.Add_IRcommand(new IRcommand_Initialize_Temp_With_Array_Element(tmp, arrayTmp, subscriptTmp));
 
-
 		return tmp;
 	}
-
-	// public TEMP IRme() {
-	// System.out.println("-- AST_VAR_SUBSCRIPT IRme");
-	//
-	// TEMP arrayElementTmp = TEMP_FACTORY.getInstance().getFreshTEMP();
-	// TEMP arrayTmp = var.IRme();
-	// TEMP subscriptTmp = subscript.IRme();
-	// IR.getInstance().Add_IRcommand(new
-	// IRcommand_Initialize_Temp_With_Array_Element(arrayElementTmp, arrayTmp,
-	// subscriptTmp));
-	//
-	// return arrayElementTmp;
-	// }
 }

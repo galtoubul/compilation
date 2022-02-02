@@ -94,6 +94,10 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
             } else if (initialValue instanceof AST_EXP_STRING) {
                 currentClass.initialValues
                         .add(new Pair<String, Optional<Object>>(id, Optional.of(((AST_EXP_STRING) initialValue).s)));
+            } else {
+                // NIL
+                currentClass.initialValues
+                        .add(new Pair<String, Optional<Object>>(id, Optional.of(0)));
             }
         }
 

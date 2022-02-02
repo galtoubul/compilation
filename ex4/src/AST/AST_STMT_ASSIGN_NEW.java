@@ -1,21 +1,21 @@
 package AST;
 
-import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
-import TYPES.TYPE;
-import TYPES.TYPE_ARRAY;
-import TYPES.TYPE_CLASS;
 import ast_annotation.AstAnnotation;
 import ast_notation_type.AstNotationType;
 import global_variables.GlobalVariables;
-import pair.Pair;
-import TEMP.*;
 import IR.*;
 import SYMBOL_TABLE.SYMBOL_TABLE;
 import SYMBOL_TABLE.ScopeEntry;
 import SYMBOL_TABLE.ScopeType;
 import SYMBOL_TABLE.SymbolTableEntry;
+import TYPES.TYPE;
+import TYPES.TYPE_ARRAY;
+import TYPES.TYPE_CLASS;
+import TEMP.TEMP;
+import TEMP.TEMP_FACTORY;
 
 public class AST_STMT_ASSIGN_NEW extends AST_STMT {
     public AST_VAR var;
@@ -67,15 +67,14 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
 
         Optional<SymbolTableEntry> entry = SYMBOL_TABLE.getInstance().findEntry(varSimple.name);
         varName = varSimple.name;
-        setNotation(Optional.of(entry.get().position));
+        setNotation(entry.map(e -> e.position));
 
         return null;
     }
 
     private void setNotation(Optional<Integer> offset) {
-        System.out.println("-- AST_STMT_ASSIGN setNotation");
-        ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(varName);
-        AstNotationType astNotationType = SYMBOL_TABLE.getInstance().findEntry(varName).get().astNotationType;
+        System.out.println("-- AST_STMT_ASSIGN_NEW setNotation");
+        ScopeType scopeType = SYMBOL_TABLE.getInstance().getScopeTypeByEntryName(varName).get();
 
         System.out.println("\t\tvariable scope type = " + scopeType);
 
@@ -86,9 +85,12 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
                 break;
             case Class:
                 ScopeEntry entry = SYMBOL_TABLE.getInstance().findScopeType(scopeType).get();
-                this.setFieldNotation((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(entry.scopeName.get()));
+                this.astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD,
+                        this.fieldOffset((TYPE_CLASS) SYMBOL_TABLE.getInstance().find(entry.scopeName.get())));
                 break;
             default:
+                // Local value or parameter
+                AstNotationType astNotationType = SYMBOL_TABLE.getInstance().findEntry(varName).get().astNotationType;
                 if (astNotationType == AstNotationType.parameter) {
                     astAnnotation = new AstAnnotation(AstAnnotation.TYPE.PARAMETER, offset);
                     System.out.format("\t\t%s is a parameter | its index = %s\n", varName, offset);
@@ -101,28 +103,11 @@ public class AST_STMT_ASSIGN_NEW extends AST_STMT {
         }
     }
 
-    private void setFieldNotation(TYPE_CLASS classToSearch) {
-        int ind = 0;
-        ArrayList<Pair<String, Optional<Object>>> fields = classToSearch.initialValues;
-        boolean filedFound = false;
-        while (classToSearch != null) {
-            for (Pair<String, Optional<Object>> initializations : fields) {
-                if (!initializations.getKey().equals(this.varName)) {
-                    ind++;
-                } else {
-                    filedFound = true;
-                    break;
-                }
-            }
-            if (filedFound) {
-                break;
-            }
-            classToSearch = classToSearch.father.orElse(null);
-            if (classToSearch != null)
-                fields = classToSearch.initialValues;
-        }
-        astAnnotation = new AstAnnotation(AstAnnotation.TYPE.FIELD,
-                Optional.of(ind));
+    private Optional<Integer> fieldOffset(TYPE_CLASS classToSearch) {
+        return IntStream.range(0, classToSearch.initialValues.size())
+                .boxed()
+                .filter(index -> classToSearch.initialValues.get(index).getKey().equals(this.varName))
+                .findFirst();
     }
 
     @Override
