@@ -875,6 +875,10 @@ public class MIPSGenerator {
 	public void callMethodStmt(int objectTemp, int methodOffset, Deque<Integer> argTemps) {
 		final String VTABLE_REG = "$s0";
 		final String METHOD_REG = "$s1";
+		String invalid_ptr = Labels.getAvialableLabel("invalid_ptr");
+		String end = Labels.getAvialableLabel("end");
+
+		beqz(objectTemp, invalid_ptr);
 
 		// Push arguments, including the object itself
 		argTemps.addLast(objectTemp);
@@ -890,6 +894,11 @@ public class MIPSGenerator {
 
 		// restore sp
 		this.textSegment += String.format("\taddu $sp, $sp, %d\n", argsNum * WORD_SIZE);
+		jump(end);
+		label(invalid_ptr);
+		PrintWord("string_invalid_ptr_dref");
+		exit();
+		label(end);
 	}
 
 	public void callMethodExp(int dstTemp, int objectTemp, int methodOffset, Deque<Integer> argTemps) {

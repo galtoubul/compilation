@@ -1,7 +1,43 @@
-void main() {
-   string s1 := "Having";
-   string s2 := "said";
-   string s3 := s1 + s2;
+class A{
+    int x:=1;
 
-   PrintInt(s3 = "Havingsaid");
+    void foo(){
+            PrintInt(x);
+    }
+}
+
+class B extends A{
+    int x:=2;
+
+    void foo(){
+        PrintInt(x);
+    }
+}
+
+array ObjectArray = A[];
+int i:=0;
+
+void main(){
+     ObjectArray arr := new A[10];
+     while(i<10){
+        if (i < 5){
+            arr[i] := new A;
+        }
+        if (i > 5){
+            arr[i] := new B;
+        }
+        i := i+1;
+     }
+     i := 0;
+     while(i<10){
+             if (i < 5){
+                 arr[i].foo();
+             }
+             if (i > 5){
+                 arr[i].foo();
+             }
+             i := i+1;
+     }
+     arr[5].foo();
+
 }
