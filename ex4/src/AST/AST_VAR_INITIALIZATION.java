@@ -88,6 +88,11 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
             TYPE_CLASS currentClass = (TYPE_CLASS) SYMBOL_TABLE.getInstance()
                     .find(SYMBOL_TABLE.getInstance().currentScope().scopeName.get());
             currentClass.data_members.add(typeClassVarDec);
+            for (Pair<String, Optional<Object>> p : currentClass.initialValues) {
+                if (p.getKey().equals(id)) {
+                    currentClass.initialValues.remove(p);
+                }
+            }
             if (initialValue instanceof AST_EXP_INT) {
                 currentClass.initialValues
                         .add(new Pair<String, Optional<Object>>(id, Optional.of(((AST_EXP_INT) initialValue).value)));
