@@ -790,7 +790,7 @@ public class MIPSGenerator {
 	public void callFuncStmt(String funcName, Deque<Integer> argTemps) {
 		// push args
 		int argsNum = argTemps.size();
-		pushArgs(argTemps);
+		//pushArgs(argTemps);
 		// jal
 		textSegment += String.format("\tjal %s_%s\n", FUNCTION_PREFIX, funcName);
 		// restore sp
@@ -883,7 +883,7 @@ public class MIPSGenerator {
 		// Push arguments, including the object itself
 		argTemps.addLast(objectTemp);
 		int argsNum = argTemps.size();
-		this.pushArgs(argTemps);
+		this.pushTempReg(objectTemp);
 
 		// Get the method from the virtual table
 		this.textSegment += String.format("\tlw %s, 0(%s)\n", VTABLE_REG, tempString(objectTemp));

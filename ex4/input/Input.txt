@@ -1,43 +1,45 @@
-class A{
-    int x:=1;
-
-    void foo(){
-            PrintInt(x);
-    }
+int foo(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13) {
+    PrintInt(a1);
+    PrintInt(a2);
+    PrintInt(a3);
+    PrintInt(a4);
+    PrintInt(a5);
+    PrintInt(a6);
+    PrintInt(a7);
+    PrintInt(a8);
+    PrintInt(a9);
+    PrintInt(a10);
+    PrintInt(a11);
+    PrintInt(a12);
+    PrintInt(a13);
+    return 1000;
 }
 
-class B extends A{
-    int x:=2;
-
-    void foo(){
-        PrintInt(x);
+class A {
+    int foo(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13) {
+        PrintInt(a1);
+        PrintInt(a2);
+        PrintInt(a3);
+        PrintInt(a4);
+        PrintInt(a5);
+        PrintInt(a6);
+        PrintInt(a7);
+        PrintInt(a8);
+        PrintInt(a9);
+        PrintInt(a10);
+        PrintInt(a11);
+        PrintInt(a12);
+        PrintInt(a13);
+        return 100;
     }
 }
-
-array ObjectArray = A[];
-int i:=0;
 
 void main(){
-     ObjectArray arr := new A[10];
-     while(i<10){
-        if (i < 5){
-            arr[i] := new A;
-        }
-        if (i > 5){
-            arr[i] := new B;
-        }
-        i := i+1;
-     }
-     i := 0;
-     while(i<10){
-             if (i < 5){
-                 arr[i].foo();
-             }
-             if (i > 5){
-                 arr[i].foo();
-             }
-             i := i+1;
-     }
-     arr[5].foo();
-
+    A a := new A;
+    if(foo(1,1,1,1,1,1,1,1,1,1,1,1,1)){
+        PrintInt(a.foo(2,2,2,2,2,2,2,2,2,2,2,2,2));
+    }
+    if(a.foo(1,1,1,1,1,1,1,1,1,1,1,1,1)){
+        PrintInt(foo(2,2,2,2,2,2,2,2,2,2,2,2,2));
+    }
 }

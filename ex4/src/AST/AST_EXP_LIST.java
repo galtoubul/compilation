@@ -2,6 +2,7 @@ package AST;
 
 import java.util.Optional;
 
+import IR.*;
 import TYPES.TYPE_LIST;
 import TEMP.*;
 
@@ -65,9 +66,14 @@ public class AST_EXP_LIST extends AST_Node {
 		if (this.head == null) {
 			return new TEMP_LIST(null, null);
 		} else if (tail == null) {
-			return new TEMP_LIST(head.IRme(), null);
+			TEMP t = head.IRme();
+			IR.getInstance().Add_IRcommand(new IRcommand_Push_Arg(t));
+			return new TEMP_LIST(t, null);
 		} else {
-			return new TEMP_LIST(head.IRme(), tail.IRme());
+			TEMP_LIST tl = tail.IRme();
+			TEMP t = head.IRme();
+			IR.getInstance().Add_IRcommand(new IRcommand_Push_Arg(t));
+			return new TEMP_LIST(t, tl);
 		}
 	}
 }

@@ -16,10 +16,6 @@ abstract class IRcommand_Call_Func implements IRcommand {
 
     @Override
     public HashSet<TEMP> transform(Set<TEMP> liveTemps) {
-        HashSet<TEMP> in = new HashSet<>(liveTemps);
-        for (TEMP temp : this.argsTempList) {
-            in.add(temp);
-        }
-        return in;
+        return new HashSet<>(liveTemps);
     }
 }
