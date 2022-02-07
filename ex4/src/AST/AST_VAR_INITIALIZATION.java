@@ -91,6 +91,7 @@ public class AST_VAR_INITIALIZATION extends AST_VAR_DEC {
             for (Pair<String, Optional<Object>> p : currentClass.initialValues) {
                 if (p.getKey().equals(id)) {
                     currentClass.initialValues.remove(p);
+                    break;
                 }
             }
             if (initialValue instanceof AST_EXP_INT) {
