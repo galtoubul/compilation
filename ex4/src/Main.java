@@ -73,7 +73,7 @@ public class Main
 			} catch (lexicalErrorException e) {
 				output = "ERROR";
 			}
-			file_writer.write(output);
+			//file_writer.write(output);
 			System.out.println("-------------------------- FILE OUTPUT IS:");
 			System.out.println(output);
 
